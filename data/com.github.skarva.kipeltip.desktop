@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Kipeltip
+GenericName=Password Manager
+Comment=Secure and manage your passwords
+Categories=System;Utility;
+Exec=com.github.skarva.kipeltip
+Icon=application-default-icon
+Terminal=false
+Type=Application
+X-GNOME-Gettext-Domain=kipeltip
+Keywords=Password;Login;

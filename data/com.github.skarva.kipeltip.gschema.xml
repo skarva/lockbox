@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <enum id="com.github.skarva.kipeltip.window-state">
+        <value nick="Normal" value="0" />
+        <value nick="Maximized" value="1" />
+        <value nick="Fullscreen" value="2" />
+    </enum>
+    <schema path="/com/github/skarva/kipeltip/saved-state/" id="com.github.skarva.kipeltip.saved-state" gettext-domain="com.github.skarva.kipeltip">
+        <key name="window-state" enum="com.github.skarva.kipeltip.window-state">
+            <default>"Normal"</default>
+            <summary>The saved state of the main window.</summary>
+            <description>The saved state of the main window.</description>
+        </key>
+        <key name="window-width" type="i">
+            <default>800</default>
+            <summary>Width of the main window.</summary>
+            <description>Width of the main window.</description>
+        </key>
+        <key name="window-height" type="i">
+            <default>600</default>
+            <summary>Height of the main window.</summary>
+            <description>Height of the main window.</description>
+        </key>
+        <key name="window-x" type="i">
+            <default>-1</default>
+            <summary>X-axis position of the main window.</summary>
+            <description>X-axis position of the main window.</description>
+        </key>
+        <key name="window-y" type="i">
+            <default>-1</default>
+            <summary>Y-axis position of the main window.</summary>
+            <description>Y-axis position of the main window.</description>
+        </key>
+    </schema>
+    <schema path="/com/github/skarva/kipeltip/settings/" id="com.github.skarva.kipeltip.settings" gettext-domain="com.github.skarva.kipeltip">
+        <key name="clear-clipboard" type="b">
+            <default>true</default>
+            <summary>Clear clipboard after timeout.</summary>
+            <description>Clear clipboard after timeout.</description>
+        </key>
+        <key name="clear-clipboard-timeout" type="i">
+            <default>10</default>
+            <summary>Timeout for clearing clipboard in seconds.</summary>
+            <description>Timeout for clearing clipboard in seconds.</description>
+        </key>
+        <key name="autolock" type="b">
+            <default>true</default>
+            <summary>Autolock session after timeout.</summary>
+            <description>Autolock session after timeout.</description>
+        </key>
+        <key name="autolock-timeout" type="i">
+            <default>120</default>
+            <summary>Time for autolocking session in seconds.</summary>
+            <description>Time for autolocking session in seconds.</description>
+        </key>
+    </schema>
+</schemalist>
