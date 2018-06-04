@@ -26,7 +26,7 @@ namespace Kipeltip.Dialogs {
 
         public PreferencesDialog (Gtk.Window? parent) {
             Object (
-                border_width: 5,
+                border_width: 6,
                 deletable: false,
                 resizable: false,
                 title: _("Preferences"),

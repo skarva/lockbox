@@ -19,8 +19,8 @@
 
 namespace Kipeltip {
     public class Database : GLib.Object {
-        public string provider { set; get; default = "SQLite" }
-        public string uri { set; get; default = "SQLite://DB_DIR=.;DB_NAME=test" }
+        public string provider { set; get; default = "SQLite"; }
+        public string uri { set; get; default = "SQLite://DB_DIR=.;DB_NAME=test"; }
         private Gda.Connection connection;
 
         public void open () throws Error {

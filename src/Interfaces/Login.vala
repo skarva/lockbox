@@ -17,26 +17,16 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Widgets {
-    public class PasswordListView : Gtk.Grid {
-        private Gtk.Grid password_list;
-
-        construct {
-            password_list = new Gtk.Grid ();
-            password_list.expand = true;
-            password_list.orientation = Gtk.Orientation.VERTICAL;
-            add (password_list);
-
-            // TODO Load sites from DB
-
-            /* Test Passwords */
-            var pwd = new Kipeltip.Interfaces.Password ("Test 1", "test", "pass");
-            var entry1 = new PasswordListRow (pwd);
-            password_list.add (entry1);
-        }
-
-        public void add_password () {
-            // TODO Add password dialog
+namespace Kipeltip.Interfaces {
+    public class Login {
+        public string name;
+        public string username;
+        public string password;
+        
+        public Login (string name="", string username="", string password="") {
+            this.name = name;
+            this.username = username;
+            this.password = password;
         }
     }
 }

@@ -53,7 +53,6 @@ namespace Kipeltip.Widgets {
                     case 1:
                         password_dialog = new Kipeltip.Dialogs.PasswordDialog (window);
                         password_dialog.destroy.connect (() => {
-                            Granite.Services.Logger.notification ("password_set signal called");
                             setup_complete ();
                         });
                         password_dialog.show_all ();

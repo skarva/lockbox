@@ -18,45 +18,53 @@
 */
 
 namespace Kipeltip.Dialogs {
-    public class PasswordDialog : Gtk.Dialog {
+    public class AddLoginDialog : Gtk.Dialog {
+        private Gtk.Entry entry_name;
+        private Gtk.Entry username;
         private Gtk.Entry password;
-        private Gtk.Widget save_button;
-
-        public PasswordDialog (Gtk.Window? parent) {
+        
+        public signal void update_list ();
+        
+        public AddLoginDialog (Gtk.Window? parent) {
             Object (
                 border_width: 6,
                 deletable: false,
                 resizable: false,
-                title: _("Master Password"),
+                title: _("Add Login"),
                 transient_for: parent
             );
-
+            
             set_default_response (Gtk.ResponseType.NONE);
         }
-
+        
         construct {
             var grid = new Gtk.Grid ();
             grid.column_spacing = 12;
             grid.row_spacing = 6;
             get_content_area ().add (grid);
 
-            var password_label = new Gtk.Label (_("Master Password"));
-            password_label.halign = Gtk.Align.END;
-            password_label.margin_start = 12;
-            grid.attach (password_label, 0, 0, 1, 1);
+            var header = new Granite.HeaderLabel (_("Add Login"));
+            grid.attach (header, 0, 0, 2, 1);
 
+            var name_label = new Gtk.Label (_("Name"));
+            entry_name = new Gtk.Entry ();
+            grid.attach (name_label, 0, 1, 1, 1);
+            grid.attach (entry_name, 1, 1, 1, 1);
+            
+            var username_label = new Gtk.Label (_("Username"));
+            username = new Gtk.Entry ();
+            grid.attach (username_label, 0, 2, 1, 1);
+            grid.attach (username, 1, 2, 1, 1);
+            
+            var password_label = new Gtk.Label (_("Password"));
             password = new Gtk.Entry ();
-            password.input_purpose = Gtk.InputPurpose.PASSWORD;
-            password.invisible_char = '*';
-            password.visibility = false;
-            password.activates_default = true;
-            grid.attach (password, 1, 0, 1, 1);
-
-            save_button = add_button (_("Set Password"), Gtk.ResponseType.NONE);
+            grid.attach (password_label, 0, 3, 1, 1);
+            grid.attach (password, 1, 3, 1, 1);
+            
+            var close_button = add_button (_("Close"), Gtk.ResponseType.NONE);
 
             response.connect (()=> {
-               // TODO Create user DB using master password as passphrase
-               destroy ();
+                destroy ();
             });
         }
     }

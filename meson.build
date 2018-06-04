@@ -10,6 +10,7 @@ add_project_arguments([
 
 dependencies = [
     dependency('granite'),
+    dependency('libgda-5.0'),
     meson.get_compiler('vala').find_library('posix'),
     meson.get_compiler('c').find_library('m', required : false)
 ]
