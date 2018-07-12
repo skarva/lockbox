@@ -36,6 +36,7 @@ namespace Kipeltip {
         public const string ACTION_PREFIX = "kipeltip.";
         public const string ACTION_ADD = "action_add";
         public const string ACTION_PREFERENCES = "action_preferences";
+        public const string ACTION_CLOSE_COLLECTION = "action_close_collection";
         public const string ACTION_REMOVE_COLLECTION = "action_remove_collection";
         
         public static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
@@ -43,6 +44,7 @@ namespace Kipeltip {
         public const ActionEntry[] action_entries = {
             { ACTION_ADD, action_add },
             { ACTION_PREFERENCES, action_preferences },
+            { ACTION_CLOSE_COLLECTION, action_close_collection },
             { ACTION_REMOVE_COLLECTION, action_remove_collection }
         };
 
@@ -84,7 +86,6 @@ namespace Kipeltip {
             headerbar = new Widgets.HeaderBar ();
             headerbar.title = title;
             set_titlebar (headerbar);
-            headerbar.disable ();
             
             layout_stack = new Gtk.Stack ();
             layout_stack.transition_type = Gtk.StackTransitionType.UNDER_UP;
@@ -140,8 +141,12 @@ namespace Kipeltip {
             preferences_dialog.present ();
         }
         
+        private void action_close_collection () {
+            show_auth_form ();
+            remove_entries ();
+        }
+        
         private void action_remove_collection () {
-            headerbar.disable ();   
             try {
                 var file = Granite.Services.Paths.user_data_folder.get_child (current_collection.name + ".db");
                 current_collection = new Services.Collection ();
@@ -149,7 +154,6 @@ namespace Kipeltip {
             } catch (Error e) {
                 critical (e.message);
             }
-            headerbar.subtitle = "";
             
             if (get_num_collections () == 0) {
                 show_welcome_screen ();
@@ -160,11 +164,13 @@ namespace Kipeltip {
                 
         private void show_welcome_screen () {
             layout_stack.visible_child = welcome;
+            headerbar.subtitle = "";
             headerbar.disable ();
         }
         
         private void show_auth_form () {
             layout_stack.visible_child = auth_form;
+            headerbar.subtitle = "";
             headerbar.disable ();
         }
         
@@ -219,7 +225,6 @@ namespace Kipeltip {
             saved_state.maximized = is_maximized;
         }
         
-        // NOTE Also call this when a collection is closed
         private void remove_entries () {
             foreach (var login_id in login_list.removal_list) {
                 current_collection.remove_login_entry (login_id);

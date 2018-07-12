@@ -18,6 +18,7 @@
 */
 
 namespace Kipeltip.Widgets {
+    private Gtk.Button return_button;
     private Gtk.Button add_button;
     private Gtk.ToggleButton find_button;
     private Gtk.MenuButton app_menu;
@@ -31,11 +32,19 @@ namespace Kipeltip.Widgets {
         }
         
         construct {
+            return_button = new Gtk.Button.with_label (_("Close"));
+            return_button.no_show_all = true;
+            return_button.valign = Gtk.Align.CENTER;
+            return_button.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_CLOSE_COLLECTION;
+            return_button.get_style_context ().add_class ("back-button");
+        
             add_button = new Gtk.Button.from_icon_name ("list-add", Gtk.IconSize.LARGE_TOOLBAR);
+            add_button.no_show_all = true;
             add_button.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_ADD;
             add_button.tooltip_text = _("New site login");
             
             find_button = new Gtk.ToggleButton ();
+            find_button.no_show_all = true;
             find_button.image = new Gtk.Image.from_icon_name ("edit-find", Gtk.IconSize.LARGE_TOOLBAR);
             find_button.tooltip_text = _("Find login");
             
@@ -44,7 +53,7 @@ namespace Kipeltip.Widgets {
             preferences_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_PREFERENCES;
             
             var reset_menuitem = new Gtk.ModelButton ();
-            reset_menuitem.text = _("Remove Collection  ");
+            reset_menuitem.text = _("Remove Collection");
             reset_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_REMOVE_COLLECTION;
             
             var separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
@@ -62,29 +71,29 @@ namespace Kipeltip.Widgets {
             menu.add (menu_grid);
             
             app_menu = new Gtk.MenuButton ();
+            app_menu.no_show_all = true;
             app_menu.image =  new Gtk.Image.from_icon_name ("open-menu", Gtk.IconSize.LARGE_TOOLBAR);
             app_menu.tooltip_text = _("Menu");
             app_menu.popover = menu;
             
+            pack_start (return_button);            
             pack_start (add_button);
             pack_end (app_menu);
-            //pack_end (find_button);            
-        }
-        
-        public void activate_menu () {
-            add_button.visible = true;
+            //pack_end (find_button);    
         }
         
         public void disable () {
-            add_button.sensitive = false;
-            find_button.sensitive = false;
-            app_menu.sensitive = false;
+            return_button.hide ();
+            add_button.hide ();
+            find_button.hide ();
+            app_menu.hide ();
         }
         
         public void enable () {
-            add_button.sensitive = true;
-            find_button.sensitive = true;
-            app_menu.sensitive = true;
+            return_button.show ();
+            add_button.show ();
+            find_button.show ();
+            app_menu.show ();
         }
     }
 }
