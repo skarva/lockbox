@@ -25,6 +25,9 @@ namespace Kipeltip {
         private Gtk.Stack layout_stack;
         private Widgets.LoginList login_list;
         private Widgets.WelcomeScreen welcome;
+        private Widgets.AuthenticateForm auth_form;
+        
+        private Services.Collection current_collection;
         
         public static Gtk.Clipboard clipboard;
         
@@ -33,14 +36,14 @@ namespace Kipeltip {
         public const string ACTION_PREFIX = "kipeltip.";
         public const string ACTION_ADD = "action_add";
         public const string ACTION_PREFERENCES = "action_preferences";
-        public const string ACTION_RESET = "action_reset";
+        public const string ACTION_REMOVE_COLLECTION = "action_remove_collection";
         
         public static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
         
         public const ActionEntry[] action_entries = {
             { ACTION_ADD, action_add },
             { ACTION_PREFERENCES, action_preferences },
-            { ACTION_RESET, action_reset }
+            { ACTION_REMOVE_COLLECTION, action_remove_collection }
         };
 
         public MainWindow (Kipeltip.Application app) {
@@ -53,6 +56,8 @@ namespace Kipeltip {
         }
 
         construct {
+            current_collection = new Services.Collection ();
+        
             actions = new SimpleActionGroup ();
             actions.add_action_entries (action_entries, this);
             insert_action_group ("kipeltip", actions);
@@ -61,7 +66,7 @@ namespace Kipeltip {
                 app.set_accels_for_action (ACTION_PREFIX + action, action_accelerators[action].to_array ());
             }
         
-            var saved_state = SavedState.get_default ();
+            var saved_state = Services.SavedState.get_default ();
             set_default_size (saved_state.window_width, saved_state.window_height);
             if (saved_state.window_x == -1 || saved_state.window_y == -1) {
                 window_position = Gtk.WindowPosition.CENTER;
@@ -69,18 +74,11 @@ namespace Kipeltip {
                 move (saved_state.window_x, saved_state.window_y);
             }
 
-            switch (saved_state.window_state) {
-                case Kipeltip.WindowState.MAXIMIZED:
-                    this.maximize ();
-                    break;
-                default:
-                    break;
+            if (saved_state.maximized) {
+                this.maximize ();
             }
             
             clipboard = Gtk.Clipboard.get_for_display (get_display (), Gdk.SELECTION_CLIPBOARD);
-            
-            action_accelerators.set (ACTION_ADD, "<Control>n");
-            action_accelerators.set (ACTION_PREFERENCES, "<Control>p");
 
             /* Init Layout */
             headerbar = new Widgets.HeaderBar ();
@@ -92,40 +90,44 @@ namespace Kipeltip {
             layout_stack.transition_type = Gtk.StackTransitionType.UNDER_UP;
             add (layout_stack);
 
-            // If settings aren't saved show welcome dialog, also disable headerbar
             welcome = new Widgets.WelcomeScreen (this);
             layout_stack.add_named (welcome, "welcome");
 
-            welcome.setup_complete.connect (() => {
-                layout_stack.visible_child_name = "login";
-                headerbar.enable ();
-            });
-
+            welcome.setup_complete.connect (show_auth_form);
+            
             login_list = new Widgets.LoginList ();
             layout_stack.add_named (login_list, "login");
             
-            login_list.row_activated.connect (show_entry_details);
+            auth_form = new Widgets.AuthenticateForm (current_collection);
+            layout_stack.add_named (auth_form, "auth");
+            
+            auth_form.success.connect (() => {
+                headerbar.subtitle = current_collection.name;
+                login_list.populate (current_collection.retrieve_list ());
+                show_login_list ();
+            });
+            
+            show_all ();
         }
-
-        public override bool delete_event (Gdk.EventAny event) {
-            var saved_state = SavedState.get_default ();
-            int window_width;
-            int window_height;
-            get_size (out window_width, out window_height);
-            saved_state.window_width = window_width;
-            saved_state.window_height = window_height;
-            if (is_maximized) {
-                saved_state.window_state = Kipeltip.WindowState.MAXIMIZED;
+        
+        public void init_window () {
+            if (get_num_collections () == 0) {
+                show_welcome_screen ();
             } else {
-                saved_state.window_state = Kipeltip.WindowState.NORMAL;
+                show_auth_form ();
             }
+        }
+        
+        protected override bool delete_event (Gdk.EventAny event) {
+            remove_entries ();
+            update_saved_state ();
 
             return false;
         }
         
         private void action_add () {
-            // TODO Show dialog for new login either direcly here or call it from LoginList
             var add_login_dialog = new Dialogs.AddLoginDialog (this);
+            add_login_dialog.new_login.connect (update_login_list);
             add_login_dialog.show_all ();
             
             add_login_dialog.present ();
@@ -138,14 +140,90 @@ namespace Kipeltip {
             preferences_dialog.present ();
         }
         
-        private void action_reset () {
+        private void action_remove_collection () {
+            headerbar.disable ();   
+            try {
+                var file = Granite.Services.Paths.user_data_folder.get_child (current_collection.name + ".db");
+                current_collection = new Services.Collection ();
+                file.delete ();
+            } catch (Error e) {
+                critical (e.message);
+            }
+            headerbar.subtitle = "";
+            
+            if (get_num_collections () == 0) {
+                show_welcome_screen ();
+            } else {
+                show_auth_form ();
+            }
+        }
+                
+        private void show_welcome_screen () {
+            layout_stack.visible_child = welcome;
             headerbar.disable ();
-            login_list.clear ();
-            layout_stack.visible_child_name = "welcome";
         }
         
-        private void show_entry_details (Gtk.ListBoxRow row) {
-            (row as Widgets.LoginListRow).show_details ();
+        private void show_auth_form () {
+            layout_stack.visible_child = auth_form;
+            headerbar.disable ();
+        }
+        
+        private void show_login_list () {
+            layout_stack.visible_child = login_list;
+            headerbar.enable ();
+        }
+
+        private void update_login_list (Interfaces.Login new_entry) {
+            int id = current_collection.add_login_entry (new_entry);
+            if (id == -1) {
+                var alert = new Granite.MessageDialog.with_image_from_icon_name (
+                    _("Failed to add login to collection!"),
+                    _("An error occured while trying to add a new entry to the collection.\n
+                    If this issue persists, contact the developers"),
+                    "dialog-error",
+                    Gtk.ButtonsType.CLOSE
+                );
+                alert.run ();
+                alert.destroy ();
+            } else {
+                new_entry.id = id;
+                login_list.add_login (new_entry);
+            }
+        }
+        
+        private int get_num_collections () {
+            int results = 0;
+            try {
+                var data_dir = Granite.Services.Paths.user_data_folder;
+                FileEnumerator enumerator = data_dir.enumerate_children ("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+                
+                FileInfo info = null;
+                while ((info = enumerator.next_file ()) != null) {
+                    if (info.get_file_type () == FileType.REGULAR) {
+                        results++;
+                    }
+                }
+            } catch (Error e) {
+                critical (e.message);
+            }
+            return results; 
+        }
+        
+        private void update_saved_state () {
+            var saved_state = Services.SavedState.get_default ();
+            int window_width;
+            int window_height;
+            get_size (out window_width, out window_height);
+            saved_state.window_width = window_width;
+            saved_state.window_height = window_height;
+            saved_state.maximized = is_maximized;
+        }
+        
+        // NOTE Also call this when a collection is closed
+        private void remove_entries () {
+            foreach (var login_id in login_list.removal_list) {
+                current_collection.remove_login_entry (login_id);
+            }
         }
     }
 }

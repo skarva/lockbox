@@ -19,9 +19,10 @@
 
 namespace Kipeltip.Interfaces {
     public class Login {
-        public string name;
-        public string username;
-        public string password;
+        public int id { get; set; }
+        public string name { get; private set; }
+        public string username { get; private set; }
+        public string password { get; private set; }
         
         public Login (string name="", string username="", string password="") {
             this.name = name;

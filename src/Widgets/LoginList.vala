@@ -19,43 +19,37 @@
 
 namespace Kipeltip.Widgets {
     public class LoginList : Gtk.ListBox {
+        public List<int> removal_list;
+        
         construct {
             this.selection_mode = Gtk.SelectionMode.NONE;
-
-            /* Test Passwords */
-            var pwd = new Kipeltip.Interfaces.Login ("Test 1", "test", "pass");
-            var entry1 = new LoginListRow (pwd);
-            entry1.delete_entry.connect (remove_login);
-            add (entry1);
-
-            var pwd2 = new Kipeltip.Interfaces.Login ("Test 2", "test", "pass2");
-            var entry2 = new LoginListRow (pwd2);
-            entry2.delete_entry.connect (remove_login);
-            add (entry2);
             
-            populate_from_db ();
-        }
-        
-        public void update () {
-            clear ();
-            populate_from_db ();
+            removal_list = new List<int> ();
         }
         
         public void clear () {
-            foreach (Gtk.Widget widget in this.get_children ()) {
+            foreach (var widget in this.get_children ()) {
                 remove (widget);
             }
         }
         
-        private void populate_from_db () {
-            // TODO Access DB and load entries
-        }
+        public void add_login (Interfaces.Login new_login) {
+            var new_entry = new LoginListRow (new_login);
+            new_entry.delete_entry.connect (remove_login);
+            add (new_entry);
 
-        private void add_login () {
-            // TODO Add password dialog
+            show_all ();
+        }
+                
+        public void populate (List<Interfaces.Login> entries) {
+            foreach (var entry in entries) {
+                add_login (entry);
+            }
         }
 
         private void remove_login (LoginListRow row) {
+            // TODO Hide row until the application is closed
+            removal_list.append (row.id);
             remove (row);
         }
     }

@@ -18,16 +18,12 @@
 */
 
 namespace Kipeltip {
-    public class Application : Granite.Application {
+    public class Application : Gtk.Application {
         public static string app_cmd_name;
 
         construct {
             flags |= ApplicationFlags.HANDLES_OPEN;
-            build_version = Constants.VERSION;
-
-            program_name = app_cmd_name;
-            exec_name = Constants.PROJECT_NAME;
-            app_launcher = Constants.PROJECT_NAME + ".desktop";
+            
             application_id = Constants.PROJECT_NAME;
         }
 
@@ -40,6 +36,8 @@ namespace Kipeltip {
 
             Granite.Services.Logger.initialize ("Kipeltip");
             Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.NOTIFY;
+            
+            Granite.Services.Paths.initialize ("kipeltip", Constants.DATADIR);
         }
 
         public static Application _instance = null;
@@ -55,10 +53,14 @@ namespace Kipeltip {
 
         protected override void activate () {
             var window = new MainWindow (this);
+            window.init_window ();
             window.show_all ();
         }
 
         public static int main (string[] args) {
+            Gtk.init (ref args);
+            Gda.init ();
+            
             app_cmd_name = "Kipeltip";
             Application app = Application.instance;
             return app.run (args);

@@ -26,34 +26,35 @@ namespace Kipeltip.Dialogs {
 
         public PreferencesDialog (Gtk.Window? parent) {
             Object (
-                border_width: 6,
+                border_width: 12,
                 deletable: false,
                 resizable: false,
                 title: _("Preferences"),
                 transient_for: parent
             );
 
-            set_default_response (Gtk.ResponseType.NONE);
+            set_default_response (Gtk.ResponseType.CLOSE);
         }
 
         construct {
-            var settings = Settings.get_default ();
+            var settings = Services.Settings.get_default ();
 
             var grid = new Gtk.Grid ();
             grid.column_spacing = 12;
             grid.row_spacing = 6;
+            grid.margin_bottom = 12;
             get_content_area ().add (grid);
 
             var header = new Granite.HeaderLabel (_("Security"));
             grid.attach (header, 0, 0, 2, 1);
 
             /* Clipboard clearing settings */
-            var clear_clipboard_label = new SettingsLabel (_("Clear clipboard after timeout"));
+            var clear_clipboard_label = new SettingsLabel (_("Clear clipboard after timeout:"));
             clear_clipboard = new SettingsSwitch ("clear-clipboard");
             grid.attach (clear_clipboard_label, 0, 1, 1, 1);
             grid.attach (clear_clipboard, 1, 1, 1, 1);
 
-            var clear_clipboard_timeout_label = new SettingsLabel (_("Timeout (secs)"));
+            var clear_clipboard_timeout_label = new SettingsLabel (_("Timeout (secs):"));
             clear_clipboard_timeout = new Gtk.Entry ();
             clear_clipboard_timeout.input_purpose = Gtk.InputPurpose.DIGITS;
             clear_clipboard_timeout.text = settings.clear_clipboard_timeout.to_string ();
@@ -62,12 +63,12 @@ namespace Kipeltip.Dialogs {
             grid.attach (clear_clipboard_timeout, 1, 2, 1, 1);
 
             /* Autolock settings */
-            var autolock_label = new SettingsLabel (_("Autolock after timeout"));
-            autolock = new SettingsSwitch (_("autolock"));
+            var autolock_label = new SettingsLabel (_("Autolock session after timeout:"));
+            autolock = new SettingsSwitch ("autolock");
             grid.attach (autolock_label, 0, 3, 1, 1);
             grid.attach (autolock, 1, 3, 1, 1);
 
-            var autolock_timeout_label = new SettingsLabel (_("Timeout (secs)"));
+            var autolock_timeout_label = new SettingsLabel (_("Timeout (secs):"));
             autolock_timeout = new Gtk.Entry ();
             autolock_timeout.input_purpose = Gtk.InputPurpose.DIGITS;
             autolock_timeout.text = settings.autolock_timeout.to_string ();
@@ -75,7 +76,7 @@ namespace Kipeltip.Dialogs {
             grid.attach (autolock_timeout_label, 0, 4, 1, 1);
             grid.attach (autolock_timeout, 1, 4, 1, 1);
 
-            var close_button = add_button (_("Close"), Gtk.ResponseType.NONE);
+            var close_button = add_button (_("Close"), Gtk.ResponseType.CLOSE);
 
             response.connect (()=> {
                 destroy ();
@@ -94,7 +95,7 @@ namespace Kipeltip.Dialogs {
             public SettingsSwitch (string setting) {
                 halign = Gtk.Align.START;
                 valign = Gtk.Align.CENTER;
-                Settings.get_default ().schema.bind (setting, this, "active", SettingsBindFlags.DEFAULT);
+                Services.Settings.get_default ().schema.bind (setting, this, "active", SettingsBindFlags.DEFAULT);
             }
         }
     }

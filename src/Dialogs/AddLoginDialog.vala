@@ -19,53 +19,88 @@
 
 namespace Kipeltip.Dialogs {
     public class AddLoginDialog : Gtk.Dialog {
-        private Gtk.Entry entry_name;
-        private Gtk.Entry username;
-        private Gtk.Entry password;
-        
-        public signal void update_list ();
-        
+        private Gtk.Entry name_entry;
+        private Gtk.Entry username_entry;
+        private Gtk.Entry password_entry;
+
+        public signal void new_login (Interfaces.Login new_entry);
+
         public AddLoginDialog (Gtk.Window? parent) {
             Object (
-                border_width: 6,
+                border_width: 12,
                 deletable: false,
                 resizable: false,
                 title: _("Add Login"),
                 transient_for: parent
             );
-            
-            set_default_response (Gtk.ResponseType.NONE);
+
+            set_default_response (Gtk.ResponseType.OK);
         }
-        
+
         construct {
             var grid = new Gtk.Grid ();
             grid.column_spacing = 12;
             grid.row_spacing = 6;
+            grid.margin_bottom = 12;
             get_content_area ().add (grid);
 
             var header = new Granite.HeaderLabel (_("Add Login"));
             grid.attach (header, 0, 0, 2, 1);
 
-            var name_label = new Gtk.Label (_("Name"));
-            entry_name = new Gtk.Entry ();
+            var name_label = new Gtk.Label (_("Name:"));
+            name_label.halign = Gtk.Align.END;
+            name_label.margin_start = 12;
+            name_entry = new Gtk.Entry ();
+            name_entry.activates_default = true;
             grid.attach (name_label, 0, 1, 1, 1);
-            grid.attach (entry_name, 1, 1, 1, 1);
-            
-            var username_label = new Gtk.Label (_("Username"));
-            username = new Gtk.Entry ();
-            grid.attach (username_label, 0, 2, 1, 1);
-            grid.attach (username, 1, 2, 1, 1);
-            
-            var password_label = new Gtk.Label (_("Password"));
-            password = new Gtk.Entry ();
-            grid.attach (password_label, 0, 3, 1, 1);
-            grid.attach (password, 1, 3, 1, 1);
-            
-            var close_button = add_button (_("Close"), Gtk.ResponseType.NONE);
+            grid.attach (name_entry, 1, 1, 1, 1);
 
-            response.connect (()=> {
-                destroy ();
-            });
+            var username_label = new Gtk.Label (_("Username:"));
+            username_label.halign = Gtk.Align.END;
+            username_label.margin_start = 12;
+            username_entry = new Gtk.Entry ();
+            username_entry.activates_default = true;
+            grid.attach (username_label, 0, 2, 1, 1);
+            grid.attach (username_entry, 1, 2, 1, 1);
+
+            var password_label = new Gtk.Label (_("Password:"));
+            password_label.halign = Gtk.Align.END;
+            password_label.margin_start = 12;
+            password_entry = new Gtk.Entry ();
+            password_entry.input_purpose = Gtk.InputPurpose.PASSWORD;
+            password_entry.invisible_char = '*';
+            password_entry.activates_default = true;
+            grid.attach (password_label, 0, 3, 1, 1);
+            grid.attach (password_entry, 1, 3, 1, 1);
+
+            var close_button = add_button (_("Close"), Gtk.ResponseType.CLOSE);
+            var ok_button = add_button (_("Save"), Gtk.ResponseType.OK);
+
+            response.connect (on_response);
+        }
+
+        private void on_response (Gtk.Dialog source, int response_id) {
+            switch (response_id) {
+                case Gtk.ResponseType.OK:
+                    if (name_entry.text_length == 0 || username_entry.text_length == 0 || password_entry.text_length == 0) {
+                        var alert = new Granite.MessageDialog.with_image_from_icon_name (
+                            _("Some fields are still empty!"),
+                            _("You must fill in all the fields in order to save your login info."),
+                            "dialog-error",
+                            Gtk.ButtonsType.CLOSE
+                        );
+                        alert.run ();
+                        alert.destroy ();
+                    } else {
+                        var login = new Interfaces.Login (name_entry.text.strip (), username_entry.text.strip (), password_entry.text.strip ());
+                        new_login (login);
+                        destroy ();
+                    }
+                    break;
+                case Gtk.ResponseType.CLOSE:
+                    destroy ();
+                    break;
+            }
         }
     }
 }

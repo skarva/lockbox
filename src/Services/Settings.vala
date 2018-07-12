@@ -17,20 +17,13 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip {
-
-    public enum WindowState {
-        NORMAL = 0,
-        MAXIMIZED = 1,
-        FULLSCREEN = 2
-    }
-
+namespace Kipeltip.Services {
     public class SavedState : Granite.Services.Settings {
         public int window_width { get; set; }
         public int window_height { get; set; }
         public int window_x { get; set; }
         public int window_y { get; set; }
-        public Kipeltip.WindowState window_state { get; set; }
+        public bool maximized { get; set; }
 
         public SavedState () {
             base (Constants.PROJECT_NAME + ".saved-state");
@@ -50,7 +43,9 @@ namespace Kipeltip {
         public int clear_clipboard_timeout { get; set; }
         public bool autolock { get; set; }
         public int autolock_timeout { get; set; }
-
+        public string last_collection { get; set; }
+        public string[] recent_collections { get; set; }
+        
         public Settings () {
             base (Constants.PROJECT_NAME + ".settings");
         }

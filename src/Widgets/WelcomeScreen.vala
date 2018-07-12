@@ -21,7 +21,6 @@ namespace Kipeltip.Widgets {
     public class WelcomeScreen : Granite.Widgets.Welcome {
         public unowned Kipeltip.MainWindow window { get; construct; }
         private Kipeltip.Dialogs.PreferencesDialog preferences_dialog;
-        private Kipeltip.Dialogs.PasswordDialog password_dialog;
 
         public signal void setup_complete ();
 
@@ -37,10 +36,10 @@ namespace Kipeltip.Widgets {
             valign = Gtk.Align.FILL;
             halign = Gtk.Align.FILL;
             vexpand = true;
-            append ("security-low", "Set up preferences",
-                "Customize features such as clipboard clearing and autolocking.");
-            append ("security-high", "Set up master password",
-                "The master password is used to keep all your passwords safe.");
+            append ("security-low", _("Pick your preferences"),
+                _("Customize features such as clipboard clearing and autolocking."));
+            append ("security-high", _("Create a new collection"),
+                _("The collection is where you will keep all your passwords safe."));
             set_item_sensitivity (1, false);
 
             activated.connect ((index) => {
@@ -51,11 +50,7 @@ namespace Kipeltip.Widgets {
                         set_item_sensitivity (1, true);
                         break;
                     case 1:
-                        password_dialog = new Kipeltip.Dialogs.PasswordDialog (window);
-                        password_dialog.destroy.connect (() => {
-                            setup_complete ();
-                        });
-                        password_dialog.show_all ();
+                        setup_complete ();
                         break;
                 }
             });

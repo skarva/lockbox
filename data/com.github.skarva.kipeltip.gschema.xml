@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-    <enum id="com.github.skarva.kipeltip.window-state">
-        <value nick="Normal" value="0" />
-        <value nick="Maximized" value="1" />
-        <value nick="Fullscreen" value="2" />
-    </enum>
     <schema path="/com/github/skarva/kipeltip/saved-state/" id="com.github.skarva.kipeltip.saved-state" gettext-domain="com.github.skarva.kipeltip">
-        <key name="window-state" enum="com.github.skarva.kipeltip.window-state">
-            <default>"Normal"</default>
-            <summary>The saved state of the main window.</summary>
-            <description>The saved state of the main window.</description>
+        <key name="maximized" type="b">
+            <default>false</default>
+            <summary>The maximized state of the main window.</summary>
+            <description>The maximized state of the main window.</description>
         </key>
         <key name="window-width" type="i">
             <default>800</default>
@@ -52,6 +47,16 @@
             <default>120</default>
             <summary>Time for autolocking session in seconds.</summary>
             <description>Time for autolocking session in seconds.</description>
+        </key>
+        <key name="last-collection" type="s">
+            <default>''</default>
+            <summary>The name of the last collection loaded</summary>
+            <description>Used as selected collection in drop box at next launch on the authentication form.</description>
+        </key>
+        <key name="recent-collections" type="as">
+            <default>[]</default>
+            <summary>Most recently loaded collections</summary>
+            <description>Used to fill in collection drop box on the authentication form</description>
         </key>
     </schema>
 </schemalist>

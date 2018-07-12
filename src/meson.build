@@ -3,6 +3,7 @@ conf_data.set_quoted('PROJECT_NAME', meson.project_name())
 conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 conf_data.set_quoted('VERSION', meson.project_version())
 conf_data.set_quoted('PREFIX', get_option('prefix'))
+conf_data.set_quoted('DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 config_header = configure_file(
     input : 'config.vala.in',
     output : 'config.vala',
@@ -13,11 +14,11 @@ executable(meson.project_name(),
     'Application.vala',
     'MainWindow.vala',
     'Dialogs/AddLoginDialog.vala',
-    'Dialogs/PasswordDialog.vala',
     'Dialogs/PreferencesDialog.vala',
     'Interfaces/Login.vala',
-    'Services/Database.vala',
+    'Services/Collection.vala',
     'Services/Settings.vala',
+    'Widgets/AuthenticateForm.vala',
     'Widgets/HeaderBar.vala',
     'Widgets/LoginList.vala',
     'Widgets/LoginListRow.vala',

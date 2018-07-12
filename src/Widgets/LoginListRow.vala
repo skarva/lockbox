@@ -20,69 +20,48 @@
 namespace Kipeltip.Widgets {
     public class LoginListRow : Gtk.ListBoxRow {
         public string category { set; get; }
+        public int id { set; get; }
         private Gtk.Box container;
         private Gtk.Label title;
-        private Gtk.Button copy_username;
-        private Gtk.Button copy_password;
-        private Gtk.Revealer detail_revealer;
-        private Gtk.Grid detail_view;
-        private Gtk.Label username;
-        private Gtk.Label password;
+        private Gtk.Button copy_username_button;
+        private Gtk.Button copy_password_button;
         private Gtk.Button delete_login;
         
+        public signal void copy_username ();
+        public signal void copy_password ();
         public signal void delete_entry (LoginListRow row);
 
         public LoginListRow (Kipeltip.Interfaces.Login login) {
             this.activatable = true;
+            id = login.id;
 
             container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             container.height_request = 50;
             
             title = new Gtk.Label (login.name);
             
-            username = new Gtk.Label (login.username);
-            
-            password = new Gtk.Label (login.password);
-            
-            copy_username = new Gtk.Button.with_label ("Copy Username");
-            copy_password = new Gtk.Button.with_label ("Copy Password");
+            copy_username_button = new Gtk.Button.with_label ("Copy Username");
+            copy_password_button = new Gtk.Button.with_label ("Copy Password");
             delete_login = new Gtk.Button.with_label ("Delete Login");
-            
-            detail_view = new Gtk.Grid ();
-            detail_view.attach (username, 0, 0);
-            detail_view.attach (password, 0, 1);
-            detail_view.attach (delete_login, 1, 1);
-            
-            detail_revealer = new Gtk.Revealer ();
-            detail_revealer.reveal_child = false;
-            detail_revealer.transition_duration = 500;
-            detail_revealer.transition_type = Gtk.RevealerTransitionType.SLIDE_DOWN;
-            detail_revealer.add (detail_view);
 
             container.pack_start (title);
-            container.pack_start (copy_username, false, false, 5);
-            container.pack_start (copy_password, false, false, 5);
-            container.pack_start (detail_revealer);
+            container.pack_start (copy_username_button, false, false, 5);
+            container.pack_start (copy_password_button, false, false, 5);
+            container.pack_start (delete_login, false, false, 5);   
             
             add (container);
             
-            copy_username.clicked.connect ( () => {
-                MainWindow.clipboard.set_text (username.label, username.label.length);
-                // TODO Start timer to clear clipboard
+            copy_username_button.clicked.connect ( () => {
+                copy_username ();
             });
             
-            copy_password.clicked.connect ( () => {
-                MainWindow.clipboard.set_text (password.label, password.label.length);
-                // TODO Start timer to clipboard clear
+            copy_password_button.clicked.connect ( () => {
+                copy_password ();
             });
             
             delete_login.clicked.connect ( () => {
                 delete_entry (this);
             });
-        }
-        
-        public void show_details () {
-            detail_revealer.reveal_child = !detail_revealer.reveal_child;
         }
     }
 }

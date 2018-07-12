@@ -37,24 +37,28 @@ namespace Kipeltip.Widgets {
             
             find_button = new Gtk.ToggleButton ();
             find_button.image = new Gtk.Image.from_icon_name ("edit-find", Gtk.IconSize.LARGE_TOOLBAR);
-            find_button.tooltip_text = _("Find...");
+            find_button.tooltip_text = _("Find login");
             
             var preferences_menuitem = new Gtk.ModelButton ();
             preferences_menuitem.text = _("Preferences");
             preferences_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_PREFERENCES;
             
             var reset_menuitem = new Gtk.ModelButton ();
-            reset_menuitem.text = _("Reset and Clear");
-            reset_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_RESET;
+            reset_menuitem.text = _("Remove Collection  ");
+            reset_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_REMOVE_COLLECTION;
+            
+            var separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
             
             var menu_grid = new Gtk.Grid ();
-            menu_grid.margin = 5;
+            menu_grid.row_spacing = 6;
+            menu_grid.margin = 12;
             menu_grid.orientation = Gtk.Orientation.VERTICAL;
             menu_grid.attach (preferences_menuitem, 0, 0, 1, 1);
+            menu_grid.attach (separator, 0, 1, 1, 1);
             menu_grid.attach (reset_menuitem, 0, 2, 1, 1);
             menu_grid.show_all ();
             
-            var menu = new Gtk.Popover (null);
+            var menu = new Gtk.PopoverMenu ();
             menu.add (menu_grid);
             
             app_menu = new Gtk.MenuButton ();
@@ -64,7 +68,7 @@ namespace Kipeltip.Widgets {
             
             pack_start (add_button);
             pack_end (app_menu);
-            pack_end (find_button);            
+            //pack_end (find_button);            
         }
         
         public void activate_menu () {
