@@ -105,6 +105,7 @@ namespace Kipeltip {
             auth_form.success.connect (() => {
                 headerbar.subtitle = current_collection.name;
                 login_list.populate (current_collection.retrieve_list ());
+                GLib.Timeout.add_seconds (Services.Settings.get_default ().autolock_timeout, autolock_timed_out);
                 show_login_list ();
             });
             
@@ -229,6 +230,12 @@ namespace Kipeltip {
             foreach (var login_id in login_list.removal_list) {
                 current_collection.remove_login_entry (login_id);
             }
+        }
+        
+        private bool autolock_timed_out ()
+        {
+            action_close_collection ();
+            return true;
         }
     }
 }
