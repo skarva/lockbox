@@ -29,7 +29,7 @@ namespace Kipeltip {
         
         private Services.Collection current_collection;
         
-        public static Gtk.Clipboard clipboard;
+        private Gtk.Clipboard clipboard;
         
         public SimpleActionGroup actions { get; construct; }
         
@@ -97,6 +97,8 @@ namespace Kipeltip {
             welcome.setup_complete.connect (show_auth_form);
             
             login_list = new Widgets.LoginList ();
+            login_list.copy_username.connect (copy_username);
+            login_list.copy_password.connect (copy_password);
             layout_stack.add_named (login_list, "login");
             
             auth_form = new Widgets.AuthenticateForm (current_collection);
@@ -105,7 +107,9 @@ namespace Kipeltip {
             auth_form.success.connect (() => {
                 headerbar.subtitle = current_collection.name;
                 login_list.populate (current_collection.retrieve_list ());
-                GLib.Timeout.add_seconds (Services.Settings.get_default ().autolock_timeout, autolock_timed_out);
+                if (Services.Settings.get_default ().autolock) {
+                    GLib.Timeout.add_seconds (Services.Settings.get_default ().autolock_timeout, autolock_timed_out);
+                }
                 show_login_list ();
             });
             
@@ -206,7 +210,7 @@ namespace Kipeltip {
                 
                 FileInfo info = null;
                 while ((info = enumerator.next_file ()) != null) {
-                    if (info.get_file_type () == FileType.REGULAR) {
+                    if (info.get_file_type () == FileType.REGULAR && info.get_name ().contains (".db")) {
                         results++;
                     }
                 }
@@ -232,9 +236,33 @@ namespace Kipeltip {
             }
         }
         
-        private bool autolock_timed_out ()
-        {
-            action_close_collection ();
+        private void copy_username (int id) {
+            var username = current_collection.retrieve_username (id);
+            clipboard.set_text (username, -1);
+            if (Services.Settings.get_default ().clear_clipboard) {
+                GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
+            }
+        }
+        
+        private void copy_password (int id) {
+            var password = current_collection.retrieve_password (id);
+            clipboard.set_text (password, -1);
+            if (Services.Settings.get_default ().clear_clipboard) {
+                GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
+            }
+        }
+        
+        private bool autolock_timed_out () {
+            if (Services.Settings.get_default ().autolock) {
+                action_close_collection ();
+            }
+            return true;
+        }
+        
+        private bool clear_clipboard_timed_out () {
+            if (Services.Settings.get_default ().clear_clipboard) {
+                clipboard.clear ();
+            }
             return true;
         }
     }

@@ -21,6 +21,9 @@ namespace Kipeltip.Widgets {
     public class LoginList : Gtk.ListBox {
         public List<int> removal_list;
         
+        public signal void copy_username (int id);
+        public signal void copy_password (int id);
+        
         construct {
             this.selection_mode = Gtk.SelectionMode.NONE;
             
@@ -35,6 +38,8 @@ namespace Kipeltip.Widgets {
         
         public void add_login (Interfaces.Login new_login) {
             var new_entry = new LoginListRow (new_login);
+            new_entry.copy_username.connect (copy_login_username);
+            new_entry.copy_password.connect (copy_login_password);
             new_entry.delete_entry.connect (remove_login);
             add (new_entry);
 
@@ -46,6 +51,14 @@ namespace Kipeltip.Widgets {
             foreach (var entry in entries) {
                 add_login (entry);
             }
+        }
+        
+        private void copy_login_username (int id) {
+            copy_username (id);
+        }
+
+        private void copy_login_password (int id) {
+            copy_password (id);
         }
 
         private void remove_login (LoginListRow row) {

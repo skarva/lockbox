@@ -19,21 +19,20 @@
 
 namespace Kipeltip.Widgets {
     public class LoginListRow : Gtk.ListBoxRow {
-        public string category { set; get; }
-        public int id { set; get; }
+        public int id { get; set; }
         private Gtk.Box container;
         private Gtk.Label title;
         private Gtk.Button copy_username_button;
         private Gtk.Button copy_password_button;
         private Gtk.Button delete_login;
         
-        public signal void copy_username ();
-        public signal void copy_password ();
+        public signal void copy_username (int id);
+        public signal void copy_password (int id);
         public signal void delete_entry (LoginListRow row);
 
         public LoginListRow (Kipeltip.Interfaces.Login login) {
             this.activatable = true;
-            id = login.id;
+            this.id = login.id;
 
             container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             container.height_request = 50;
@@ -53,11 +52,11 @@ namespace Kipeltip.Widgets {
             add (container);
             
             copy_username_button.clicked.connect ( () => {
-                copy_username ();
+                copy_username (id);
             });
             
             copy_password_button.clicked.connect ( () => {
-                copy_password ();
+                copy_password (id);
             });
             
             delete_login.clicked.connect ( () => {

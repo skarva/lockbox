@@ -60,14 +60,17 @@ namespace Kipeltip.Services {
             try {
                 var builder = new Gda.SqlBuilder (Gda.SqlStatementType.SELECT);
                 builder.select_add_target ("login_entry", null);
+                builder.select_add_field ("id", null, null);
                 builder.select_add_field ("name", null ,null);
                 
                 var result = connection.statement_execute_select (builder.get_statement (), null);
                 if (result.get_n_rows () > 0) {
                     var iter = result.create_iter ();
                     while (iter.move_next ()) {
+                        int id = iter.get_value_for_field ("id").get_int ();
                         string name = iter.get_value_for_field ("name").get_string ();
                         var entry = new Interfaces.Login (name);
+                        entry.id = id;
                         collection_list.append (entry);
                     }
                 }
@@ -78,15 +81,46 @@ namespace Kipeltip.Services {
             return collection_list;
         }
         
-        public string retrieve_username ()
+        public string retrieve_username (int id)
                 requires (connection.is_opened ())
         {
+            try {
+                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.SELECT);
+                builder.select_add_target ("login_entry", null);
+                builder.select_add_field ("username", null, null);
+                
+                var cond = builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, id), 0);
+                builder.set_where (cond);
+                
+                var result = connection.statement_execute_select (builder.get_statement (), null);
+                if (result.get_n_rows () > 0) {
+                    return result.get_value_at (result.get_column_index ("username"), 0).get_string ();
+                }
+            } catch (Error e) {
+                critical (e.message);
+            }
+            
             return "";
         }
         
-        public string retrieve_password ()
+        public string retrieve_password (int id)
                 requires (connection.is_opened ())
         {
+            try {
+                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.SELECT);
+                builder.select_add_target ("login_entry", null);
+                builder.select_add_field ("password", null, null);
+                
+                builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, id), 0);
+                
+                var result = connection.statement_execute_select (builder.get_statement (), null);
+                if (result.get_n_rows () > 0) {
+                    return result.get_value_at (result.get_column_index ("password"), 0).get_string ();
+                }
+            } catch (Error e) {
+                critical (e.message);
+            }
+            
             return "";
         }
         
@@ -147,7 +181,7 @@ namespace Kipeltip.Services {
             Error e = null;
 
             var operation = Gda.ServerOperation.prepare_create_table (connection,"login_entry", e,
-                "id", typeof (int64), Gda.ServerOperationCreateTableFlag.PKEY_AUTOINC_FLAG,
+                "id", typeof (int), Gda.ServerOperationCreateTableFlag.PKEY_AUTOINC_FLAG,
                 "name", typeof (string), Gda.ServerOperationCreateTableFlag.NOT_NULL_FLAG,
                 "username", typeof (string), Gda.ServerOperationCreateTableFlag.NOT_NULL_FLAG,
                 "password", typeof (string), Gda.ServerOperationCreateTableFlag.NOT_NULL_FLAG);
