@@ -22,6 +22,9 @@ namespace Kipeltip.Widgets {
     private Gtk.Button add_button;
     private Gtk.ToggleButton find_button;
     private Gtk.MenuButton app_menu;
+    private Gtk.ModelButton preferences_menuitem;
+    private Gtk.ModelButton reset_menuitem;
+    private Gtk.Separator separator;
 
     public class HeaderBar : Gtk.HeaderBar {
         public HeaderBar () {
@@ -48,15 +51,15 @@ namespace Kipeltip.Widgets {
             find_button.image = new Gtk.Image.from_icon_name ("edit-find", Gtk.IconSize.LARGE_TOOLBAR);
             find_button.tooltip_text = _("Find login");
             
-            var preferences_menuitem = new Gtk.ModelButton ();
+            preferences_menuitem = new Gtk.ModelButton ();
             preferences_menuitem.text = _("Preferences");
             preferences_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_PREFERENCES;
             
-            var reset_menuitem = new Gtk.ModelButton ();
+            reset_menuitem = new Gtk.ModelButton ();
             reset_menuitem.text = _("Remove Collection");
             reset_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_REMOVE_COLLECTION;
             
-            var separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
+            separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
             
             var menu_grid = new Gtk.Grid ();
             menu_grid.row_spacing = 6;
@@ -71,7 +74,6 @@ namespace Kipeltip.Widgets {
             menu.add (menu_grid);
             
             app_menu = new Gtk.MenuButton ();
-            app_menu.no_show_all = true;
             app_menu.image =  new Gtk.Image.from_icon_name ("open-menu", Gtk.IconSize.LARGE_TOOLBAR);
             app_menu.tooltip_text = _("Menu");
             app_menu.popover = menu;
@@ -86,14 +88,16 @@ namespace Kipeltip.Widgets {
             return_button.hide ();
             add_button.hide ();
             find_button.hide ();
-            app_menu.hide ();
+            reset_menuitem.hide ();
+            separator.hide ();
         }
         
         public void enable () {
             return_button.show ();
             add_button.show ();
             find_button.show ();
-            app_menu.show ();
+            reset_menuitem.show ();
+            separator.show ();
         }
     }
 }

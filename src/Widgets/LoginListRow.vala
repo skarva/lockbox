@@ -42,7 +42,8 @@ namespace Kipeltip.Widgets {
             
             copy_username_button = new Gtk.Button.with_label ("Copy Username");
             copy_password_button = new Gtk.Button.with_label ("Copy Password");
-            delete_login = new Gtk.Button.with_label ("Delete Login");
+            delete_login = new Gtk.Button.from_icon_name ("edit-delete-symbolic", Gtk.IconSize.BUTTON);
+            delete_login.relief = Gtk.ReliefStyle.NONE;
 
             container.pack_start (title);
             container.pack_start (copy_username_button, false, false, 5);

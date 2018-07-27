@@ -42,13 +42,13 @@ namespace Kipeltip.Widgets {
         }
                 
         public void populate (List<Interfaces.Login> entries) {
+            clear ();
             foreach (var entry in entries) {
                 add_login (entry);
             }
         }
 
         private void remove_login (LoginListRow row) {
-            // TODO Hide row until the application is closed
             removal_list.append (row.id);
             remove (row);
         }
