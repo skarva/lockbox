@@ -81,6 +81,37 @@ namespace Kipeltip.Services {
             return collection_list;
         }
         
+        public Interfaces.Login retrieve_login (int id)
+                requires (connection.is_opened ())
+        {
+            var login = new Interfaces.Login ();
+            login.id = -1;
+            
+            try {
+                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.SELECT);
+                builder.select_add_target ("login_entry", null);
+                builder.select_add_field ("name", null, null);
+                builder.select_add_field ("username", null, null);
+                builder.select_add_field ("password", null, null);
+                
+                var cond = builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, id), 0);
+                builder.set_where (cond);
+                
+                var result = connection.statement_execute_select (builder.get_statement (), null);
+                if (result.get_n_rows () > 0) {
+                    var name = result.get_value_at (result.get_column_index ("name"), 0).get_string ();
+                    var username = result.get_value_at (result.get_column_index ("username"), 0).get_string ();
+                    var password = result.get_value_at (result.get_column_index ("password"), 0).get_string ();
+                    login = new Interfaces.Login (name, username, password);
+                    login.id = id;
+                }
+            } catch (Error e) {
+                critical (e.message);
+            }
+            
+            return login;
+        }
+        
         public string retrieve_username (int id)
                 requires (connection.is_opened ())
         {
@@ -108,7 +139,7 @@ namespace Kipeltip.Services {
         {
             try {
                 var builder = new Gda.SqlBuilder (Gda.SqlStatementType.SELECT);
-                builder.select_add_target ("login_entry", null);
+                builder.select_add_target ("login_entry", null);    
                 builder.select_add_field ("password", null, null);
                 
                 builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, id), 0);
@@ -148,6 +179,32 @@ namespace Kipeltip.Services {
             }
             
             return -1;
+        }
+        
+        public bool update_login (Interfaces.Login login_entry)
+                requires (connection.is_opened ())
+        {
+            try {
+                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.UPDATE);
+                builder.set_table ("login_entry");
+                builder.add_field_value_as_gvalue ("name", login_entry.name);
+                builder.add_field_value_as_gvalue ("username", login_entry.username);
+                builder.add_field_value_as_gvalue ("password", login_entry.password);
+                
+                var cond = builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, login_entry.id), 0);
+                builder.set_where (cond);
+                
+                var statement = builder.get_statement ();
+                Gda.Set last_row;
+                
+                if (connection.statement_execute_non_select (statement, null, out last_row) == 1) {
+                    return true;
+                }
+            } catch (Error e) {
+                critical (e.message);
+            }
+            
+            return false;
         }
         
         public bool remove_login_entry (int id) 

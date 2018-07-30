@@ -23,6 +23,7 @@ namespace Kipeltip.Widgets {
         
         public signal void copy_username (int id);
         public signal void copy_password (int id);
+        public signal void edit_entry (int id);
         
         construct {
             this.selection_mode = Gtk.SelectionMode.NONE;
@@ -40,6 +41,7 @@ namespace Kipeltip.Widgets {
             var new_entry = new LoginListRow (new_login);
             new_entry.copy_username.connect (copy_login_username);
             new_entry.copy_password.connect (copy_login_password);
+            new_entry.edit_entry.connect (edit_login);
             new_entry.delete_entry.connect (remove_login);
             add (new_entry);
 
@@ -59,6 +61,10 @@ namespace Kipeltip.Widgets {
 
         private void copy_login_password (int id) {
             copy_password (id);
+        }
+        
+        private void edit_login (int id) {
+            edit_entry(id);
         }
 
         private void remove_login (LoginListRow row) {
