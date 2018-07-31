@@ -18,23 +18,28 @@
 */
 
 namespace Kipeltip.Dialogs {
-    public class AddLoginDialog : Gtk.Dialog {
+    public class EditLoginDialog : Gtk.Dialog {
+        private int id;
         private Gtk.Entry name_entry;
         private Gtk.Entry username_entry;
         private Gtk.Entry password_entry;
 
-        public signal void new_login (Interfaces.Login new_entry);
+        public signal void update_login (Interfaces.Login entry);
 
-        public AddLoginDialog (Gtk.Window? parent) {
+        public EditLoginDialog (Gtk.Window? parent, Interfaces.Login entry) {
             Object (
                 border_width: 12,
                 deletable: false,
                 resizable: false,
-                title: _("Add Login"),
+                title: _("Edit Login"),
                 transient_for: parent
             );
 
             set_default_response (Gtk.ResponseType.OK);
+            this.id = entry.id;
+            name_entry.text = entry.name;
+            username_entry.text = entry.username;
+            password_entry.text = entry.password;
         }
 
         construct {
@@ -44,7 +49,7 @@ namespace Kipeltip.Dialogs {
             grid.margin_bottom = 12;
             get_content_area ().add (grid);
 
-            var header = new Granite.HeaderLabel (_("Add Login"));
+            var header = new Granite.HeaderLabel (_("Edit Login"));
             grid.attach (header, 0, 0, 2, 1);
 
             var name_label = new Gtk.Label (_("Name:"));
@@ -74,7 +79,7 @@ namespace Kipeltip.Dialogs {
             grid.attach (password_entry, 1, 3, 1, 1);
 
             var close_button = add_button (_("Cancel"), Gtk.ResponseType.CLOSE);
-            var ok_button = add_button (_("Save New Login"), Gtk.ResponseType.OK);
+            var ok_button = add_button (_("Update Login"), Gtk.ResponseType.OK);
 
             response.connect (on_response);
         }
@@ -93,7 +98,8 @@ namespace Kipeltip.Dialogs {
                         alert.destroy ();
                     } else {
                         var login = new Interfaces.Login (name_entry.text.strip (), username_entry.text.strip (), password_entry.text.strip ());
-                        new_login (login);
+                        login.id = id;
+                        update_login (login);
                         destroy ();
                     }
                     break;

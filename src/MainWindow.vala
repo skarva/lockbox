@@ -99,6 +99,7 @@ namespace Kipeltip {
             login_list = new Widgets.LoginList ();
             login_list.copy_username.connect (copy_username);
             login_list.copy_password.connect (copy_password);
+            login_list.edit_entry.connect (edit_entry);
             layout_stack.add_named (login_list, "login");
             
             auth_form = new Widgets.AuthenticateForm (current_collection);
@@ -183,6 +184,10 @@ namespace Kipeltip {
             layout_stack.visible_child = login_list;
             headerbar.enable ();
         }
+        
+        private void update_login (Interfaces.Login login) {
+            current_collection.update_login (login);
+        }
 
         private void update_login_list (Interfaces.Login new_entry) {
             int id = current_collection.add_login_entry (new_entry);
@@ -250,6 +255,15 @@ namespace Kipeltip {
             if (Services.Settings.get_default ().clear_clipboard) {
                 GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
             }
+        }
+        
+        private void edit_entry (int id) {
+            var login = current_collection.retrieve_login (id);
+            var edit_login_dialog = new Dialogs.EditLoginDialog (this, login);
+            edit_login_dialog.update_login.connect (update_login);
+            edit_login_dialog.show_all ();
+            
+            edit_login_dialog.present ();
         }
         
         private bool autolock_timed_out () {

@@ -24,10 +24,12 @@ namespace Kipeltip.Widgets {
         private Gtk.Label title;
         private Gtk.Button copy_username_button;
         private Gtk.Button copy_password_button;
+        private Gtk.Button edit_login;
         private Gtk.Button delete_login;
         
         public signal void copy_username (int id);
         public signal void copy_password (int id);
+        public signal void edit_entry(int id);
         public signal void delete_entry (LoginListRow row);
 
         public LoginListRow (Kipeltip.Interfaces.Login login) {
@@ -41,12 +43,15 @@ namespace Kipeltip.Widgets {
             
             copy_username_button = new Gtk.Button.with_label ("Copy Username");
             copy_password_button = new Gtk.Button.with_label ("Copy Password");
+            edit_login = new Gtk.Button.from_icon_name ("accessories-text-editor-symbolic", Gtk.IconSize.BUTTON);
+            edit_login.relief = Gtk.ReliefStyle.NONE;
             delete_login = new Gtk.Button.from_icon_name ("edit-delete-symbolic", Gtk.IconSize.BUTTON);
             delete_login.relief = Gtk.ReliefStyle.NONE;
 
             container.pack_start (title);
             container.pack_start (copy_username_button, false, false, 5);
             container.pack_start (copy_password_button, false, false, 5);
+            container.pack_start (edit_login, false, false ,5);
             container.pack_start (delete_login, false, false, 5);   
             
             add (container);
@@ -57,6 +62,10 @@ namespace Kipeltip.Widgets {
             
             copy_password_button.clicked.connect ( () => {
                 copy_password (id);
+            });
+            
+            edit_login.clicked.connect (() => {
+                edit_entry(id);
             });
             
             delete_login.clicked.connect ( () => {
