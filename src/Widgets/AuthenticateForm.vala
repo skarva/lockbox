@@ -36,7 +36,7 @@ namespace Kipeltip.Widgets {
         construct {
             var info_label = new Gtk.Label (_("Invalid collection credentials!"));
             info_label.show ();
-        
+
             infobar = new Gtk.InfoBar ();
             infobar.no_show_all = true;
             infobar.message_type = Gtk.MessageType.ERROR;
@@ -46,11 +46,13 @@ namespace Kipeltip.Widgets {
                 infobar.visible = false;
             });
             pack_start (infobar);
-        
-            var avatar = new Granite.Widgets.Avatar.with_default_icon (64);
-            avatar.halign = Gtk.Align.CENTER;
-            pack_start (avatar);
-        
+
+
+            var logo = new Gtk.Image.from_file (Constants.DATADIR + "/" + Constants.PROJECT_NAME + "/logo.svg");
+            logo.margin_top = 12;
+            logo.halign = Gtk.Align.CENTER;
+            pack_start (logo);
+
             var grid = new Gtk.Grid ();
             grid.orientation = Gtk.Orientation.VERTICAL;
             grid.column_spacing = 12;
@@ -58,7 +60,7 @@ namespace Kipeltip.Widgets {
             grid.valign = Gtk.Align.FILL;
             grid.halign = Gtk.Align.CENTER;
             set_center_widget (grid);
-            
+
             var header = new Granite.HeaderLabel (_("Open a collection"));
             grid.attach (header, 0, 0, 2, 1);
 
@@ -68,6 +70,7 @@ namespace Kipeltip.Widgets {
             grid.attach (name_label, 0, 1, 1, 1);
 
             name_entry = new Gtk.Entry ();
+            name_entry.input_purpose = Gtk.InputPurpose.FREE_FORM;
             name_entry.activate.connect (check_credentials);
             name_entry.key_release_event.connect (()=> {
                 is_empty ();
@@ -97,7 +100,7 @@ namespace Kipeltip.Widgets {
 
             login_button.clicked.connect (check_credentials);
         }
-        
+
         private bool is_empty () {
             if (name_entry.text.length > 0 && password_entry.text.length > 0) {
                 login_button.sensitive = true;
@@ -107,7 +110,7 @@ namespace Kipeltip.Widgets {
                 return true;
             }
         }
-        
+
         private void check_credentials () {
             if (!is_empty ()) {
                 var collection_name = name_entry.text.strip ();
