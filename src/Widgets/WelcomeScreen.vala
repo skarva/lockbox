@@ -36,7 +36,7 @@ namespace Kipeltip.Widgets {
             valign = Gtk.Align.FILL;
             halign = Gtk.Align.FILL;
             vexpand = true;
-            append ("security-low", _("Pick your preferences"),
+            append ("preferences-desktop", _("Pick your preferences"),
                 _("Customize features such as clipboard clearing and autolocking."));
             append ("security-high", _("Create a new collection"),
                 _("The collection is where you will keep all your passwords safe."));

@@ -1,9 +1,27 @@
+icon_sizes = ['16', '24', '32', '64', '128']
+
+foreach i : icon_sizes
+    install_data(
+        join_paths('icons', i, 'com.github.skarva.kipeltip.svg'),
+        install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', i + 'x' + i, 'apps')
+    )
+    install_data(
+        join_paths('icons', i, 'com.github.skarva.kipeltip.svg'),
+        install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', i + 'x' + i + '@2', 'apps')
+    )
+endforeach
+
+install_data(
+    'icons/logo.svg',
+    install_dir: join_paths(get_option('datadir'), meson.project_name())
+)
+
 install_data(
     meson.project_name() + '.gschema.xml',
     install_dir: join_paths(get_option('datadir'), 'glib-2.0', 'schemas')
 )
 
 install_data(
-    'logo.svg',
-    install_dir: join_paths(get_option('datadir'), meson.project_name())
+    meson.project_name() + '.desktop',
+    install_dir: join_paths(get_option('datadir'), 'applications')
 )

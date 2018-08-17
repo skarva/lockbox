@@ -2,10 +2,10 @@
 Name=Kipeltip
 GenericName=Password Manager
 Comment=Secure and manage your passwords
-Categories=System;Utility;
+Categories=System;Utility;Internet;
 Exec=com.github.skarva.kipeltip
-Icon=application-default-icon
+Icon=com.github.skarva.kipeltip
 Terminal=false
 Type=Application
-X-GNOME-Gettext-Domain=kipeltip
+X-GNOME-Gettext-Domain=com.github.skarva.kipeltip
 Keywords=Password;Login;
