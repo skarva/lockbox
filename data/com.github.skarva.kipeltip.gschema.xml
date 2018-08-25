@@ -53,10 +53,5 @@
             <summary>The name of the last collection loaded</summary>
             <description>Used as selected collection in drop box at next launch on the authentication form.</description>
         </key>
-        <key name="recent-collections" type="as">
-            <default>[]</default>
-            <summary>Most recently loaded collections</summary>
-            <description>Used to fill in collection drop box on the authentication form</description>
-        </key>
     </schema>
 </schemalist>
