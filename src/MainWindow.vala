@@ -148,8 +148,11 @@ namespace Kipeltip {
         }
         
         private void action_close_collection () {
+            var settings = Services.Settings.get_default ();
+            settings.last_collection = current_collection.name;
             show_auth_form ();
             remove_entries ();
+            current_collection = new Services.Collection ();
         }
         
         private void action_remove_collection () {
@@ -229,9 +232,14 @@ namespace Kipeltip {
             var saved_state = Services.SavedState.get_default ();
             int window_width;
             int window_height;
+            int window_x;
+            int window_y;
             get_size (out window_width, out window_height);
+            get_position (out window_x, out window_y);
             saved_state.window_width = window_width;
             saved_state.window_height = window_height;
+            saved_state.window_x = window_x;
+            saved_state.window_y = window_y;
             saved_state.maximized = is_maximized;
         }
         

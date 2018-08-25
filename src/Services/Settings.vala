@@ -44,7 +44,6 @@ namespace Kipeltip.Services {
         public bool autolock { get; set; }
         public int autolock_timeout { get; set; }
         public string last_collection { get; set; }
-        public string[] recent_collections { get; set; }
         
         public Settings () {
             base (Constants.PROJECT_NAME + ".settings");

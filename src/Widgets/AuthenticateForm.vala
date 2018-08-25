@@ -71,8 +71,9 @@ namespace Kipeltip.Widgets {
 
             name_entry = new Gtk.Entry ();
             name_entry.input_purpose = Gtk.InputPurpose.FREE_FORM;
+            name_entry.text = Services.Settings.get_default ().last_collection;
             name_entry.activate.connect (check_credentials);
-            name_entry.key_release_event.connect (()=> {
+            name_entry.key_release_event.connect (() => {
                 is_empty ();
                 return false;
             });
@@ -117,7 +118,6 @@ namespace Kipeltip.Widgets {
                 var collection_password = password_entry.text.strip ();
 
                 if (collection.open (collection_name, collection_password)) {
-                    name_entry.text = "";
                     password_entry.text = "";
                     success ();
                 } else {
