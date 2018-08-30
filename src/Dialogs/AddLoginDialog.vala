@@ -69,6 +69,7 @@ namespace Kipeltip.Dialogs {
             password_entry = new Gtk.Entry ();
             password_entry.input_purpose = Gtk.InputPurpose.PASSWORD;
             password_entry.invisible_char = '*';
+            password_entry.visibility = false;
             password_entry.activates_default = true;
             grid.attach (password_label, 0, 3, 1, 1);
             grid.attach (password_entry, 1, 3, 1, 1);

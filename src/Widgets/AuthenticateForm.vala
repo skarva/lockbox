@@ -119,6 +119,7 @@ namespace Kipeltip.Widgets {
 
                 if (collection.open (collection_name, collection_password)) {
                     password_entry.text = "";
+                    login_button.sensitive = false;
                     success ();
                 } else {
                     infobar.visible = true;

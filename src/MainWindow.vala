@@ -29,6 +29,9 @@ namespace Kipeltip {
         
         private Services.Collection current_collection;
         
+        private uint clipboard_timer_id = 0;
+        private uint autolock_timer_id = 0;
+        
         private Gtk.Clipboard clipboard;
         
         public SimpleActionGroup actions { get; construct; }
@@ -152,7 +155,14 @@ namespace Kipeltip {
             settings.last_collection = current_collection.name;
             show_auth_form ();
             remove_entries ();
-            current_collection = new Services.Collection ();
+            if (clipboard_timer_id > 0) {
+                GLib.Source.remove (clipboard_timer_id);
+                clipboard_timer_id = 0;
+            }
+            if (autolock_timer_id > 0) {
+                GLib.Source.remove (autolock_timer_id);
+                autolock_timer_id = 0;
+            }
         }
         
         private void action_remove_collection () {
@@ -253,6 +263,10 @@ namespace Kipeltip {
             var username = current_collection.retrieve_username (id);
             clipboard.set_text (username, -1);
             if (Services.Settings.get_default ().clear_clipboard) {
+                if (clipboard_timer_id > 0) {
+                    GLib.Source.remove (clipboard_timer_id);
+                    clipboard_timer_id = 0;
+                }
                 GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
             }
         }
@@ -261,6 +275,10 @@ namespace Kipeltip {
             var password = current_collection.retrieve_password (id);
             clipboard.set_text (password, -1);
             if (Services.Settings.get_default ().clear_clipboard) {
+                if (clipboard_timer_id > 0) {
+                    GLib.Source.remove (clipboard_timer_id);
+                    clipboard_timer_id = 0;
+                }
                 GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
             }
         }
@@ -276,6 +294,7 @@ namespace Kipeltip {
         
         private bool autolock_timed_out () {
             if (Services.Settings.get_default ().autolock) {
+                autolock_timer_id = 0;
                 action_close_collection ();
             }
             return true;
@@ -283,6 +302,7 @@ namespace Kipeltip {
         
         private bool clear_clipboard_timed_out () {
             if (Services.Settings.get_default ().clear_clipboard) {
+                clipboard_timer_id = 0;
                 clipboard.clear ();
             }
             return true;

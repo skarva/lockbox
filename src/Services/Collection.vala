@@ -30,7 +30,7 @@ namespace Kipeltip.Services {
         
         public bool open (string name, string password) {
             Granite.Services.Logger.notification ("Connecting to collection database...");
-            bool exists = FileUtils.test(data_dir.get_path () + name + ".db", FileTest.EXISTS);
+            bool exists = FileUtils.test(data_dir.get_path () + "/" + name + ".db", FileTest.EXISTS);
             string cnc = "DB_DIR=" + data_dir.get_path () + ";DB_NAME=" + name;
 
             try {
@@ -142,7 +142,8 @@ namespace Kipeltip.Services {
                 builder.select_add_target ("login_entry", null);    
                 builder.select_add_field ("password", null, null);
                 
-                builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, id), 0);
+                var cond = builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, id), 0);
+                builder.set_where (cond);
                 
                 var result = connection.statement_execute_select (builder.get_statement (), null);
                 if (result.get_n_rows () > 0) {
