@@ -91,19 +91,13 @@ namespace Kipeltip {
             set_titlebar (headerbar);
             
             layout_stack = new Gtk.Stack ();
-            layout_stack.transition_type = Gtk.StackTransitionType.UNDER_UP;
+            layout_stack.transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT;
             add (layout_stack);
 
             welcome = new Widgets.WelcomeScreen (this);
             layout_stack.add_named (welcome, "welcome");
 
             welcome.setup_complete.connect (show_auth_form);
-            
-            login_list = new Widgets.LoginList ();
-            login_list.copy_username.connect (copy_username);
-            login_list.copy_password.connect (copy_password);
-            login_list.edit_entry.connect (edit_entry);
-            layout_stack.add_named (login_list, "login");
             
             auth_form = new Widgets.AuthenticateForm (current_collection);
             layout_stack.add_named (auth_form, "auth");
@@ -116,6 +110,15 @@ namespace Kipeltip {
                 }
                 show_login_list ();
             });
+            
+            var scroll_window = new Gtk.ScrolledWindow (null, null);
+            
+            login_list = new Widgets.LoginList ();
+            login_list.copy_username.connect (copy_username);
+            login_list.copy_password.connect (copy_password);
+            login_list.edit_entry.connect (edit_entry);
+            scroll_window.add (login_list);
+            layout_stack.add_named (scroll_window, "login");
             
             show_all ();
         }
@@ -182,19 +185,19 @@ namespace Kipeltip {
         }
                 
         private void show_welcome_screen () {
-            layout_stack.visible_child = welcome;
+            layout_stack.visible_child_name = "welcome";
             headerbar.subtitle = "";
             headerbar.disable ();
         }
         
         private void show_auth_form () {
-            layout_stack.visible_child = auth_form;
+            layout_stack.visible_child_name = "auth";
             headerbar.subtitle = "";
             headerbar.disable ();
         }
         
         private void show_login_list () {
-            layout_stack.visible_child = login_list;
+            layout_stack.visible_child_name = "login";
             headerbar.enable ();
         }
         
