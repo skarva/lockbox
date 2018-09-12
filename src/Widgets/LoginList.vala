@@ -27,6 +27,9 @@ namespace Kipeltip.Widgets {
         
         construct {
             this.selection_mode = Gtk.SelectionMode.NONE;
+            this.set_sort_func ((row1, row2) => {
+                return ((LoginListRow)row1).id - ((LoginListRow)row2).id;
+            });
             
             removal_list = new List<int> ();
         }
@@ -34,6 +37,9 @@ namespace Kipeltip.Widgets {
         public void clear () {
             foreach (var widget in this.get_children ()) {
                 remove (widget);
+            }
+            foreach (var login in removal_list) {
+                removal_list.remove (login);
             }
         }
         

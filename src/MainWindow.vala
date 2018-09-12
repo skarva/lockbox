@@ -41,6 +41,8 @@ namespace Kipeltip {
         public const string ACTION_PREFERENCES = "action_preferences";
         public const string ACTION_CLOSE_COLLECTION = "action_close_collection";
         public const string ACTION_REMOVE_COLLECTION = "action_remove_collection";
+        public const string ACTION_UNDO = "action_undo";
+        public const string ACTION_QUIT = "action_quit";
         
         public static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
         
@@ -48,7 +50,9 @@ namespace Kipeltip {
             { ACTION_ADD, action_add },
             { ACTION_PREFERENCES, action_preferences },
             { ACTION_CLOSE_COLLECTION, action_close_collection },
-            { ACTION_REMOVE_COLLECTION, action_remove_collection }
+            { ACTION_REMOVE_COLLECTION, action_remove_collection },
+            { ACTION_UNDO, action_undo },
+            { ACTION_QUIT, action_quit }
         };
 
         public MainWindow (Kipeltip.Application app) {
@@ -60,6 +64,12 @@ namespace Kipeltip {
             );
         }
 
+        static construct {
+            action_accelerators.set (ACTION_ADD, "<Control>a");
+            action_accelerators.set (ACTION_UNDO, "<Control>z");
+            action_accelerators.set (ACTION_QUIT, "<Control>q");
+        }
+        
         construct {
             current_collection = new Services.Collection ();
         
@@ -106,7 +116,7 @@ namespace Kipeltip {
                 headerbar.subtitle = current_collection.name;
                 login_list.populate (current_collection.retrieve_list ());
                 if (Services.Settings.get_default ().autolock) {
-                    GLib.Timeout.add_seconds (Services.Settings.get_default ().autolock_timeout, autolock_timed_out);
+                    reset_autolock_timer ();
                 }
                 show_login_list ();
             });
@@ -139,11 +149,17 @@ namespace Kipeltip {
         }
         
         private void action_add () {
-            var add_login_dialog = new Dialogs.AddLoginDialog (this);
-            add_login_dialog.new_login.connect (update_login_list);
-            add_login_dialog.show_all ();
+            if (layout_stack.visible_child_name == "login") {
+                var add_login_dialog = new Dialogs.AddLoginDialog (this);
+                add_login_dialog.new_login.connect (update_login_list);
+                add_login_dialog.show_all ();
+                
+                add_login_dialog.present ();
+            }
             
-            add_login_dialog.present ();
+            if (Services.Settings.get_default ().autolock) {
+                reset_autolock_timer ();
+            }
         }
         
         private void action_preferences () {
@@ -151,13 +167,17 @@ namespace Kipeltip {
             preferences_dialog.show_all ();
             
             preferences_dialog.present ();
+            
+            if (Services.Settings.get_default ().autolock) {
+                reset_autolock_timer ();
+            }
         }
         
         private void action_close_collection () {
             var settings = Services.Settings.get_default ();
             settings.last_collection = current_collection.name;
-            show_auth_form ();
             remove_entries ();
+            show_auth_form ();
             if (clipboard_timer_id > 0) {
                 GLib.Source.remove (clipboard_timer_id);
                 clipboard_timer_id = 0;
@@ -182,6 +202,25 @@ namespace Kipeltip {
             } else {
                 show_auth_form ();
             }
+        }
+        
+        private void action_undo () {
+            if (layout_stack.visible_child_name == "login") {
+                var latest_login = login_list.removal_list.nth_data (login_list.removal_list.length () - 1);
+                login_list.removal_list.remove (latest_login);
+                var login = current_collection.retrieve_login (latest_login);
+                login_list.add_login (login);
+            }
+            
+            if (Services.Settings.get_default ().autolock) {
+                reset_autolock_timer ();
+            }
+        }
+        
+        private void action_quit () {
+            remove_entries ();
+            update_saved_state ();
+            destroy ();
         }
                 
         private void show_welcome_screen () {
@@ -266,11 +305,10 @@ namespace Kipeltip {
             var username = current_collection.retrieve_username (id);
             clipboard.set_text (username, -1);
             if (Services.Settings.get_default ().clear_clipboard) {
-                if (clipboard_timer_id > 0) {
-                    GLib.Source.remove (clipboard_timer_id);
-                    clipboard_timer_id = 0;
-                }
-                GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
+                reset_clipboard_timer ();
+            }
+            if (Services.Settings.get_default ().autolock) {
+                reset_autolock_timer ();
             }
         }
         
@@ -278,11 +316,10 @@ namespace Kipeltip {
             var password = current_collection.retrieve_password (id);
             clipboard.set_text (password, -1);
             if (Services.Settings.get_default ().clear_clipboard) {
-                if (clipboard_timer_id > 0) {
-                    GLib.Source.remove (clipboard_timer_id);
-                    clipboard_timer_id = 0;
-                }
-                GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
+                reset_clipboard_timer ();
+            }
+            if (Services.Settings.get_default ().autolock) {
+                reset_autolock_timer ();
             }
         }
         
@@ -293,6 +330,10 @@ namespace Kipeltip {
             edit_login_dialog.show_all ();
             
             edit_login_dialog.present ();
+            
+            if (Services.Settings.get_default ().autolock) {
+                reset_autolock_timer ();
+            }
         }
         
         private bool autolock_timed_out () {
@@ -309,6 +350,22 @@ namespace Kipeltip {
                 clipboard.clear ();
             }
             return true;
+        }
+        
+        private void reset_clipboard_timer () {
+            if (clipboard_timer_id > 0) {
+                GLib.Source.remove (clipboard_timer_id);
+                clipboard_timer_id = 0;
+            }
+            clipboard_timer_id = GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
+        }
+        
+        private void reset_autolock_timer () {
+            if (autolock_timer_id > 0) {
+                GLib.Source.remove (autolock_timer_id);
+                autolock_timer_id = 0;
+            }
+            autolock_timer_id = GLib.Timeout.add_seconds (Services.Settings.get_default ().autolock_timeout, autolock_timed_out);
         }
     }
 }
