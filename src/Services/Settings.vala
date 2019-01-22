@@ -17,7 +17,7 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Services {
+namespace Lockbox.Services {
     public class SavedState : Granite.Services.Settings {
         public int window_width { get; set; }
         public int window_height { get; set; }
@@ -41,10 +41,8 @@ namespace Kipeltip.Services {
     public class Settings : Granite.Services.Settings {
         public bool clear_clipboard { get; set; }
         public int clear_clipboard_timeout { get; set; }
-        public bool autolock { get; set; }
-        public int autolock_timeout { get; set; }
-        public string last_collection { get; set; }
-        
+        public bool dark_theme { get; set; }
+
         public Settings () {
             base (Constants.PROJECT_NAME + ".settings");
         }
@@ -54,8 +52,8 @@ namespace Kipeltip.Services {
                 case "clear-clipboard":
                     Granite.Services.Logger.notification ("Changed clear clipboard setting");
                     break;
-                case "autolock":
-                    Granite.Services.Logger.notification ("Change autolock setting");
+                case "dark-mode":
+                    Granite.Services.Logger.notification ("Changed dark mode setting");
                     break;
             }
         }

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,13 +17,13 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip {
+namespace Lockbox {
     public class Application : Gtk.Application {
         public static string app_cmd_name;
 
         construct {
             flags |= ApplicationFlags.HANDLES_OPEN;
-            
+
             application_id = Constants.PROJECT_NAME;
         }
 
@@ -34,10 +34,10 @@ namespace Kipeltip {
             Intl.bind_textdomain_codeset (Constants.GETTEXT_PACKAGE, "UTF-8");
             Intl.textdomain (Constants.GETTEXT_PACKAGE);
 
-            Granite.Services.Logger.initialize ("Kipeltip");
+            Granite.Services.Logger.initialize ("Lockbox");
             Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.NOTIFY;
-            
-            Granite.Services.Paths.initialize ("kipeltip", Constants.DATADIR);
+
+            Granite.Services.Paths.initialize ("lockbox", Constants.DATADIR);
         }
 
         public static Application _instance = null;
@@ -53,17 +53,16 @@ namespace Kipeltip {
 
         protected override void activate () {
             var window = new MainWindow (this);
-            window.init_window ();
+            //window.init_window ();
             window.show_all ();
         }
 
         public static int main (string[] args) {
             Gtk.init (ref args);
-            Gda.init ();
-            
-            app_cmd_name = "Kipeltip";
+
+            app_cmd_name = "Lockbox";
             Application app = Application.instance;
             return app.run (args);
         }
     }
-}
+} // Lockbox

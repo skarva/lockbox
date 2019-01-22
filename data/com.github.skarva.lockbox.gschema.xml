@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-    <schema path="/com/github/skarva/kipeltip/saved-state/" id="com.github.skarva.kipeltip.saved-state" gettext-domain="com.github.skarva.kipeltip">
+    <schema path="/com/github/skarva/lockbox/saved-state/" id="com.github.skarva.lockbox.saved-state" gettext-domain="com.github.skarva.lockbox">
         <key name="maximized" type="b">
             <default>false</default>
             <summary>The maximized state of the main window.</summary>
@@ -27,7 +27,7 @@
             <description>Y-axis position of the main window.</description>
         </key>
     </schema>
-    <schema path="/com/github/skarva/kipeltip/settings/" id="com.github.skarva.kipeltip.settings" gettext-domain="com.github.skarva.kipeltip">
+    <schema path="/com/github/skarva/lockbox/settings/" id="com.github.skarva.lockbox.settings" gettext-domain="com.github.skarva.lockbox">
         <key name="clear-clipboard" type="b">
             <default>true</default>
             <summary>Clear clipboard after timeout.</summary>
@@ -38,20 +38,10 @@
             <summary>Timeout for clearing clipboard in seconds.</summary>
             <description>Timeout for clearing clipboard in seconds.</description>
         </key>
-        <key name="autolock" type="b">
-            <default>true</default>
-            <summary>Autolock session after timeout.</summary>
-            <description>Autolock session after timeout.</description>
-        </key>
-        <key name="autolock-timeout" type="i">
-            <default>120</default>
-            <summary>Time for autolocking session in seconds.</summary>
-            <description>Time for autolocking session in seconds.</description>
-        </key>
-        <key name="last-collection" type="s">
-            <default>''</default>
-            <summary>The name of the last collection loaded</summary>
-            <description>Used as selected collection in drop box at next launch on the authentication form.</description>
+        <key name="dark-theme" type="b">
+            <default>false</default>
+            <summary>Toggle for application dark mode.</summary>
+            <description>Toggle for appication dark mode.</description>
         </key>
     </schema>
 </schemalist>

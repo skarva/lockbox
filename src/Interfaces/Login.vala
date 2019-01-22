@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,17 +17,29 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Interfaces {
-    public class Login {
-        public int id { get; set; }
-        public string name { get; private set; }
-        public string username { get; private set; }
-        public string password { get; private set; }
-        
-        public Login (string name="", string username="", string password="") {
+namespace Lockbox.Interfaces {
+    public class Login : Item, Secret.Item {
+        public string id { get; set; }
+        public string name { get; set; }
+        public string uri { get; set; }
+        public string username { get; set; }
+
+        public Login (string name="", string uri="", string username="") {
             this.name = name;
+            this.uri = uri;
             this.username = username;
-            this.password = password;
+        }
+
+        public Secret.Schema get_schema () {
+            var schema = new Secret.Schema ("org.epiphany.FormPassword", Secret.SchemaFlags.NONE,
+                    "id", Secret.SchemaAttributeType.STRING,
+                    "uri", Secret.SchemaAttributeType.STRING,
+                    "target_origin", Secret.SchemaAttributeType.STRING,
+                    "form_username", Secret.SchemaAttributeType.STRING,
+                    "form_password", Secret.SchemaAttributeType.STRING,
+                    "username", Secret.SchemaAttributeType.STRING,
+                    "server_time_modified", Secret.SchemaAttributeType.STRING);
+            return schema;
         }
     }
 }

@@ -17,22 +17,8 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Lockbox.Widgets {
-    public class WelcomeScreen : Granite.Widgets.Welcome {
-        public signal void show_preferences ();
-        public signal void create_collection ();
-
-        public WelcomeScreen () {
-            Object(
-                title: _("Lockbox"),
-                subtitle: _("Sit tight while your secret clearance is verified")
-            );
-        }
-
-        construct {
-            valign = Gtk.Align.FILL;
-            halign = Gtk.Align.FILL;
-            vexpand = true;
-        }
+namespace Lockbox.Interfaces {
+    public interface Item : Secret.Item {
+        public abstract string name { get; set; }
     }
-} // Lockbox.Widgets
+}

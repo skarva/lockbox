@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,14 +17,15 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Widgets {
-    private Gtk.Button return_button;
-    private Gtk.Button add_button;
-    private Gtk.ToggleButton find_button;
+namespace Lockbox.Widgets {
+    private Gtk.MenuButton add_button;
+    private Gtk.ModelButton add_login_menuitem;
+    private Gtk.ModelButton add_note_menuitem;
+    private Gtk.SearchEntry find_entry;
     private Gtk.MenuButton app_menu;
     private Gtk.ModelButton preferences_menuitem;
-    private Gtk.ModelButton reset_menuitem;
-    private Gtk.Separator separator;
+    private Gtk.ModelButton sort_by_name_menuitem;
+    private Gtk.ModelButton sort_by_created_menuitem;
 
     public class HeaderBar : Gtk.HeaderBar {
         public HeaderBar () {
@@ -33,71 +34,73 @@ namespace Kipeltip.Widgets {
                 show_close_button: true
             );
         }
-        
+
         construct {
-            return_button = new Gtk.Button.with_label (_("Close"));
-            return_button.no_show_all = true;
-            return_button.valign = Gtk.Align.CENTER;
-            return_button.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_CLOSE_COLLECTION;
-            return_button.get_style_context ().add_class ("back-button");
-        
-            add_button = new Gtk.Button.from_icon_name ("list-add", Gtk.IconSize.LARGE_TOOLBAR);
-            add_button.no_show_all = true;
-            add_button.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_ADD;
-            add_button.tooltip_text = _("New site login");
-            
-            find_button = new Gtk.ToggleButton ();
-            find_button.no_show_all = true;
-            find_button.image = new Gtk.Image.from_icon_name ("edit-find", Gtk.IconSize.LARGE_TOOLBAR);
-            find_button.tooltip_text = _("Find login");
-            
+            /* Add menu and options */
+            add_login_menuitem = new Gtk.ModelButton ();
+            add_login_menuitem.text = _("Add New Login");
+            add_login_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_ADD_LOGIN;
+
+            add_note_menuitem = new Gtk.ModelButton ();
+            add_note_menuitem.text = _("Add Secure Note");
+            add_note_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_ADD_NOTE;
+
+            var add_menu_grid = new Gtk.Grid ();
+            add_menu_grid.row_spacing = 6;
+            add_menu_grid.margin_top = 3;
+            add_menu_grid.margin_bottom = 3;
+            add_menu_grid.orientation = Gtk.Orientation.VERTICAL;
+            add_menu_grid.attach (add_login_menuitem, 0, 0, 1, 1);
+            add_menu_grid.attach (add_note_menuitem, 0, 1, 1, 1);
+            add_menu_grid.show_all ();
+
+            var add_menu = new Gtk.PopoverMenu ();
+            add_menu.add (add_menu_grid);
+
+            add_button = new Gtk.MenuButton ();
+            add_button.image = new Gtk.Button.from_icon_name ("list-add", Gtk.IconSize.LARGE_TOOLBAR);
+            add_button.tooltip_text = _("Add Login or Note");
+            add_button.popover = add_menu;
+
+            /* Search entry */
+            find_entry = new Gtk.SearchEntry ();
+            find_entry.valign = Gtk.Align.CENTER;
+            find_entry.placeholder_text = _("Search collection...");
+
+            /* App menu and options */
             preferences_menuitem = new Gtk.ModelButton ();
             preferences_menuitem.text = _("Preferences");
             preferences_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_PREFERENCES;
-            
-            reset_menuitem = new Gtk.ModelButton ();
-            reset_menuitem.text = _("Remove Collection");
-            reset_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_REMOVE_COLLECTION;
-            
-            separator = new Gtk.Separator (Gtk.Orientation.HORIZONTAL);
-            
+
+            sort_by_name_menuitem = new Gtk.ModelButton ();
+            sort_by_name_menuitem.text = _("Sort by Name");
+
+            sort_by_created_menuitem = new Gtk.ModelButton ();
+            sort_by_created_menuitem.text = _("Sort by Created Date");
+
             var menu_grid = new Gtk.Grid ();
             menu_grid.row_spacing = 6;
-            menu_grid.margin = 12;
+            menu_grid.margin_top = 3;
+            menu_grid.margin_bottom = 3;
             menu_grid.orientation = Gtk.Orientation.VERTICAL;
             menu_grid.attach (preferences_menuitem, 0, 0, 1, 1);
-            menu_grid.attach (separator, 0, 1, 1, 1);
-            menu_grid.attach (reset_menuitem, 0, 2, 1, 1);
+            menu_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 1, 1, 1);
+            menu_grid.attach (sort_by_name_menuitem, 0, 2, 1, 1);
+            menu_grid.attach (sort_by_created_menuitem, 0, 3, 1, 1);
             menu_grid.show_all ();
-            
+
             var menu = new Gtk.PopoverMenu ();
             menu.add (menu_grid);
-            
+
             app_menu = new Gtk.MenuButton ();
             app_menu.image =  new Gtk.Image.from_icon_name ("open-menu", Gtk.IconSize.LARGE_TOOLBAR);
             app_menu.tooltip_text = _("Menu");
+            app_menu.valign = Gtk.Align.CENTER;
             app_menu.popover = menu;
-            
-            pack_start (return_button);            
+
             pack_start (add_button);
             pack_end (app_menu);
-            //pack_end (find_button);    
-        }
-        
-        public void disable () {
-            return_button.hide ();
-            add_button.hide ();
-            find_button.hide ();
-            reset_menuitem.hide ();
-            separator.hide ();
-        }
-        
-        public void enable () {
-            return_button.show ();
-            add_button.show ();
-            find_button.show ();
-            reset_menuitem.show ();
-            separator.show ();
+            pack_end (find_entry);
         }
     }
-}
+} // Lockbox.Widgets

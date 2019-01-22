@@ -17,12 +17,13 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Dialogs {
+namespace Lockbox.Dialogs {
     public class PreferencesDialog : Gtk.Dialog {
         private Gtk.Switch clear_clipboard;
         private Gtk.Entry clear_clipboard_timeout;
-        private Gtk.Switch autolock;
-        private Gtk.Entry autolock_timeout;
+        private Gtk.Switch dark_theme;
+
+        public signal void toggle_dark_theme (bool state);
 
         public PreferencesDialog (Gtk.Window? parent) {
             Object (
@@ -62,24 +63,20 @@ namespace Kipeltip.Dialogs {
             grid.attach (clear_clipboard_timeout_label, 0, 2, 1, 1);
             grid.attach (clear_clipboard_timeout, 1, 2, 1, 1);
 
-            /* Autolock settings */
-            var autolock_label = new SettingsLabel (_("Autolock session after timeout:"));
-            autolock = new SettingsSwitch ("autolock");
-            grid.attach (autolock_label, 0, 3, 1, 1);
-            grid.attach (autolock, 1, 3, 1, 1);
-
-            var autolock_timeout_label = new SettingsLabel (_("Timeout (secs):"));
-            autolock_timeout = new Gtk.Entry ();
-            autolock_timeout.input_purpose = Gtk.InputPurpose.DIGITS;
-            autolock_timeout.text = settings.autolock_timeout.to_string ();
-            autolock_timeout.activates_default = true;
-            grid.attach (autolock_timeout_label, 0, 4, 1, 1);
-            grid.attach (autolock_timeout, 1, 4, 1, 1);
+            /* Dark Mode setting */
+            var dark_theme_label = new SettingsLabel (_("Dark Mode:"));
+            dark_theme = new SettingsSwitch ("dark-theme");
+            grid.attach (dark_theme_label, 0, 3, 1, 1);
+            grid.attach (dark_theme, 1, 3, 1, 1);
 
             var close_button = add_button (_("Close"), Gtk.ResponseType.CLOSE);
 
             response.connect (()=> {
                 destroy ();
+            });
+
+            dark_theme.state_set.connect ((state) => {
+                toggle_dark_theme (state);
             });
         }
 

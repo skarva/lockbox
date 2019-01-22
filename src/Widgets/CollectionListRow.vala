@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,58 +17,58 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Widgets {
-    public class LoginListRow : Gtk.ListBoxRow {
-        public int id { get; set; }
+namespace Lockbox.Widgets {
+    public class CollectionListRow : Gtk.ListBoxRow {
+        public Interfaces.Item item;
         private Gtk.Box container;
         private Gtk.Label title;
         private Gtk.Button copy_username_button;
         private Gtk.Button copy_password_button;
-        private Gtk.Button edit_login;
-        private Gtk.Button delete_login;
-        
-        public signal void copy_username (int id);
-        public signal void copy_password (int id);
-        public signal void edit_entry(int id);
-        public signal void delete_entry (LoginListRow row);
+        private Gtk.Button edit_item;
+        private Gtk.Button delete_item;
 
-        public LoginListRow (Kipeltip.Interfaces.Login login) {
+        public signal void copy_username (Interfaces.Item item);
+        public signal void copy_password (Interfaces.Item item);
+        public signal void edit_entry(Interfaces.Item item);
+        public signal void delete_entry (CollectionListRow row);
+
+        public CollectionListRow (Interfaces.Item item) {
             this.activatable = true;
-            this.id = login.id;
+            this.item = item;
 
             container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             container.height_request = 50;
-            
-            title = new Gtk.Label (login.name);
-            
+
+            title = new Gtk.Label (item.name);
+
             copy_username_button = new Gtk.Button.with_label ("Copy Username");
             copy_password_button = new Gtk.Button.with_label ("Copy Password");
-            edit_login = new Gtk.Button.from_icon_name ("accessories-text-editor-symbolic", Gtk.IconSize.BUTTON);
-            edit_login.relief = Gtk.ReliefStyle.NONE;
-            delete_login = new Gtk.Button.from_icon_name ("edit-delete-symbolic", Gtk.IconSize.BUTTON);
-            delete_login.relief = Gtk.ReliefStyle.NONE;
+            edit_item = new Gtk.Button.from_icon_name ("accessories-text-editor-symbolic", Gtk.IconSize.BUTTON);
+            edit_item.relief = Gtk.ReliefStyle.NONE;
+            delete_item = new Gtk.Button.from_icon_name ("edit-delete-symbolic", Gtk.IconSize.BUTTON);
+            delete_item.relief = Gtk.ReliefStyle.NONE;
 
             container.pack_start (title);
             container.pack_start (copy_username_button, false, false, 5);
             container.pack_start (copy_password_button, false, false, 5);
-            container.pack_start (edit_login, false, false ,5);
-            container.pack_start (delete_login, false, false, 5);   
-            
+            container.pack_start (edit_item, false, false ,5);
+            container.pack_start (delete_item, false, false, 5);
+
             add (container);
-            
+
             copy_username_button.clicked.connect ( () => {
-                copy_username (id);
+                copy_username (item);
             });
-            
+
             copy_password_button.clicked.connect ( () => {
-                copy_password (id);
+                copy_password (item);
             });
-            
-            edit_login.clicked.connect (() => {
-                edit_entry(id);
+
+            edit_item.clicked.connect (() => {
+                edit_entry(item);
             });
-            
-            delete_login.clicked.connect ( () => {
+
+            delete_item.clicked.connect ( () => {
                 delete_entry (this);
             });
         }
