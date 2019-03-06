@@ -24,13 +24,23 @@ namespace Lockbox.Interfaces {
         public string uri { get; set; }
         public string username { get; set; }
 
-        public Login (string name="", string uri="", string username="") {
+        public Login (string id="", string name="", string uri="", string username="") {
+            this.id = id;
             this.name = name;
             this.uri = uri;
             this.username = username;
         }
 
-        public Secret.Schema get_schema () {
+        public static bool is_login(Secret.Item item) {
+            string name = item.get_schema_name ();
+            if (name == epiphany_schema ().name) {
+                return true;
+            } else {
+                return false;
+            }
+        } 
+
+        public static Secret.Schema epiphany_schema () {
             var schema = new Secret.Schema ("org.epiphany.FormPassword", Secret.SchemaFlags.NONE,
                     "id", Secret.SchemaAttributeType.STRING,
                     "uri", Secret.SchemaAttributeType.STRING,

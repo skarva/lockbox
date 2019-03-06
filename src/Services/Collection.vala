@@ -17,25 +17,25 @@
 * Boston, MA 02110-1301 USA
 */
 
+namespace Lockbox {
+    public enum CollectionType { LOGIN, NOTE }
+}
+
 namespace Lockbox.Services {
     public class CollectionManager {
-        public string current_label { get; set; }
-        private Secret.Service service;
         private Secret.Collection default_login_collection;
         private Secret.Collection default_notes_collection;
         private bool ready;
 
         public signal void loaded ();
         public signal void opened ();
-        public signal void failed (string message);
 
         // This should open the Login collection and, if it exists, the secure note collection
         public CollectionManager () {
-            current_label = "null";
             ready = false;
             Secret.Service.get.begin (Secret.ServiceFlags.LOAD_COLLECTIONS, new Cancellable (), (obj, res) => {
                 try {
-                    service = Secret.Service.get.end (res);
+                    var service = Secret.Service.get.end (res);
                     var collections = service.get_collections ();
                     var found_collection = false;
                     foreach (var collection in collections) {
@@ -57,47 +57,27 @@ namespace Lockbox.Services {
                 }
             });
         }
-/*
-        // Deprecated
-        public void open (string name) {
-            if (!ready) {
-                failed ("Could not load collections");
+
+        public List<Secret.Item> get_items (CollectionType type) {
+            var collection_items = new List<Secret.Item> ();
+            var relevant_items = new List<Secret.Item> ();
+            var schema = "none";
+            if (type == LOGIN) {
+                collection_items = default_login_collection.get_items ();
+                schema = Interfaces.Login.epiphany_schema ().name;
+            } else if (type == NOTE && default_notes_collection != null) {
+                collection_items = default_notes_collection.get_items ();
+                schema = Interfaces.Note.note_schema ().name;
             }
 
-            foreach (var c in collection_list) {
-                if (c.label == name) {
-                    collection = c;
+            foreach (var item in collection_items) {
+                if (item.get_schema_name () == schema) {
+                    relevant_items.append (item);
                 }
             }
 
-            if (collection == null) {
-                Secret.Collection.create.begin (service, name, null, Secret.CollectionCreateFlags.COLLECTION_CREATE_NONE, new Cancellable (), (obj, res) => {
-                    try {
-                        collection = Secret.Collection.create.end (res);
-                        this.current_label = collection.label;
-                        refresh_collection_list ();
-                        opened ();
-                    } catch (Error e) {
-                        failed ("Failed to create collection! " + e.message);
-                    }
-                });
-            } else {
-                var list = new List<DBusProxy> ();
-                list.append (collection);
-                service.unlock.begin (list, new Cancellable (), (obj, res) => {
-                    try {
-                        var unlocked = new List<DBusProxy> ();
-                        service.unlock.end (res, out unlocked);
-                        if (unlocked.length () > 0) {
-                            this.current_label = collection.label;
-                            opened ();
-                        }
-                    } catch (Error e) {
-                        failed ("Failed to unlock collection! "  + e.message);
-                    }
-                });
-            }
-        }*/
+            return relevant_items;
+        }
 
         public void close () {
             Secret.Service.disconnect ();

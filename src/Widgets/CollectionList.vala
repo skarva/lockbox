@@ -41,8 +41,14 @@ namespace Lockbox.Widgets {
             }
         }
 
-        public void add_item (Interfaces.Item new_item) {
-            var new_entry = new CollectionListRow (new_item);
+        public void clean () {
+            foreach (var item in removal_list) {
+                item.delete.begin (new Cancellable ());
+            }
+        }
+
+        public void add_login (Interfaces.Login item) {
+            var new_entry = new CollectionListLoginRow (item);
             new_entry.copy_username.connect (copy_login_username);
             new_entry.copy_password.connect (copy_login_password);
             new_entry.edit_entry.connect (edit_item);
@@ -52,10 +58,33 @@ namespace Lockbox.Widgets {
             show_all ();
         }
 
-        public void populate (List<Interfaces.Item> entries) {
-            clear_list ();
-            foreach (var entry in entries) {
-                add_item (entry);
+         public void add_note (Interfaces.Note item) {
+            var new_entry = new CollectionListNoteRow (item);
+            new_entry.edit_entry.connect (edit_item);
+            new_entry.delete_entry.connect (remove_item);
+            add (new_entry);
+
+            show_all ();
+        }
+
+        public void populate (List<Secret.Item> items) {
+            foreach (var item in items) {
+                if (Interfaces.Login.is_login (item)) {
+                    var login = new Interfaces.Login (
+                        item.attributes.get("id"),
+                        item.label,
+                        item.attributes.get("uri"),
+                        item.attributes.get("username"));
+                    add_login (login);
+                } else if (Interfaces.Note.is_note (item)) {
+                    var note = new Interfaces.Note (
+                        item.attributes.get("id"),
+                        item.label,
+                        item.attributes.get("content"));
+                    add_note (note);
+                } else {
+                    critical ("Unknown CollectionType");
+                }
             }
         }
 

@@ -19,12 +19,33 @@
 
 namespace Lockbox.Interfaces {
     public class Note : Secret.Item, Item {
+        public string id { get; set; }
         public string name { get; set; }
         public string content { get; set; }
 
-        public Note (string name="", string content="") {
+        public Note (string id="", string name="", string content="") {
+            this.id = id;
             this.name = name;
             this.content = content;
+        }
+
+        public static bool is_note (Secret.Item item) {
+            string name = item.get_schema_name ();
+            if (name == null || name.length == 0) {
+                return false;
+            } else if (name == note_schema ().name) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public static Secret.Schema note_schema () {
+            var schema = new Secret.Schema ("tech.skarva.lockbox.notes", Secret.SchemaFlags.NONE,
+                    "id", Secret.SchemaAttributeType.STRING,
+                    "name", Secret.SchemaAttributeType.STRING,
+                    "content", Secret.SchemaAttributeType.STRING);
+            return schema;
         }
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-    <schema path="/com/github/skarva/lockbox/saved-state/" id="com.github.skarva.lockbox.saved-state" gettext-domain="com.github.skarva.lockbox">
+    <schema path="/tech/skarva/lockbox/saved-state/" id="tech.skarva.lockbox.saved-state" gettext-domain="tech.skarva.lockbox">
         <key name="maximized" type="b">
             <default>false</default>
             <summary>The maximized state of the main window.</summary>
@@ -27,7 +27,7 @@
             <description>Y-axis position of the main window.</description>
         </key>
     </schema>
-    <schema path="/com/github/skarva/lockbox/settings/" id="com.github.skarva.lockbox.settings" gettext-domain="com.github.skarva.lockbox">
+    <schema path="/tech/skarva/lockbox/settings/" id="tech.skarva.lockbox.settings" gettext-domain="techw.skarva.lockbox">
         <key name="clear-clipboard" type="b">
             <default>true</default>
             <summary>Clear clipboard after timeout.</summary>

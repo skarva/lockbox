@@ -34,7 +34,7 @@ namespace Lockbox {
             Intl.bind_textdomain_codeset (Constants.GETTEXT_PACKAGE, "UTF-8");
             Intl.textdomain (Constants.GETTEXT_PACKAGE);
 
-            Granite.Services.Logger.initialize ("Lockbox");
+            Granite.Services.Logger.initialize ("Lock Box");
             Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.NOTIFY;
 
             Granite.Services.Paths.initialize ("lockbox", Constants.DATADIR);
@@ -53,7 +53,6 @@ namespace Lockbox {
 
         protected override void activate () {
             var window = new MainWindow (this);
-            //window.init_window ();
             window.show_all ();
         }
 

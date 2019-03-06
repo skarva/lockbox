@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2018 skärva <ryan@skarva.tech> -->
 <component type="desktop">
-    <id>com.github.skarva.lockbox.desktop</id>
+    <id>tech.skarva.lockbox.desktop</id>
     <metadata_license>CC0</metadata_license>
-    <name>Lockbox</name>
+    <name>Lock Box</name>
     <summary>Lock it up tight</summary>
     <description>
         <p>A quick summary of your app's main selling points and features. Just a couple sentences per paragraph is best.</p>

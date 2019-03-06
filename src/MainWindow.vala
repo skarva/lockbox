@@ -21,9 +21,8 @@ namespace Lockbox {
     public class MainWindow : Gtk.ApplicationWindow {
         public weak Lockbox.Application app { get; construct; }
 
-        private Widgets.HeaderBar headerbar;
         private Gtk.Stack layout_stack;
-         private Widgets.CollectionList collection_list;
+        private Widgets.CollectionList collection_list;
         private Widgets.WelcomeScreen welcome;
 
         private Services.CollectionManager collection_manager;
@@ -53,8 +52,7 @@ namespace Lockbox {
             Object (
                 application: app,
                 app: app,
-                icon_name: Constants.PROJECT_NAME,
-                title: _("Lockbox")
+                icon_name: Constants.PROJECT_NAME
             );
         }
 
@@ -97,8 +95,7 @@ namespace Lockbox {
             clipboard = Gtk.Clipboard.get_for_display (get_display (), Gdk.SELECTION_CLIPBOARD);
 
             /* Init Layout */
-            headerbar = new Widgets.HeaderBar ();
-            headerbar.title = title;
+            var headerbar = new Widgets.HeaderBar ();
             set_titlebar (headerbar);
 
             layout_stack = new Gtk.Stack ();
@@ -112,27 +109,36 @@ namespace Lockbox {
 
             collection_list = new Widgets.CollectionList ();
             scroll_window.add (collection_list);
-            layout_stack.add_named (scroll_window, "login");
+            layout_stack.add_named (scroll_window, "collection");
 
             layout_stack.visible_child_name = "welcome";
 
             collection_manager.loaded.connect (() => {
-                layout_stack.visible_child_name = "login";
+                collection_list.populate (collection_manager.get_items (CollectionType.LOGIN));
+                collection_list.populate (collection_manager.get_items (CollectionType.NOTE));
+                layout_stack.visible_child_name = "collection";
             });
 
             show_all ();
         }
 
         protected override bool delete_event (Gdk.EventAny event) {
-            // collection_manager.close ();
+            // collection_list.clean ();
+            collection_manager.close ();
             update_saved_state ();
 
             return false;
         }
 
         private void action_add_login () {
-            // Add login to collection_manager
-            // Add login to collection_list
+            var add_dialog = new Dialogs.AddLoginDialog (this);
+            add_dialog.new_login.connect ((item) => {
+                // Add login to collection_manager
+                collection_list.add_login (item);
+            });
+            add_dialog.show_all ();
+
+            add_dialog.present ();
         }
 
         private void action_add_note () {
@@ -142,7 +148,6 @@ namespace Lockbox {
 
         private void action_preferences () {
             var preferences_dialog = new Dialogs.PreferencesDialog (this);
-            preferences_dialog.toggle_dark_theme.connect (on_toggle_dark_theme);
             preferences_dialog.show_all ();
 
             preferences_dialog.present ();
@@ -150,10 +155,10 @@ namespace Lockbox {
 
         private void action_undo () {
             // collection_list.undo ();
-            // collection_list.undo ();
         }
 
         private void action_quit () {
+            // collection_list.perform_removal ();
             collection_manager.close ();
             update_saved_state ();
             destroy ();
@@ -187,11 +192,8 @@ namespace Lockbox {
                 GLib.Source.remove (clipboard_timer_id);
                 clipboard_timer_id = 0;
             }
-            clipboard_timer_id = GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
-        }
-
-        private void on_toggle_dark_theme (bool state) {
-            Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = state;
+            clipboard_timer_id = GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout,
+                                                             clear_clipboard_timed_out);
         }
     }
 } // Lockbox

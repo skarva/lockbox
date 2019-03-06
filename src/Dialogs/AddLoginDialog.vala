@@ -17,13 +17,13 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Dialogs {
+namespace Lockbox.Dialogs {
     public class AddLoginDialog : Gtk.Dialog {
         private Gtk.Entry name_entry;
         private Gtk.Entry username_entry;
         private Gtk.Entry password_entry;
 
-        public signal void new_login (Interfaces.Login new_entry);
+        public signal void new_login (Interfaces.Login login);
 
         public AddLoginDialog (Gtk.Window? parent) {
             Object (

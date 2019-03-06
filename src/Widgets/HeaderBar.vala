@@ -21,7 +21,7 @@ namespace Lockbox.Widgets {
     private Gtk.MenuButton add_button;
     private Gtk.ModelButton add_login_menuitem;
     private Gtk.ModelButton add_note_menuitem;
-    private Gtk.SearchEntry find_entry;
+    private Gtk.SearchEntry search_entry;
     private Gtk.MenuButton app_menu;
     private Gtk.ModelButton preferences_menuitem;
     private Gtk.ModelButton sort_by_name_menuitem;
@@ -58,14 +58,15 @@ namespace Lockbox.Widgets {
             add_menu.add (add_menu_grid);
 
             add_button = new Gtk.MenuButton ();
-            add_button.image = new Gtk.Button.from_icon_name ("list-add", Gtk.IconSize.LARGE_TOOLBAR);
+            add_button.image = new Gtk.Button.from_icon_name ("insert-object", Gtk.IconSize.LARGE_TOOLBAR);
             add_button.tooltip_text = _("Add Login or Note");
             add_button.popover = add_menu;
 
             /* Search entry */
-            find_entry = new Gtk.SearchEntry ();
-            find_entry.valign = Gtk.Align.CENTER;
-            find_entry.placeholder_text = _("Search collection...");
+            search_entry = new Gtk.SearchEntry ();
+            search_entry.hexpand = true;
+            search_entry.valign = Gtk.Align.CENTER;
+            search_entry.placeholder_text = _("Search collection...");
 
             /* App menu and options */
             preferences_menuitem = new Gtk.ModelButton ();
@@ -98,9 +99,12 @@ namespace Lockbox.Widgets {
             app_menu.valign = Gtk.Align.CENTER;
             app_menu.popover = menu;
 
+            set_custom_title (search_entry);
+
             pack_start (add_button);
+            pack_start (new Gtk.Separator (Gtk.Orientation.VERTICAL));
             pack_end (app_menu);
-            pack_end (find_entry);
+            pack_end (new Gtk.Separator (Gtk.Orientation.VERTICAL));
         }
     }
 } // Lockbox.Widgets

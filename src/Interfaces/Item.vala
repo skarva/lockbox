@@ -19,6 +19,7 @@
 
 namespace Lockbox.Interfaces {
     public interface Item : Secret.Item {
+        public abstract string id { get; set; }
         public abstract string name { get; set; }
     }
 }
