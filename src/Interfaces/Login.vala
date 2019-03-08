@@ -23,12 +23,14 @@ namespace Lockbox.Interfaces {
         public string name { get; set; }
         public string uri { get; set; }
         public string username { get; set; }
+        public string password { get; set; }
 
-        public Login (string id="", string name="", string uri="", string username="") {
+        public Login (string id="", string name="", string uri="", string username="", string password) {
             this.id = id;
             this.name = name;
             this.uri = uri;
             this.username = username;
+            this.password = password;
         }
 
         public static bool is_login(Secret.Item item) {

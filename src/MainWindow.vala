@@ -133,7 +133,7 @@ namespace Lockbox {
         private void action_add_login () {
             var add_dialog = new Dialogs.AddLoginDialog (this);
             add_dialog.new_login.connect ((item) => {
-                // Add login to collection_manager
+                collection_manager.add_item(item, CollectionType.LOGIN);
                 collection_list.add_login (item);
             });
             add_dialog.show_all ();

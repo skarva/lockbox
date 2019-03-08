@@ -74,7 +74,8 @@ namespace Lockbox.Widgets {
                         item.attributes.get("id"),
                         item.label,
                         item.attributes.get("uri"),
-                        item.attributes.get("username"));
+                        item.attributes.get("username"), 
+                        ""); // No password here since it is a secret value
                     add_login (login);
                 } else if (Interfaces.Note.is_note (item)) {
                     var note = new Interfaces.Note (

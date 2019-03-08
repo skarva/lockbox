@@ -20,6 +20,7 @@
 namespace Lockbox.Dialogs {
     public class AddLoginDialog : Gtk.Dialog {
         private Gtk.Entry name_entry;
+        private Gtk.Entry uri_entry;
         private Gtk.Entry username_entry;
         private Gtk.Entry password_entry;
 
@@ -55,13 +56,21 @@ namespace Lockbox.Dialogs {
             grid.attach (name_label, 0, 1, 1, 1);
             grid.attach (name_entry, 1, 1, 1, 1);
 
+            var uri_label = new Gtk.Label (_("URI:"));
+            uri_label.halign = Gtk.Align.END;
+            uri_label.margin_start = 12;
+            uri_entry = new Gtk.Entry ();
+            uri_entry.activates_default = true;
+            grid.attach (uri_label, 0, 2, 1, 1);
+            grid.attach (uri_entry, 1, 2, 1, 1);
+
             var username_label = new Gtk.Label (_("Username:"));
             username_label.halign = Gtk.Align.END;
             username_label.margin_start = 12;
             username_entry = new Gtk.Entry ();
             username_entry.activates_default = true;
-            grid.attach (username_label, 0, 2, 1, 1);
-            grid.attach (username_entry, 1, 2, 1, 1);
+            grid.attach (username_label, 0, 3, 1, 1);
+            grid.attach (username_entry, 1, 3, 1, 1);
 
             var password_label = new Gtk.Label (_("Password:"));
             password_label.halign = Gtk.Align.END;
@@ -71,8 +80,8 @@ namespace Lockbox.Dialogs {
             password_entry.invisible_char = '*';
             password_entry.visibility = false;
             password_entry.activates_default = true;
-            grid.attach (password_label, 0, 3, 1, 1);
-            grid.attach (password_entry, 1, 3, 1, 1);
+            grid.attach (password_label, 0, 4, 1, 1);
+            grid.attach (password_entry, 1, 4, 1, 1);
 
             var close_button = add_button (_("Cancel"), Gtk.ResponseType.CLOSE);
             var ok_button = add_button (_("Save New Login"), Gtk.ResponseType.OK);
@@ -93,7 +102,11 @@ namespace Lockbox.Dialogs {
                         alert.run ();
                         alert.destroy ();
                     } else {
-                        var login = new Interfaces.Login (name_entry.text.strip (), username_entry.text.strip (), password_entry.text.strip ());
+                        var id = "{" + Uuid.string_random () + "}";
+                        var login = new Interfaces.Login (id, name_entry.text.strip (),
+                                                              uri_entry.text.strip (),
+                                                              username_entry.text.strip (),
+                                                              password_entry.text.strip ());
                         new_login (login);
                         destroy ();
                     }

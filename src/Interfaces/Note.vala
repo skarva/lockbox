@@ -33,18 +33,17 @@ namespace Lockbox.Interfaces {
             string name = item.get_schema_name ();
             if (name == null || name.length == 0) {
                 return false;
-            } else if (name == note_schema ().name) {
+            } else if (name == schema ().name) {
                 return true;
             } else {
                 return false;
             }
         }
 
-        public static Secret.Schema note_schema () {
+        public static Secret.Schema schema () {
             var schema = new Secret.Schema ("tech.skarva.lockbox.notes", Secret.SchemaFlags.NONE,
                     "id", Secret.SchemaAttributeType.STRING,
-                    "name", Secret.SchemaAttributeType.STRING,
-                    "content", Secret.SchemaAttributeType.STRING);
+                    "name", Secret.SchemaAttributeType.STRING);
             return schema;
         }
     }
