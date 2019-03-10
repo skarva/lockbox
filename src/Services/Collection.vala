@@ -23,9 +23,9 @@ namespace Lockbox {
 
 namespace Lockbox.Services {
     public class CollectionManager {
-        public Secret.Service service { get; private set; }
-        public Secret.Collection default_login_collection { get; private set; }
-        public Secret.Collection default_notes_collection { get; private set; }
+        private Secret.Service service;
+        private Secret.Collection default_login_collection;
+        private Secret.Collection default_notes_collection;
 
         public signal void loaded ();
         public signal void opened ();
@@ -73,35 +73,29 @@ namespace Lockbox.Services {
                                 Schemas.epiphany (), attributes, name,
                                 secret_value, Secret.ItemCreateFlags.NONE,
                                 new Cancellable (), (obj, res) => {
-                                    var item = Secret.Item.create.end (res);
-                                    added (item);
+                                    try {
+                                        var item = Secret.Item.create.end (res);
+                                        added (item);
+                                    } catch (Error e) {
+                                        critical (e.message);
+                                    }
                                 });
-
-                // service.store.begin (Schemas.epiphany (), attributes,
-                //                 default_login_collection.g_object_path,
-                //                 name, secret_value, new Cancellable ());
-
-                // service.search.begin (Schemas.epiphany (), attributes,
-                //                 Secret.SearchFlags.NONE, new Cancellable ()
-                //                 , (obj, res) => {
-                //                     var list = service.search.end (res);
-                //                     item = list.nth_data(0);
-                //                 });
             } else if (type == NOTE) {
-                // var secret_value = new Secret.Value (secret,
-                //                                      secret.length,
-                //                                      "text/plain");
+                var secret_value = new Secret.Value (secret,
+                                                     secret.length,
+                                                     "text/plain");
 
-                // service.store.begin (Schemas.note (), attributes,
-                //                 default_notes_collection.g_object_path,
-                //                 name, secret_value, new Cancellable ());
-
-                // service.search.begin (Schemas.note (), attributes,
-                //                 Secret.SearchFlags.NONE, new Cancellable ()
-                //                 , (obj, res) => {
-                //                     var list = service.search.end (res);
-                //                     item = list.nth_data(0);
-                //                 });
+                Secret.Item.create.begin (default_notes_collection,
+                                Schemas.note (), attributes, name,
+                                secret_value, Secret.ItemCreateFlags.NONE,
+                                new Cancellable (), (obj, res) => {
+                                    try {
+                                        var item = Secret.Item.create.end (res);
+                                        added (item);
+                                    } catch (Error e) {
+                                        critical (e.message);
+                                    }
+                                });
             }
         }
 
