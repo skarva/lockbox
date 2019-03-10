@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,29 +17,27 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Dialogs {
-    public class EditLoginDialog : Gtk.Dialog {
-        private int id;
+namespace Lockbox.Dialogs {
+    public class LoginDialog : Gtk.Dialog {
         private Gtk.Entry name_entry;
+        private Gtk.Entry uri_entry;
         private Gtk.Entry username_entry;
         private Gtk.Entry password_entry;
 
-        public signal void update_login (Interfaces.Login entry);
+        public signal void new_login (string name,
+                                      HashTable<string, string> attributes,
+                                      string password);
 
-        public EditLoginDialog (Gtk.Window? parent, Interfaces.Login entry) {
+        public LoginDialog (Gtk.Window? parent) {
             Object (
                 border_width: 12,
                 deletable: false,
                 resizable: false,
-                title: _("Edit Login"),
+                title: _("Add Login"),
                 transient_for: parent
             );
 
             set_default_response (Gtk.ResponseType.OK);
-            this.id = entry.id;
-            name_entry.text = entry.name;
-            username_entry.text = entry.username;
-            password_entry.text = entry.password;
         }
 
         construct {
@@ -49,7 +47,7 @@ namespace Kipeltip.Dialogs {
             grid.margin_bottom = 12;
             get_content_area ().add (grid);
 
-            var header = new Granite.HeaderLabel (_("Edit Login"));
+            var header = new Granite.HeaderLabel (_("Add Login"));
             grid.attach (header, 0, 0, 2, 1);
 
             var name_label = new Gtk.Label (_("Name:"));
@@ -60,13 +58,21 @@ namespace Kipeltip.Dialogs {
             grid.attach (name_label, 0, 1, 1, 1);
             grid.attach (name_entry, 1, 1, 1, 1);
 
+            var uri_label = new Gtk.Label (_("URI:"));
+            uri_label.halign = Gtk.Align.END;
+            uri_label.margin_start = 12;
+            uri_entry = new Gtk.Entry ();
+            uri_entry.activates_default = true;
+            grid.attach (uri_label, 0, 2, 1, 1);
+            grid.attach (uri_entry, 1, 2, 1, 1);
+
             var username_label = new Gtk.Label (_("Username:"));
             username_label.halign = Gtk.Align.END;
             username_label.margin_start = 12;
             username_entry = new Gtk.Entry ();
             username_entry.activates_default = true;
-            grid.attach (username_label, 0, 2, 1, 1);
-            grid.attach (username_entry, 1, 2, 1, 1);
+            grid.attach (username_label, 0, 3, 1, 1);
+            grid.attach (username_entry, 1, 3, 1, 1);
 
             var password_label = new Gtk.Label (_("Password:"));
             password_label.halign = Gtk.Align.END;
@@ -76,11 +82,11 @@ namespace Kipeltip.Dialogs {
             password_entry.invisible_char = '*';
             password_entry.visibility = false;
             password_entry.activates_default = true;
-            grid.attach (password_label, 0, 3, 1, 1);
-            grid.attach (password_entry, 1, 3, 1, 1);
+            grid.attach (password_label, 0, 4, 1, 1);
+            grid.attach (password_entry, 1, 4, 1, 1);
 
             var close_button = add_button (_("Cancel"), Gtk.ResponseType.CLOSE);
-            var ok_button = add_button (_("Update Login"), Gtk.ResponseType.OK);
+            var ok_button = add_button (_("Save New Login"), Gtk.ResponseType.OK);
 
             response.connect (on_response);
         }
@@ -98,9 +104,19 @@ namespace Kipeltip.Dialogs {
                         alert.run ();
                         alert.destroy ();
                     } else {
-                        var login = new Interfaces.Login (name_entry.text.strip (), username_entry.text.strip (), password_entry.text.strip ());
-                        login.id = id;
-                        update_login (login);
+                        var id = "{" + Uuid.string_random () + "}";
+                        var timestamp = get_real_time () / 1000;
+                        var attributes = new HashTable<string, string> (str_hash, str_equal);
+                        attributes.insert ("id", id);
+                        attributes.insert ("uri", uri_entry.text.strip ());
+                        attributes.insert ("target_origin", "");
+                        attributes.insert ("form_username", "");
+                        attributes.insert ("form_password", "");
+                        attributes.insert ("username", username_entry.text.strip ());
+                        attributes.insert ("server_time_modified", timestamp.to_string ());
+
+                        new_login (name_entry.text.strip (), attributes,
+                                   password_entry.text.strip ());
                         destroy ();
                     }
                     break;

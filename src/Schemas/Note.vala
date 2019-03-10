@@ -17,9 +17,22 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Lockbox.Interfaces {
-    public interface Item : Secret.Item {
-        public abstract string id { get; set; }
-        public abstract string name { get; set; }
+namespace Lockbox.Schemas {
+    public static bool is_note (Secret.Item item) {
+        string name = item.get_schema_name ();
+        if (name == null || name.length == 0) {
+            return false;
+        } else if (name == note ().name) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Secret.Schema note () {
+        var schema = new Secret.Schema ("tech.skarva.lockbox.notes", Secret.SchemaFlags.NONE,
+                "id", Secret.SchemaAttributeType.STRING,
+                "name", Secret.SchemaAttributeType.STRING);
+        return schema;
     }
 }

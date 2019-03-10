@@ -19,17 +19,17 @@
 
 namespace Lockbox.Widgets {
     public class CollectionList : Gtk.ListBox {
-        public List<Interfaces.Item> removal_list;
+        public List<Secret.Item> removal_list;
 
-        public signal void copy_username (Interfaces.Item item);
-        public signal void copy_password (Interfaces.Item item);
-        public signal void edit_entry (Interfaces.Item item);
+        public signal void copy_username (Secret.Item item);
+        public signal void copy_password (Secret.Item item);
+        public signal void edit_entry (Secret.Item item);
 
         construct {
             this.selection_mode = Gtk.SelectionMode.NONE;
             // Add check for sort setting and set sort method accordingly
 
-            removal_list = new List<Interfaces.Item> ();
+            removal_list = new List<Secret.Item> ();
         }
 
         public void clear_list () {
@@ -47,19 +47,12 @@ namespace Lockbox.Widgets {
             }
         }
 
-        public void add_login (Interfaces.Login item) {
-            var new_entry = new CollectionListLoginRow (item);
-            new_entry.copy_username.connect (copy_login_username);
-            new_entry.copy_password.connect (copy_login_password);
-            new_entry.edit_entry.connect (edit_item);
-            new_entry.delete_entry.connect (remove_item);
-            add (new_entry);
-
-            show_all ();
-        }
-
-         public void add_note (Interfaces.Note item) {
-            var new_entry = new CollectionListNoteRow (item);
+        public void add_item (Secret.Item item) {
+            var new_entry = new CollectionListRow (item);
+            if (Schemas.is_login (item)) {
+                new_entry.copy_username.connect (copy_login_username);
+                new_entry.copy_password.connect (copy_login_password);
+            }
             new_entry.edit_entry.connect (edit_item);
             new_entry.delete_entry.connect (remove_item);
             add (new_entry);
@@ -69,35 +62,23 @@ namespace Lockbox.Widgets {
 
         public void populate (List<Secret.Item> items) {
             foreach (var item in items) {
-                if (Interfaces.Login.is_login (item)) {
-                    var login = new Interfaces.Login (
-                        item.attributes.get("id"),
-                        item.label,
-                        item.attributes.get("uri"),
-                        item.attributes.get("username"), 
-                        ""); // No password here since it is a secret value
-                    add_login (login);
-                } else if (Interfaces.Note.is_note (item)) {
-                    var note = new Interfaces.Note (
-                        item.attributes.get("id"),
-                        item.label,
-                        item.attributes.get("content"));
-                    add_note (note);
+                if (Schemas.is_login (item) || Schemas.is_note (item)) {
+                    add_item (item);
                 } else {
-                    critical ("Unknown CollectionType");
+                    critical ("Unknown Item type");
                 }
             }
         }
 
-        private void copy_login_username (Interfaces.Item item) {
+        private void copy_login_username (Secret.Item item) {
             copy_username (item);
         }
 
-        private void copy_login_password (Interfaces.Item item) {
+        private void copy_login_password (Secret.Item item) {
             copy_password (item);
         }
 
-        private void edit_item (Interfaces.Item item) {
+        private void edit_item (Secret.Item item) {
             edit_entry(item);
         }
 

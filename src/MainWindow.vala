@@ -119,6 +119,10 @@ namespace Lockbox {
                 layout_stack.visible_child_name = "collection";
             });
 
+            collection_manager.added.connect ((item) => {
+                collection_list.add_item (item);
+            });
+
             show_all ();
         }
 
@@ -131,14 +135,14 @@ namespace Lockbox {
         }
 
         private void action_add_login () {
-            var add_dialog = new Dialogs.AddLoginDialog (this);
-            add_dialog.new_login.connect ((item) => {
-                collection_manager.add_item(item, CollectionType.LOGIN);
-                collection_list.add_login (item);
+            var login_dialog = new Dialogs.LoginDialog (this);
+            login_dialog.new_login.connect ((name, attributes, password) => {
+                collection_manager.add_item(name, attributes, password,
+                                            CollectionType.LOGIN);
             });
-            add_dialog.show_all ();
+            login_dialog.show_all ();
 
-            add_dialog.present ();
+            login_dialog.present ();
         }
 
         private void action_add_note () {

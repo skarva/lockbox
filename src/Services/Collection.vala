@@ -23,18 +23,16 @@ namespace Lockbox {
 
 namespace Lockbox.Services {
     public class CollectionManager {
-        private Secret.Service service;
-        private Secret.Collection default_login_collection;
-        private Secret.Collection default_notes_collection;
-        private bool ready;
+        public Secret.Service service { get; private set; }
+        public Secret.Collection default_login_collection { get; private set; }
+        public Secret.Collection default_notes_collection { get; private set; }
 
         public signal void loaded ();
         public signal void opened ();
-        public signal void added (string id);
+        public signal void added (Secret.Item item);
 
         // This should open the Login collection and, if it exists, the secure note collection
         public CollectionManager () {
-            ready = false;
             Secret.Service.get.begin (Secret.ServiceFlags.LOAD_COLLECTIONS, new Cancellable (), (obj, res) => {
                 try {
                     service = Secret.Service.get.end (res);
@@ -64,32 +62,46 @@ namespace Lockbox.Services {
             Secret.Service.disconnect ();
         }
 
-        public void add_item (Interfaces.Item item, CollectionType type) {
+        public void add_item (string name, HashTable<string, string> attributes,
+                              string secret, CollectionType type) {
             if (type == LOGIN) {
-                var login = item as Interfaces.Login;
-                var timestamp = get_real_time () / 1000;
-                var attributes = new HashTable<string, string> (str_hash, str_equal);
-                attributes.insert ("id", login.id);
-                attributes.insert ("uri", login.uri);
-                attributes.insert ("target_origin", "");
-                attributes.insert ("form_username", "");
-                attributes.insert ("form_password", "");
-                attributes.insert ("username", login.username);
-                attributes.insert ("server_time_modified", timestamp.to_string ());
-                service.store.begin (Interfaces.Login.epiphany_schema (), attributes,
-                        default_login_collection.g_object_path, login.name,
-                        new Secret.Value (login.password, login.password.length, "text/plain"),
-                        new Cancellable (), added (login.id));
+                var secret_value = new Secret.Value (secret,
+                                                     secret.length,
+                                                     "text/plain");
+
+                Secret.Item.create.begin (default_login_collection,
+                                Schemas.epiphany (), attributes, name,
+                                secret_value, Secret.ItemCreateFlags.NONE,
+                                new Cancellable (), (obj, res) => {
+                                    var item = Secret.Item.create.end (res);
+                                    added (item);
+                                });
+
+                // service.store.begin (Schemas.epiphany (), attributes,
+                //                 default_login_collection.g_object_path,
+                //                 name, secret_value, new Cancellable ());
+
+                // service.search.begin (Schemas.epiphany (), attributes,
+                //                 Secret.SearchFlags.NONE, new Cancellable ()
+                //                 , (obj, res) => {
+                //                     var list = service.search.end (res);
+                //                     item = list.nth_data(0);
+                //                 });
             } else if (type == NOTE) {
-                var note = item as Interfaces.Note;
-                var attributes = new HashTable<string, string> (str_hash, str_equal);
-                attributes.insert ("id", note.id);
-                attributes.insert ("name", note.name);
-                attributes.insert ("content", note.content);
-                service.store.begin (Interfaces.Note.schema (), attributes, 
-                        default_notes_collection.g_object_path, note.name,
-                        new Secret.Value (note.content, note.content.length, "text/plain"),
-                        new Cancellable ());
+                // var secret_value = new Secret.Value (secret,
+                //                                      secret.length,
+                //                                      "text/plain");
+
+                // service.store.begin (Schemas.note (), attributes,
+                //                 default_notes_collection.g_object_path,
+                //                 name, secret_value, new Cancellable ());
+
+                // service.search.begin (Schemas.note (), attributes,
+                //                 Secret.SearchFlags.NONE, new Cancellable ()
+                //                 , (obj, res) => {
+                //                     var list = service.search.end (res);
+                //                     item = list.nth_data(0);
+                //                 });
             }
         }
 
@@ -99,10 +111,10 @@ namespace Lockbox.Services {
             var schema = "none";
             if (type == LOGIN) {
                 collection_items = default_login_collection.get_items ();
-                schema = Interfaces.Login.epiphany_schema ().name;
+                schema = Schemas.epiphany ().name;
             } else if (type == NOTE && default_notes_collection != null) {
                 collection_items = default_notes_collection.get_items ();
-                schema = Interfaces.Note.schema ().name;
+                schema = Schemas.note ().name;
             }
 
             foreach (var item in collection_items) {
