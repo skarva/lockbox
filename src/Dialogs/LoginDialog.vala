@@ -85,8 +85,9 @@ namespace Lockbox.Dialogs {
             grid.attach (password_label, 0, 4, 1, 1);
             grid.attach (password_entry, 1, 4, 1, 1);
 
-            var close_button = add_button (_("Cancel"), Gtk.ResponseType.CLOSE);
-            var ok_button = add_button (_("Save New Login"), Gtk.ResponseType.OK);
+            var close = add_button (_("Cancel"), Gtk.ResponseType.CLOSE);
+            var save = add_button (_("Save Login"), Gtk.ResponseType.OK);
+            save.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
 
             response.connect (on_response);
         }
