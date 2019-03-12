@@ -99,6 +99,12 @@ namespace Lockbox.Services {
             }
         }
 
+        public void remove_items (List<Secret.Item> items) {
+            foreach (var item in items) {
+                item.delete.begin (new Cancellable ());
+            }
+        }
+
         public List<Secret.Item> get_items (CollectionType type) {
             var collection_items = new List<Secret.Item> ();
             var relevant_items = new List<Secret.Item> ();

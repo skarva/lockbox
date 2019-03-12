@@ -32,20 +32,14 @@ namespace Lockbox.Widgets {
             removal_list = new List<Secret.Item> ();
         }
 
-        public void clear_list () {
-            foreach (var widget in this.get_children ()) {
-                remove (widget);
-            }
-            foreach (var item in removal_list) {
-                removal_list.remove (item);
-            }
-        }
-
-        public void clean () {
-            foreach (var item in removal_list) {
-                item.delete.begin (new Cancellable ());
-            }
-        }
+        // public void clear_list () {
+        //     foreach (var widget in this.get_children ()) {
+        //         remove (widget);
+        //     }
+        //     foreach (var item in removal_list) {
+        //         removal_list.remove (item);
+        //     }
+        // }
 
         public void add_item (Secret.Item item) {
             var new_entry = new CollectionListRow (item);
@@ -67,6 +61,14 @@ namespace Lockbox.Widgets {
                 } else {
                     critical ("Unknown Item type");
                 }
+            }
+        }
+
+        public void undo () {
+            if (removal_list.length () > 0) {
+                var restored_item = removal_list.last ().data;
+                removal_list.remove (restored_item);
+                add_item (restored_item);
             }
         }
 

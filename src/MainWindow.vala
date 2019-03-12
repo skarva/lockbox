@@ -127,9 +127,7 @@ namespace Lockbox {
         }
 
         protected override bool delete_event (Gdk.EventAny event) {
-            // collection_list.clean ();
-            collection_manager.close ();
-            update_saved_state ();
+            action_quit ();
 
             return false;
         }
@@ -158,11 +156,11 @@ namespace Lockbox {
         }
 
         private void action_undo () {
-            // collection_list.undo ();
+            collection_list.undo ();
         }
 
         private void action_quit () {
-            // collection_list.perform_removal ();
+            collection_manager.remove_items (collection_list.removal_list);
             collection_manager.close ();
             update_saved_state ();
             destroy ();
