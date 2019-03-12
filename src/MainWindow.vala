@@ -123,6 +123,9 @@ namespace Lockbox {
                 collection_list.add_item (item);
             });
 
+            collection_list.copy_username.connect (copy_username);
+            collection_list.copy_password.connect (copy_password);
+
             show_all ();
         }
 
@@ -179,6 +182,24 @@ namespace Lockbox {
             saved_state.window_x = window_x;
             saved_state.window_y = window_y;
             saved_state.maximized = is_maximized;
+        }
+
+        private void copy_username (Secret.Item item) {
+            var username = item.attributes.get ("username");
+            clipboard.set_text (username, -1);
+            if (Services.Settings.get_default ().clear_clipboard) {
+                reset_clipboard_timer ();
+            }
+        }
+
+        private void copy_password (Secret.Item item) {
+            item.load_secret.begin (new Cancellable (), (obj, res) => {
+                var password = item.get_secret ().get_text ();
+                clipboard.set_text (password, -1);
+                if (Services.Settings.get_default ().clear_clipboard) {
+                    reset_clipboard_timer ();
+                }
+            });
         }
 
         private bool clear_clipboard_timed_out () {
