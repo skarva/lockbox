@@ -2,11 +2,11 @@ icon_sizes = ['16', '24', '32', '64', '128']
 
 foreach i : icon_sizes
     install_data(
-        join_paths('icons', i, 'com.github.skarva.kipeltip.svg'),
+        join_paths('icons', i, 'tech.skarva.lockbox.svg'),
         install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', i + 'x' + i, 'apps')
     )
     install_data(
-        join_paths('icons', i, 'com.github.skarva.kipeltip.svg'),
+        join_paths('icons', i, 'tech.skarva.lockbox.svg'),
         install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', i + 'x' + i + '@2', 'apps')
     )
 endforeach

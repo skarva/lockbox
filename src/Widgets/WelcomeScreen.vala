@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,18 +17,15 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Widgets {
+namespace Lockbox.Widgets {
     public class WelcomeScreen : Granite.Widgets.Welcome {
-        public unowned Kipeltip.MainWindow window { get; construct; }
-        private Kipeltip.Dialogs.PreferencesDialog preferences_dialog;
+        public signal void show_preferences ();
+        public signal void create_collection ();
 
-        public signal void setup_complete ();
-
-        public WelcomeScreen (Kipeltip.MainWindow window) {
+        public WelcomeScreen () {
             Object(
-                window: window,
-                title: _("Lock it up tight"),
-                subtitle: _("Setup your security to start storing your passwords")
+                title: _("Lockbox"),
+                subtitle: _("Sit tight while your secret clearance is verified")
             );
         }
 
@@ -36,24 +33,6 @@ namespace Kipeltip.Widgets {
             valign = Gtk.Align.FILL;
             halign = Gtk.Align.FILL;
             vexpand = true;
-            append ("preferences-desktop", _("Pick your preferences"),
-                _("Customize features such as clipboard clearing and autolocking."));
-            append ("security-high", _("Create a new collection"),
-                _("The collection is where you will keep all your passwords safe."));
-            set_item_sensitivity (1, false);
-
-            activated.connect ((index) => {
-                switch (index) {
-                    case 0:
-                        preferences_dialog = new Kipeltip.Dialogs.PreferencesDialog (window);
-                        preferences_dialog.show_all ();
-                        set_item_sensitivity (1, true);
-                        break;
-                    case 1:
-                        setup_complete ();
-                        break;
-                }
-            });
         }
     }
-}
+} // Lockbox.Widgets

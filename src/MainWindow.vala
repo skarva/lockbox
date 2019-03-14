@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,70 +17,68 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip {
+namespace Lockbox {
     public class MainWindow : Gtk.ApplicationWindow {
-        public weak Kipeltip.Application app { get; construct; }
-        
-        private Widgets.HeaderBar headerbar;
+        public weak Lockbox.Application app { get; construct; }
+
         private Gtk.Stack layout_stack;
-        private Widgets.LoginList login_list;
+        private Gtk.ListBox collection_list;
         private Widgets.WelcomeScreen welcome;
-        private Widgets.AuthenticateForm auth_form;
-        
-        private Services.Collection current_collection;
-        
-        private uint clipboard_timer_id = 0;
-        private uint autolock_timer_id = 0;
-        
+
+        private List<Secret.Item> removal_list;
+
+        private Services.CollectionManager collection_manager;
         private Gtk.Clipboard clipboard;
-        
+        private uint clipboard_timer_id = 0;
+
         public SimpleActionGroup actions { get; construct; }
-        
-        public const string ACTION_PREFIX = "kipeltip.";
-        public const string ACTION_ADD = "action_add";
+
+        public const string ACTION_PREFIX = "lockbox.";
+        public const string ACTION_ADD_LOGIN = "action_add_login";
+        public const string ACTION_ADD_NOTE = "action_add_note";
         public const string ACTION_PREFERENCES = "action_preferences";
-        public const string ACTION_CLOSE_COLLECTION = "action_close_collection";
-        public const string ACTION_REMOVE_COLLECTION = "action_remove_collection";
         public const string ACTION_UNDO = "action_undo";
         public const string ACTION_QUIT = "action_quit";
-        
+
         public static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
-        
+
         public const ActionEntry[] action_entries = {
-            { ACTION_ADD, action_add },
+            { ACTION_ADD_LOGIN, action_add_login },
+            { ACTION_ADD_NOTE, action_add_note },
             { ACTION_PREFERENCES, action_preferences },
-            { ACTION_CLOSE_COLLECTION, action_close_collection },
-            { ACTION_REMOVE_COLLECTION, action_remove_collection },
             { ACTION_UNDO, action_undo },
             { ACTION_QUIT, action_quit }
         };
 
-        public MainWindow (Kipeltip.Application app) {
+        public MainWindow (Lockbox.Application app) {
             Object (
                 application: app,
                 app: app,
-                icon_name: Constants.PROJECT_NAME,
-                title: _("Kipeltip")
+                icon_name: Constants.PROJECT_NAME
             );
         }
 
         static construct {
-            action_accelerators.set (ACTION_ADD, "<Control>a");
+            action_accelerators.set (ACTION_ADD_LOGIN, "<Control>a");
+            action_accelerators.set (ACTION_ADD_NOTE, "<Control>n");
             action_accelerators.set (ACTION_UNDO, "<Control>z");
             action_accelerators.set (ACTION_QUIT, "<Control>q");
         }
-        
+
         construct {
-            current_collection = new Services.Collection ();
-        
+            /* Load up Secret Service and Collections */
+            collection_manager = new Services.CollectionManager ();
+
+            /* Set up actions and hotkeys */
             actions = new SimpleActionGroup ();
             actions.add_action_entries (action_entries, this);
-            insert_action_group ("kipeltip", actions);
-        
+            insert_action_group ("lockbox", actions);
+
             foreach (var action in action_accelerators.get_keys ()) {
                 app.set_accels_for_action (ACTION_PREFIX + action, action_accelerators[action].to_array ());
             }
-        
+
+            /* Load State and Settings */
             var saved_state = Services.SavedState.get_default ();
             set_default_size (saved_state.window_width, saved_state.window_height);
             if (saved_state.window_x == -1 || saved_state.window_y == -1) {
@@ -92,194 +90,87 @@ namespace Kipeltip {
             if (saved_state.maximized) {
                 this.maximize ();
             }
-            
+
+            Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = Services.Settings.get_default ().dark_theme;
+
+            /* Init clipboard */
             clipboard = Gtk.Clipboard.get_for_display (get_display (), Gdk.SELECTION_CLIPBOARD);
 
             /* Init Layout */
-            headerbar = new Widgets.HeaderBar ();
-            headerbar.title = title;
+            var headerbar = new Widgets.HeaderBar ();
             set_titlebar (headerbar);
-            
+
             layout_stack = new Gtk.Stack ();
-            layout_stack.transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT;
             add (layout_stack);
 
-            welcome = new Widgets.WelcomeScreen (this);
+            welcome = new Widgets.WelcomeScreen ();
+            welcome.show_preferences.connect (action_preferences);
             layout_stack.add_named (welcome, "welcome");
 
-            welcome.setup_complete.connect (show_auth_form);
-            
-            auth_form = new Widgets.AuthenticateForm (current_collection);
-            layout_stack.add_named (auth_form, "auth");
-            
-            auth_form.success.connect (() => {
-                headerbar.subtitle = current_collection.name;
-                login_list.populate (current_collection.retrieve_list ());
-                if (Services.Settings.get_default ().autolock) {
-                    reset_autolock_timer ();
-                }
-                show_login_list ();
-            });
-            
             var scroll_window = new Gtk.ScrolledWindow (null, null);
-            
-            login_list = new Widgets.LoginList ();
-            login_list.copy_username.connect (copy_username);
-            login_list.copy_password.connect (copy_password);
-            login_list.edit_entry.connect (edit_entry);
-            scroll_window.add (login_list);
-            layout_stack.add_named (scroll_window, "login");
-            
+
+            collection_list = new Gtk.ListBox ();
+            collection_list.selection_mode = Gtk.SelectionMode.NONE;
+            scroll_window.add (collection_list);
+            layout_stack.add_named (scroll_window, "collection");
+
+            layout_stack.visible_child_name = "welcome";
+
+            collection_manager.loaded.connect (() => {
+                populate_list (collection_manager.get_items (CollectionType.LOGIN));
+                populate_list (collection_manager.get_items (CollectionType.NOTE));
+                layout_stack.visible_child_name = "collection";
+            });
+
+            collection_manager.added.connect (add_item);
+
             show_all ();
         }
-        
-        public void init_window () {
-            if (get_num_collections () == 0) {
-                show_welcome_screen ();
-            } else {
-                show_auth_form ();
-            }
-        }
-        
+
         protected override bool delete_event (Gdk.EventAny event) {
-            remove_entries ();
-            update_saved_state ();
+            action_quit ();
 
             return false;
         }
-        
-        private void action_add () {
-            if (layout_stack.visible_child_name == "login") {
-                var add_login_dialog = new Dialogs.AddLoginDialog (this);
-                add_login_dialog.new_login.connect (update_login_list);
-                add_login_dialog.show_all ();
-                
-                add_login_dialog.present ();
-            }
-            
-            if (Services.Settings.get_default ().autolock) {
-                reset_autolock_timer ();
-            }
+
+        private void action_add_login () {
+            var login_dialog = new Dialogs.LoginDialog (this);
+            login_dialog.new_login.connect ((name, attributes, password) => {
+                collection_manager.add_item(name, attributes, password,
+                                            CollectionType.LOGIN);
+            });
+            login_dialog.show_all ();
+
+            login_dialog.present ();
         }
-        
+
+        private void action_add_note () {
+            // Add note to collection_manager
+            // Add note to collection_list
+        }
+
         private void action_preferences () {
             var preferences_dialog = new Dialogs.PreferencesDialog (this);
             preferences_dialog.show_all ();
-            
+
             preferences_dialog.present ();
-            
-            if (Services.Settings.get_default ().autolock) {
-                reset_autolock_timer ();
-            }
         }
-        
-        private void action_close_collection () {
-            var settings = Services.Settings.get_default ();
-            settings.last_collection = current_collection.name;
-            remove_entries ();
-            show_auth_form ();
-            if (clipboard_timer_id > 0) {
-                GLib.Source.remove (clipboard_timer_id);
-                clipboard_timer_id = 0;
-            }
-            if (autolock_timer_id > 0) {
-                GLib.Source.remove (autolock_timer_id);
-                autolock_timer_id = 0;
-            }
-        }
-        
-        private void action_remove_collection () {
-            try {
-                var file = Granite.Services.Paths.user_data_folder.get_child (current_collection.name + ".db");
-                current_collection = new Services.Collection ();
-                file.delete ();
-            } catch (Error e) {
-                critical (e.message);
-            }
-            
-            if (get_num_collections () == 0) {
-                show_welcome_screen ();
-            } else {
-                show_auth_form ();
-            }
-        }
-        
+
         private void action_undo () {
-            if (layout_stack.visible_child_name == "login") {
-                var latest_login = login_list.removal_list.nth_data (login_list.removal_list.length () - 1);
-                login_list.removal_list.remove (latest_login);
-                var login = current_collection.retrieve_login (latest_login);
-                login_list.add_login (login);
-            }
-            
-            if (Services.Settings.get_default ().autolock) {
-                reset_autolock_timer ();
+            if (removal_list.length () > 0) {
+                var restored_item = removal_list.last ().data;
+                removal_list.remove (restored_item);
+                add_item (restored_item);
             }
         }
-        
+
         private void action_quit () {
-            remove_entries ();
+            collection_manager.remove_items (removal_list);
+            collection_manager.close ();
             update_saved_state ();
             destroy ();
         }
-                
-        private void show_welcome_screen () {
-            layout_stack.visible_child_name = "welcome";
-            headerbar.subtitle = "";
-            headerbar.disable ();
-        }
-        
-        private void show_auth_form () {
-            layout_stack.visible_child_name = "auth";
-            headerbar.subtitle = "";
-            headerbar.disable ();
-        }
-        
-        private void show_login_list () {
-            layout_stack.visible_child_name = "login";
-            headerbar.enable ();
-        }
-        
-        private void update_login (Interfaces.Login login) {
-            current_collection.update_login (login);
-        }
 
-        private void update_login_list (Interfaces.Login new_entry) {
-            int id = current_collection.add_login_entry (new_entry);
-            if (id == -1) {
-                var alert = new Granite.MessageDialog.with_image_from_icon_name (
-                    _("Failed to add login to collection!"),
-                    _("An error occured while trying to add a new entry to the collection.\n
-                    If this issue persists, contact the developers"),
-                    "dialog-error",
-                    Gtk.ButtonsType.CLOSE
-                );
-                alert.run ();
-                alert.destroy ();
-            } else {
-                new_entry.id = id;
-                login_list.add_login (new_entry);
-            }
-        }
-        
-        private int get_num_collections () {
-            int results = 0;
-            try {
-                var data_dir = Granite.Services.Paths.user_data_folder;
-                FileEnumerator enumerator = data_dir.enumerate_children ("standard::*", FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
-                
-                FileInfo info = null;
-                while ((info = enumerator.next_file ()) != null) {
-                    if (info.get_file_type () == FileType.REGULAR && info.get_name ().contains (".db")) {
-                        results++;
-                    }
-                }
-            } catch (Error e) {
-                critical (e.message);
-            }
-            return results; 
-        }
-        
         private void update_saved_state () {
             var saved_state = Services.SavedState.get_default ();
             int window_width;
@@ -294,56 +185,66 @@ namespace Kipeltip {
             saved_state.window_y = window_y;
             saved_state.maximized = is_maximized;
         }
-        
-        private void remove_entries () {
-            foreach (var login_id in login_list.removal_list) {
-                current_collection.remove_login_entry (login_id);
+
+        private void populate_list (List<Secret.Item> items) {
+            foreach (var item in items) {
+                if (Schemas.is_login (item) || Schemas.is_note (item)) {
+                    add_item (item);
+                } else {
+                    critical ("Unknown Item type");
+                }
             }
         }
-        
-        private void copy_username (int id) {
-            var username = current_collection.retrieve_username (id);
+
+        private void add_item (Secret.Item item) {
+            var row = new Widgets.CollectionListRow (item);
+            if (Schemas.is_login (item)) {
+                row.copy_username.connect (copy_username);
+                row.copy_password.connect (copy_password);
+            }
+            row.edit_entry.connect (edit_item);
+            row.delete_entry.connect (remove_item);
+            collection_list.add (row);
+            collection_list.show_all ();
+        }
+
+        private void edit_item (Secret.Item item) {
+            if (Schemas.is_login (item)) {
+                var login_dialog = new Dialogs.LoginDialog (this);
+                login_dialog.set_entries (item);
+                // login_dialog.new_login.connect ((name, attributes, password) => {
+                //     collection_manager.add_item(name, attributes, password,
+                //                                 CollectionType.LOGIN);
+                // });
+                login_dialog.show_all ();
+
+                login_dialog.present ();
+            }
+        }
+
+        private void remove_item (Widgets.CollectionListRow row) {
+            removal_list.append (row.item);
+            collection_list.remove (row);
+        }
+
+        private void copy_username (Secret.Item item) {
+            var username = item.attributes.get ("username");
             clipboard.set_text (username, -1);
             if (Services.Settings.get_default ().clear_clipboard) {
                 reset_clipboard_timer ();
             }
-            if (Services.Settings.get_default ().autolock) {
-                reset_autolock_timer ();
-            }
         }
-        
-        private void copy_password (int id) {
-            var password = current_collection.retrieve_password (id);
-            clipboard.set_text (password, -1);
-            if (Services.Settings.get_default ().clear_clipboard) {
-                reset_clipboard_timer ();
-            }
-            if (Services.Settings.get_default ().autolock) {
-                reset_autolock_timer ();
-            }
+
+        private void copy_password (Secret.Item item) {
+            item.load_secret.begin (new Cancellable (), (obj, res) => {
+                var password = item.get_secret ().get_text ();
+                clipboard.set_text (password, -1);
+                if (Services.Settings.get_default ().clear_clipboard) {
+                    reset_clipboard_timer ();
+                }
+            });
         }
-        
-        private void edit_entry (int id) {
-            var login = current_collection.retrieve_login (id);
-            var edit_login_dialog = new Dialogs.EditLoginDialog (this, login);
-            edit_login_dialog.update_login.connect (update_login);
-            edit_login_dialog.show_all ();
-            
-            edit_login_dialog.present ();
-            
-            if (Services.Settings.get_default ().autolock) {
-                reset_autolock_timer ();
-            }
-        }
-        
-        private bool autolock_timed_out () {
-            if (Services.Settings.get_default ().autolock) {
-                autolock_timer_id = 0;
-                action_close_collection ();
-            }
-            return true;
-        }
-        
+
         private bool clear_clipboard_timed_out () {
             if (Services.Settings.get_default ().clear_clipboard) {
                 clipboard_timer_id = 0;
@@ -351,21 +252,14 @@ namespace Kipeltip {
             }
             return true;
         }
-        
+
         private void reset_clipboard_timer () {
             if (clipboard_timer_id > 0) {
                 GLib.Source.remove (clipboard_timer_id);
                 clipboard_timer_id = 0;
             }
-            clipboard_timer_id = GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout, clear_clipboard_timed_out);
-        }
-        
-        private void reset_autolock_timer () {
-            if (autolock_timer_id > 0) {
-                GLib.Source.remove (autolock_timer_id);
-                autolock_timer_id = 0;
-            }
-            autolock_timer_id = GLib.Timeout.add_seconds (Services.Settings.get_default ().autolock_timeout, autolock_timed_out);
+            clipboard_timer_id = GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout,
+                                                             clear_clipboard_timed_out);
         }
     }
-}
+} // Lockbox

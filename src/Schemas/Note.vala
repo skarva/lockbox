@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,17 +17,22 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Interfaces {
-    public class Login {
-        public int id { get; set; }
-        public string name { get; private set; }
-        public string username { get; private set; }
-        public string password { get; private set; }
-        
-        public Login (string name="", string username="", string password="") {
-            this.name = name;
-            this.username = username;
-            this.password = password;
+namespace Lockbox.Schemas {
+    public static bool is_note (Secret.Item item) {
+        string name = item.get_schema_name ();
+        if (name == null || name.length == 0) {
+            return false;
+        } else if (name == note ().name) {
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    public static Secret.Schema note () {
+        var schema = new Secret.Schema ("tech.skarva.lockbox.notes", Secret.SchemaFlags.NONE,
+                "id", Secret.SchemaAttributeType.STRING,
+                "name", Secret.SchemaAttributeType.STRING);
+        return schema;
     }
 }

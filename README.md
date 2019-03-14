@@ -1,4 +1,4 @@
-# Kipeltip
+# Lock Box
 
 ![Screenshot](data/screenshot.png?raw=true)
 
@@ -7,6 +7,7 @@
 You'll need the following dependencies:
 * meson
 * libgranite-dev
+* libsecret-1-dev
 * libvala-0.34-dev (or higher)
 * valac
 
@@ -16,7 +17,7 @@ Run `meson build` to configure the build environment. Change to the build direct
     cd build
     ninja
 
-To install, use `ninja install`, then execute with `com.github.skarva.kipeltip`
+To install, use `ninja install`, then execute with `com.github.skarva.lockbox`
 
     sudo ninja install
-    com.github.skarva.kipeltip
+    com.github.skarva.lockbox

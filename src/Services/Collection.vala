@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,243 +17,113 @@
 * Boston, MA 02110-1301 USA
 */
 
-namespace Kipeltip.Services {
-    public class Collection : GLib.Object {
-        public string name { get; set; }
-        private Gda.Connection connection;
-        private File data_dir;
-        
-        public Collection () {
-            data_dir = Granite.Services.Paths.user_data_folder;
-            Granite.Services.Paths.ensure_directory_exists (data_dir);
-        }
-        
-        public bool open (string name, string password) {
-            Granite.Services.Logger.notification ("Connecting to collection database...");
-            bool exists = FileUtils.test(data_dir.get_path () + "/" + name + ".db", FileTest.EXISTS);
-            string cnc = "DB_DIR=" + data_dir.get_path () + ";DB_NAME=" + name;
+namespace Lockbox {
+    public enum CollectionType { LOGIN, NOTE }
+}
 
-            try {
-                connection = new Gda.Connection.from_string ("SQLite", cnc, null, Gda.ConnectionOptions.NONE);
-                connection.open ();
-                
-                this.name = name;
-                
-                if (!exists) {
-                    create_tables ();
-                }
-            } catch (Error e) {
-                critical (e.message);
-            }
-            
-            if (connection.is_opened ()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        
-        public List<Interfaces.Login> retrieve_list ()
-                requires (connection.is_opened ())
-        {
-            var collection_list = new List<Interfaces.Login> ();
-            try {
-                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.SELECT);
-                builder.select_add_target ("login_entry", null);
-                builder.select_add_field ("id", null, null);
-                builder.select_add_field ("name", null ,null);
-                
-                var result = connection.statement_execute_select (builder.get_statement (), null);
-                if (result.get_n_rows () > 0) {
-                    var iter = result.create_iter ();
-                    while (iter.move_next ()) {
-                        int id = iter.get_value_for_field ("id").get_int ();
-                        string name = iter.get_value_for_field ("name").get_string ();
-                        var entry = new Interfaces.Login (name);
-                        entry.id = id;
-                        collection_list.append (entry);
-                    }
-                }
-            } catch (Error e) {
-                critical (e.message);
-            }
-            
-            return collection_list;
-        }
-        
-        public Interfaces.Login retrieve_login (int id)
-                requires (connection.is_opened ())
-        {
-            var login = new Interfaces.Login ();
-            login.id = -1;
-            
-            try {
-                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.SELECT);
-                builder.select_add_target ("login_entry", null);
-                builder.select_add_field ("name", null, null);
-                builder.select_add_field ("username", null, null);
-                builder.select_add_field ("password", null, null);
-                
-                var cond = builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, id), 0);
-                builder.set_where (cond);
-                
-                var result = connection.statement_execute_select (builder.get_statement (), null);
-                if (result.get_n_rows () > 0) {
-                    var name = result.get_value_at (result.get_column_index ("name"), 0).get_string ();
-                    var username = result.get_value_at (result.get_column_index ("username"), 0).get_string ();
-                    var password = result.get_value_at (result.get_column_index ("password"), 0).get_string ();
-                    login = new Interfaces.Login (name, username, password);
-                    login.id = id;
-                }
-            } catch (Error e) {
-                critical (e.message);
-            }
-            
-            return login;
-        }
-        
-        public string retrieve_username (int id)
-                requires (connection.is_opened ())
-        {
-            try {
-                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.SELECT);
-                builder.select_add_target ("login_entry", null);
-                builder.select_add_field ("username", null, null);
-                
-                var cond = builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, id), 0);
-                builder.set_where (cond);
-                
-                var result = connection.statement_execute_select (builder.get_statement (), null);
-                if (result.get_n_rows () > 0) {
-                    return result.get_value_at (result.get_column_index ("username"), 0).get_string ();
-                }
-            } catch (Error e) {
-                critical (e.message);
-            }
-            
-            return "";
-        }
-        
-        public string retrieve_password (int id)
-                requires (connection.is_opened ())
-        {
-            try {
-                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.SELECT);
-                builder.select_add_target ("login_entry", null);    
-                builder.select_add_field ("password", null, null);
-                
-                var cond = builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, id), 0);
-                builder.set_where (cond);
-                
-                var result = connection.statement_execute_select (builder.get_statement (), null);
-                if (result.get_n_rows () > 0) {
-                    return result.get_value_at (result.get_column_index ("password"), 0).get_string ();
-                }
-            } catch (Error e) {
-                critical (e.message);
-            }
-            
-            return "";
-        }
-        
-        public int add_login_entry (Interfaces.Login login_entry)
-                requires (connection.is_opened ())
-        {
-            try {
-                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.INSERT);
-                builder.set_table ("login_entry");
-                builder.add_field_value_as_gvalue ("name", login_entry.name);
-                builder.add_field_value_as_gvalue ("username", login_entry.username);
-                builder.add_field_value_as_gvalue ("password", login_entry.password);
-                
-                var statement = builder.get_statement ();
-                
-                Gda.Set last_row;
-                
-                if (connection.statement_execute_non_select (statement, null, out last_row) == 1) {
-                    return last_row.get_holder_value ("+0").get_int ();
-                } else {
-                    return -1;
-                }
-            } catch (Error e) {
-                critical (e.message);
-            }
-            
-            return -1;
-        }
-        
-        public bool update_login (Interfaces.Login login_entry)
-                requires (connection.is_opened ())
-        {
-            try {
-                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.UPDATE);
-                builder.set_table ("login_entry");
-                builder.add_field_value_as_gvalue ("name", login_entry.name);
-                builder.add_field_value_as_gvalue ("username", login_entry.username);
-                builder.add_field_value_as_gvalue ("password", login_entry.password);
-                
-                var cond = builder.add_cond (Gda.SqlOperatorType.EQ, builder.add_id ("id"), builder.add_expr_value (null, login_entry.id), 0);
-                builder.set_where (cond);
-                
-                var statement = builder.get_statement ();
-                Gda.Set last_row;
-                
-                if (connection.statement_execute_non_select (statement, null, out last_row) == 1) {
-                    return true;
-                }
-            } catch (Error e) {
-                critical (e.message);
-            }
-            
-            return false;
-        }
-        
-        public bool remove_login_entry (int id) 
-                requires (connection.is_opened ())
-        {
-            try {
-                var builder = new Gda.SqlBuilder (Gda.SqlStatementType.DELETE);
-                builder.set_table ("login_entry");
-                var id_field = builder.add_id ("id");
-                var id_param = builder.add_expr_value (null, id);
-                builder.set_where (builder.add_cond (Gda.SqlOperatorType.EQ, id_field, id_param, 0));
-                
-                var statement = builder.get_statement ();
-                
-                if (connection.statement_execute_non_select (statement, null, null) == 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } catch (Error e) {
-                critical (e.message);
-            }
-            
-            return false;
-        }
-        
-        private void create_tables ()
-                requires (connection.is_opened ())
-        {
-            Granite.Services.Logger.notification ("Creating database tables...");
-            Error e = null;
+namespace Lockbox.Services {
+    public class CollectionManager {
+        private Secret.Service service;
+        private Secret.Collection default_login_collection;
+        private Secret.Collection default_notes_collection;
 
-            var operation = Gda.ServerOperation.prepare_create_table (connection,"login_entry", e,
-                "id", typeof (int), Gda.ServerOperationCreateTableFlag.PKEY_AUTOINC_FLAG,
-                "name", typeof (string), Gda.ServerOperationCreateTableFlag.NOT_NULL_FLAG,
-                "username", typeof (string), Gda.ServerOperationCreateTableFlag.NOT_NULL_FLAG,
-                "password", typeof (string), Gda.ServerOperationCreateTableFlag.NOT_NULL_FLAG);
-            if (e != null) {
-                critical (e.message);
-            } else {
+        public signal void loaded ();
+        public signal void opened ();
+        public signal void added (Secret.Item item);
+
+        // This should open the Login collection and, if it exists, the secure note collection
+        public CollectionManager () {
+            Secret.Service.get.begin (Secret.ServiceFlags.LOAD_COLLECTIONS, new Cancellable (), (obj, res) => {
                 try {
-                    operation.perform_create_table ();
-                } catch (Error e) {
-                    if (e.code != 1) {
-                        critical (e.message);
+                    service = Secret.Service.get.end (res);
+                    var collections = service.get_collections ();
+                    var found_collection = false;
+                    foreach (var collection in collections) {
+                        if (collection.label == "Login") {
+                            default_login_collection = collection;
+                            found_collection = true;
+                        }
+                        else if (collection.label == "Notes") {
+                            default_notes_collection = collection;
+                            found_collection = true;
+                        }
                     }
+
+                    if (found_collection) {
+                        loaded ();
+                    }
+                } catch (Error e) {
+                    critical (e.message);
+                }
+            });
+        }
+
+        public void close () {
+            Secret.Service.disconnect ();
+        }
+
+        public void add_item (string name, HashTable<string, string> attributes,
+                              string secret, CollectionType type) {
+            if (type == LOGIN) {
+                var secret_value = new Secret.Value (secret,
+                                                     secret.length,
+                                                     "text/plain");
+
+                Secret.Item.create.begin (default_login_collection,
+                                Schemas.epiphany (), attributes, name,
+                                secret_value, Secret.ItemCreateFlags.NONE,
+                                new Cancellable (), (obj, res) => {
+                                    try {
+                                        var item = Secret.Item.create.end (res);
+                                        added (item);
+                                    } catch (Error e) {
+                                        critical (e.message);
+                                    }
+                                });
+            } else if (type == NOTE) {
+                var secret_value = new Secret.Value (secret,
+                                                     secret.length,
+                                                     "text/plain");
+
+                Secret.Item.create.begin (default_notes_collection,
+                                Schemas.note (), attributes, name,
+                                secret_value, Secret.ItemCreateFlags.NONE,
+                                new Cancellable (), (obj, res) => {
+                                    try {
+                                        var item = Secret.Item.create.end (res);
+                                        added (item);
+                                    } catch (Error e) {
+                                        critical (e.message);
+                                    }
+                                });
+            }
+        }
+
+        public void remove_items (List<Secret.Item> items) {
+            foreach (var item in items) {
+                item.delete.begin (new Cancellable ());
+            }
+        }
+
+        public List<Secret.Item> get_items (CollectionType type) {
+            var collection_items = new List<Secret.Item> ();
+            var relevant_items = new List<Secret.Item> ();
+            var schema = "none";
+            if (type == LOGIN) {
+                collection_items = default_login_collection.get_items ();
+                schema = Schemas.epiphany ().name;
+            } else if (type == NOTE && default_notes_collection != null) {
+                collection_items = default_notes_collection.get_items ();
+                schema = Schemas.note ().name;
+            }
+
+            foreach (var item in collection_items) {
+                if (item.get_schema_name () == schema) {
+                    relevant_items.append (item);
                 }
             }
+
+            return relevant_items;
         }
     }
-}
+} // Lockbox.Services

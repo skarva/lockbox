@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Lock Box
+GenericName=Password Manager
+Comment=Secure and manage your secure information
+Categories=System;Utility;Internet;
+Exec=tech.skarva.lockbox
+Icon=tech.skarva.lockbox
+Terminal=false
+Type=Application
+X-GNOME-Gettext-Domain=tech.skarva.lockbox
+Keywords=Password;Login;Notes;
