@@ -24,6 +24,9 @@ namespace Lockbox.Dialogs {
         private Gtk.Entry username_entry;
         private Gtk.Entry password_entry;
 
+        private bool is_edit;
+        private Secret.Item item;
+
         public signal void new_login (string name,
                                       HashTable<string, string> attributes,
                                       string password);
@@ -36,6 +39,8 @@ namespace Lockbox.Dialogs {
                 title: _("Add Login"),
                 transient_for: parent
             );
+
+            is_edit = false;
 
             set_default_response (Gtk.ResponseType.OK);
         }
@@ -92,6 +97,17 @@ namespace Lockbox.Dialogs {
             response.connect (on_response);
         }
 
+        public void set_entries (Secret.Item item) {
+            name_entry.text = item.label;
+            uri_entry.text = item.attributes.get ("uri");
+            username_entry.text = item.attributes.get ("username");
+            item.load_secret.begin (new Cancellable (), (obj, res) => {
+                password_entry.text = item.get_secret ().get_text ();
+            });
+            is_edit = true;
+            this.item = item;
+        }
+
         private void on_response (Gtk.Dialog source, int response_id) {
             switch (response_id) {
                 case Gtk.ResponseType.OK:
@@ -104,6 +120,20 @@ namespace Lockbox.Dialogs {
                         );
                         alert.run ();
                         alert.destroy ();
+                    } else if (is_edit) {
+                        item.label = name_entry.text.strip ();
+
+                        var attributes = item.get_attributes ();
+                        attributes.replace ("uri", uri_entry.text.strip ());
+                        attributes.replace ("username", username_entry.text.strip ());
+                        item.set_attributes.begin (Schemas.epiphany (), attributes, new Cancellable ());
+
+                        var secret = password_entry.text.strip ();
+                        var secret_value = new Secret.Value (secret,
+                                                             secret.length,
+                                                             "text/plain");
+                        item.set_secret.begin (secret_value, new Cancellable ());
+                        destroy ();
                     } else {
                         var id = "{" + Uuid.string_random () + "}";
                         var timestamp = get_real_time () / 1000;

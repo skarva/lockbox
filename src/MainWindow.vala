@@ -22,8 +22,10 @@ namespace Lockbox {
         public weak Lockbox.Application app { get; construct; }
 
         private Gtk.Stack layout_stack;
-        private Widgets.CollectionList collection_list;
+        private Gtk.ListBox collection_list;
         private Widgets.WelcomeScreen welcome;
+
+        private List<Secret.Item> removal_list;
 
         private Services.CollectionManager collection_manager;
         private Gtk.Clipboard clipboard;
@@ -107,24 +109,20 @@ namespace Lockbox {
 
             var scroll_window = new Gtk.ScrolledWindow (null, null);
 
-            collection_list = new Widgets.CollectionList ();
+            collection_list = new Gtk.ListBox ();
+            collection_list.selection_mode = Gtk.SelectionMode.NONE;
             scroll_window.add (collection_list);
             layout_stack.add_named (scroll_window, "collection");
 
             layout_stack.visible_child_name = "welcome";
 
             collection_manager.loaded.connect (() => {
-                collection_list.populate (collection_manager.get_items (CollectionType.LOGIN));
-                collection_list.populate (collection_manager.get_items (CollectionType.NOTE));
+                populate_list (collection_manager.get_items (CollectionType.LOGIN));
+                populate_list (collection_manager.get_items (CollectionType.NOTE));
                 layout_stack.visible_child_name = "collection";
             });
 
-            collection_manager.added.connect ((item) => {
-                collection_list.add_item (item);
-            });
-
-            collection_list.copy_username.connect (copy_username);
-            collection_list.copy_password.connect (copy_password);
+            collection_manager.added.connect (add_item);
 
             show_all ();
         }
@@ -159,11 +157,15 @@ namespace Lockbox {
         }
 
         private void action_undo () {
-            collection_list.undo ();
+            if (removal_list.length () > 0) {
+                var restored_item = removal_list.last ().data;
+                removal_list.remove (restored_item);
+                add_item (restored_item);
+            }
         }
 
         private void action_quit () {
-            collection_manager.remove_items (collection_list.removal_list);
+            collection_manager.remove_items (removal_list);
             collection_manager.close ();
             update_saved_state ();
             destroy ();
@@ -182,6 +184,47 @@ namespace Lockbox {
             saved_state.window_x = window_x;
             saved_state.window_y = window_y;
             saved_state.maximized = is_maximized;
+        }
+
+        private void populate_list (List<Secret.Item> items) {
+            foreach (var item in items) {
+                if (Schemas.is_login (item) || Schemas.is_note (item)) {
+                    add_item (item);
+                } else {
+                    critical ("Unknown Item type");
+                }
+            }
+        }
+
+        private void add_item (Secret.Item item) {
+            var row = new Widgets.CollectionListRow (item);
+            if (Schemas.is_login (item)) {
+                row.copy_username.connect (copy_username);
+                row.copy_password.connect (copy_password);
+            }
+            row.edit_entry.connect (edit_item);
+            row.delete_entry.connect (remove_item);
+            collection_list.add (row);
+            collection_list.show_all ();
+        }
+
+        private void edit_item (Secret.Item item) {
+            if (Schemas.is_login (item)) {
+                var login_dialog = new Dialogs.LoginDialog (this);
+                login_dialog.set_entries (item);
+                // login_dialog.new_login.connect ((name, attributes, password) => {
+                //     collection_manager.add_item(name, attributes, password,
+                //                                 CollectionType.LOGIN);
+                // });
+                login_dialog.show_all ();
+
+                login_dialog.present ();
+            }
+        }
+
+        private void remove_item (Widgets.CollectionListRow row) {
+            removal_list.append (row.item);
+            collection_list.remove (row);
         }
 
         private void copy_username (Secret.Item item) {
