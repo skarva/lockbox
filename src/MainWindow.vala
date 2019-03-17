@@ -117,8 +117,7 @@ namespace Lockbox {
             layout_stack.visible_child_name = "welcome";
 
             collection_manager.loaded.connect (() => {
-                populate_list (collection_manager.get_items (CollectionType.LOGIN));
-                populate_list (collection_manager.get_items (CollectionType.NOTE));
+                populate_list (collection_manager.get_items ());
                 layout_stack.visible_child_name = "collection";
             });
 
@@ -145,8 +144,14 @@ namespace Lockbox {
         }
 
         private void action_add_note () {
-            // Add note to collection_manager
-            // Add note to collection_list
+            var note_dialog = new Dialogs.NoteDialog (this);
+            note_dialog.new_note.connect ((name, attributes, content) => {
+                collection_manager.add_item(name, attributes, content,
+                                            CollectionType.NOTE);
+            });
+            note_dialog.show_all ();
+
+            note_dialog.present ();
         }
 
         private void action_preferences () {
@@ -212,13 +217,15 @@ namespace Lockbox {
             if (Schemas.is_login (item)) {
                 var login_dialog = new Dialogs.LoginDialog (this);
                 login_dialog.set_entries (item);
-                // login_dialog.new_login.connect ((name, attributes, password) => {
-                //     collection_manager.add_item(name, attributes, password,
-                //                                 CollectionType.LOGIN);
-                // });
                 login_dialog.show_all ();
 
                 login_dialog.present ();
+            } else if (Schemas.is_note (item)) {
+                var note_dialog = new Dialogs.NoteDialog (this);
+                note_dialog.set_entries (item);
+                note_dialog.show_all ();
+
+                note_dialog.present ();
             }
         }
 
