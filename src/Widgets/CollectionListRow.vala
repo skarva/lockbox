@@ -67,8 +67,8 @@ namespace Lockbox.Widgets {
             });
 
             if (Schemas.is_note (item)) {
-                copy_username_button.hide ();
-                copy_password_button.hide ();
+                copy_username_button.no_show_all = true;
+                copy_password_button.no_show_all = true;
             }
         }
     }

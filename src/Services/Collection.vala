@@ -24,14 +24,13 @@ namespace Lockbox {
 namespace Lockbox.Services {
     public class CollectionManager {
         private Secret.Service service;
-        private Secret.Collection default_login_collection;
-        private Secret.Collection default_notes_collection;
+        private Secret.Collection default_collection;
 
         public signal void loaded ();
         public signal void opened ();
         public signal void added (Secret.Item item);
 
-        // This should open the Login collection and, if it exists, the secure note collection
+        // This should open the Login collection and, if it exists, the secure Note collection
         public CollectionManager () {
             Secret.Service.get.begin (Secret.ServiceFlags.LOAD_COLLECTIONS, new Cancellable (), (obj, res) => {
                 try {
@@ -40,11 +39,7 @@ namespace Lockbox.Services {
                     var found_collection = false;
                     foreach (var collection in collections) {
                         if (collection.label == "Login") {
-                            default_login_collection = collection;
-                            found_collection = true;
-                        }
-                        else if (collection.label == "Notes") {
-                            default_notes_collection = collection;
+                            default_collection = collection;
                             found_collection = true;
                         }
                     }
@@ -69,8 +64,8 @@ namespace Lockbox.Services {
                                                      secret.length,
                                                      "text/plain");
 
-                Secret.Item.create.begin (default_login_collection,
-                                Schemas.epiphany (), attributes, name,
+                Secret.Item.create.begin (default_collection,
+                                Schemas.epiphany (), attributes, name, 
                                 secret_value, Secret.ItemCreateFlags.NONE,
                                 new Cancellable (), (obj, res) => {
                                     try {
@@ -81,21 +76,21 @@ namespace Lockbox.Services {
                                     }
                                 });
             } else if (type == NOTE) {
-                var secret_value = new Secret.Value (secret,
-                                                     secret.length,
-                                                     "text/plain");
+                    var secret_value = new Secret.Value (secret,
+                                                         secret.length,
+                                                         "text/plain");
 
-                Secret.Item.create.begin (default_notes_collection,
-                                Schemas.note (), attributes, name,
-                                secret_value, Secret.ItemCreateFlags.NONE,
-                                new Cancellable (), (obj, res) => {
-                                    try {
-                                        var item = Secret.Item.create.end (res);
-                                        added (item);
-                                    } catch (Error e) {
-                                        critical (e.message);
-                                    }
-                                });
+                    Secret.Item.create.begin (default_collection,
+                            Schemas.note (), attributes, name, secret_value,
+                            Secret.ItemCreateFlags.NONE,
+                            new Cancellable (), (obj, res) => {
+                                try {
+                                    var item = Secret.Item.create.end (res);
+                                    added (item);
+                                } catch (Error e) {
+                                    critical (e.message);
+                                }
+                            });
             }
         }
 
@@ -105,20 +100,14 @@ namespace Lockbox.Services {
             }
         }
 
-        public List<Secret.Item> get_items (CollectionType type) {
-            var collection_items = new List<Secret.Item> ();
+        public List<Secret.Item> get_items () {
+            var collection_items = default_collection.get_items ();
             var relevant_items = new List<Secret.Item> ();
-            var schema = "none";
-            if (type == LOGIN) {
-                collection_items = default_login_collection.get_items ();
-                schema = Schemas.epiphany ().name;
-            } else if (type == NOTE && default_notes_collection != null) {
-                collection_items = default_notes_collection.get_items ();
-                schema = Schemas.note ().name;
-            }
+            var login_schema = Schemas.epiphany ().name;
+            var note_schema = Schemas.note ().name;
 
             foreach (var item in collection_items) {
-                if (item.get_schema_name () == schema) {
+                if (item.get_schema_name () == login_schema || item.get_schema_name () == note_schema) {
                     relevant_items.append (item);
                 }
             }
