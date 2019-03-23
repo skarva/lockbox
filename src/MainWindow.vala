@@ -25,6 +25,8 @@ namespace Lockbox {
         private Gtk.ListBox collection_list;
         private Widgets.WelcomeScreen welcome;
 
+        private string filter_keyword = "";
+
         private List<Secret.Item> removal_list;
 
         private Services.CollectionManager collection_manager;
@@ -93,7 +95,7 @@ namespace Lockbox {
 
             Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = Services.Settings.get_default ().dark_theme;
 
-            /* Init clipboard */
+            /* Init Clipboard */
             clipboard = Gtk.Clipboard.get_for_display (get_display (), Gdk.SELECTION_CLIPBOARD);
 
             /* Init Layout */
@@ -111,17 +113,24 @@ namespace Lockbox {
 
             collection_list = new Gtk.ListBox ();
             collection_list.selection_mode = Gtk.SelectionMode.NONE;
+            collection_list.set_filter_func (CollectionFilterFunc);
             scroll_window.add (collection_list);
             layout_stack.add_named (scroll_window, "collection");
 
             layout_stack.visible_child_name = "welcome";
 
+            /* Connect Signals */
             collection_manager.loaded.connect (() => {
                 populate_list (collection_manager.get_items ());
                 layout_stack.visible_child_name = "collection";
             });
 
             collection_manager.added.connect (add_item);
+
+            headerbar.filter.connect((keyword) => {
+                filter_keyword = keyword;
+                collection_list.invalidate_filter ();
+            });
 
             show_all ();
         }
@@ -267,6 +276,28 @@ namespace Lockbox {
             }
             clipboard_timer_id = GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout,
                                                              clear_clipboard_timed_out);
+        }
+
+        private bool CollectionFilterFunc (Gtk.ListBoxRow row) {
+            if (filter_keyword.length == 0) {
+                return true;
+            }
+
+            var collection_row = row as Widgets.CollectionListRow;
+            var label = collection_row.item.label;
+
+            // Search using exact match (case-sensitive)
+            if (label.contains (filter_keyword)) {
+                return true;
+            }
+
+            // Search using case insensitivity
+            if (label.ascii_down ().contains (filter_keyword.ascii_down ()))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 } // Lockbox
