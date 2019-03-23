@@ -48,6 +48,7 @@ namespace Lockbox.Services {
         public int clear_clipboard_timeout { get; set; }
         public bool dark_theme { get; set; }
         public Sort sort_by { get; set; }
+        public bool sort_desc { get; set; }
 
         public Settings () {
             base (Constants.PROJECT_NAME + ".settings");

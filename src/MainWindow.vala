@@ -134,11 +134,14 @@ namespace Lockbox {
             });
 
             headerbar.sort.connect((sort_by) => {
-                var sort_setting = Services.Settings.get_default ().sort_by;
-                if (sort_by != sort_setting) {
-                    Services.Settings.get_default ().sort_by = sort_by;
-                    set_sort_func (sort_by);
+                var settings = Services.Settings.get_default ();
+                if (sort_by != settings.sort_by) {
+                    settings.sort_by = sort_by;
+                    settings.sort_desc = true;
+                } else {
+                    settings.sort_desc = !settings.sort_desc;
                 }
+                set_sort_func (sort_by);
             });
 
             show_all ();
@@ -321,18 +324,20 @@ namespace Lockbox {
         private int CollectionSortNameFunc (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
             var collection_row1 = row1 as Widgets.CollectionListRow;
             var collection_row2 = row2 as Widgets.CollectionListRow;
+            var desc = Services.Settings.get_default ().sort_desc ? 1 : -1;
 
-            return collection_row1.item.label.ascii_casecmp (collection_row2.item.label);
+            return collection_row1.item.label.ascii_casecmp (collection_row2.item.label) * desc;
         }
 
         private int CollectionSortDateFunc (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
             var collection_row1 = row1 as Widgets.CollectionListRow;
             var collection_row2 = row2 as Widgets.CollectionListRow;
+            var desc = Services.Settings.get_default ().sort_desc ? 1 : -1;
 
             if (collection_row1.item.created < collection_row2.item.created) {
-                return -1;
+                return -1 * desc;
             } else if (collection_row1.item.created > collection_row2.item.created) {
-                return 1;
+                return 1 * desc;
             }
 
             return 0;

@@ -52,5 +52,10 @@
             <summary>An index of the sorting method</summary>
             <description>An index of the sorting method to apply to the collection list</description>
         </key>
+        <key name="sort-desc" type="b">
+            <default>true</default>
+            <summary>Toggle for ascending or descending sort</summary>
+            <description>Toggle for ascending or descending sort</description>
+        </key>
     </schema>
 </schemalist>
