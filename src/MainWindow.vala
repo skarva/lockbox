@@ -275,6 +275,7 @@ namespace Lockbox {
 
         private bool clear_clipboard_timed_out () {
             if (Services.Settings.get_default ().clear_clipboard) {
+                GLib.Source.remove (clipboard_timer_id);
                 clipboard_timer_id = 0;
                 clipboard.clear ();
             }
