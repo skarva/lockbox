@@ -18,16 +18,18 @@
 */
 
 namespace Lockbox.Widgets {
-    private Gtk.MenuButton add_button;
-    private Gtk.ModelButton add_login_menuitem;
-    private Gtk.ModelButton add_note_menuitem;
-    private Gtk.SearchEntry search_entry;
-    private Gtk.MenuButton app_menu;
-    private Gtk.ModelButton preferences_menuitem;
-    private Gtk.ModelButton sort_by_name_menuitem;
-    private Gtk.ModelButton sort_by_created_menuitem;
-
     public class HeaderBar : Gtk.HeaderBar {
+        private Gtk.MenuButton add_button;
+        private Gtk.ModelButton add_login_menuitem;
+        private Gtk.ModelButton add_note_menuitem;
+        private Gtk.SearchEntry search_entry;
+        private Gtk.MenuButton app_menu;
+        private Gtk.ModelButton preferences_menuitem;
+        private Gtk.ModelButton sort_by_name_menuitem;
+        private Gtk.ModelButton sort_by_created_menuitem;
+
+        public signal void filter(string keyword);
+
         public HeaderBar () {
             Object (
                 has_subtitle: false,
@@ -67,6 +69,9 @@ namespace Lockbox.Widgets {
             search_entry.hexpand = true;
             search_entry.valign = Gtk.Align.CENTER;
             search_entry.placeholder_text = _("Search collection...");
+            search_entry.search_changed.connect (() => {
+                filter(search_entry.text.strip ());
+            });
 
             /* App menu and options */
             preferences_menuitem = new Gtk.ModelButton ();
