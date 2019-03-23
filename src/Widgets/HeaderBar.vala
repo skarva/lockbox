@@ -19,16 +19,9 @@
 
 namespace Lockbox.Widgets {
     public class HeaderBar : Gtk.HeaderBar {
-        private Gtk.MenuButton add_button;
-        private Gtk.ModelButton add_login_menuitem;
-        private Gtk.ModelButton add_note_menuitem;
-        private Gtk.SearchEntry search_entry;
-        private Gtk.MenuButton app_menu;
-        private Gtk.ModelButton preferences_menuitem;
-        private Gtk.ModelButton sort_by_name_menuitem;
-        private Gtk.ModelButton sort_by_created_menuitem;
 
         public signal void filter(string keyword);
+        public signal void sort(Services.Sort sort_by);
 
         public HeaderBar () {
             Object (
@@ -39,11 +32,11 @@ namespace Lockbox.Widgets {
 
         construct {
             /* Add menu and options */
-            add_login_menuitem = new Gtk.ModelButton ();
+            var add_login_menuitem = new Gtk.ModelButton ();
             add_login_menuitem.text = _("Add New Login");
             add_login_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_ADD_LOGIN;
 
-            add_note_menuitem = new Gtk.ModelButton ();
+            var add_note_menuitem = new Gtk.ModelButton ();
             add_note_menuitem.text = _("Add Secure Note");
             add_note_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_ADD_NOTE;
 
@@ -59,13 +52,13 @@ namespace Lockbox.Widgets {
             var add_menu = new Gtk.PopoverMenu ();
             add_menu.add (add_menu_grid);
 
-            add_button = new Gtk.MenuButton ();
+            var add_button = new Gtk.MenuButton ();
             add_button.image = new Gtk.Button.from_icon_name ("insert-object", Gtk.IconSize.LARGE_TOOLBAR);
             add_button.tooltip_text = _("Add Login or Note");
             add_button.popover = add_menu;
 
             /* Search entry */
-            search_entry = new Gtk.SearchEntry ();
+            var search_entry = new Gtk.SearchEntry ();
             search_entry.hexpand = true;
             search_entry.valign = Gtk.Align.CENTER;
             search_entry.placeholder_text = _("Search collection...");
@@ -74,15 +67,21 @@ namespace Lockbox.Widgets {
             });
 
             /* App menu and options */
-            preferences_menuitem = new Gtk.ModelButton ();
+            var preferences_menuitem = new Gtk.ModelButton ();
             preferences_menuitem.text = _("Preferences");
             preferences_menuitem.action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_PREFERENCES;
 
-            sort_by_name_menuitem = new Gtk.ModelButton ();
+            var sort_by_name_menuitem = new Gtk.ModelButton ();
             sort_by_name_menuitem.text = _("Sort by Name");
+            sort_by_name_menuitem.clicked.connect (() => {
+                sort(Services.Sort.NAME);
+            });
 
-            sort_by_created_menuitem = new Gtk.ModelButton ();
+            var sort_by_created_menuitem = new Gtk.ModelButton ();
             sort_by_created_menuitem.text = _("Sort by Created Date");
+            sort_by_created_menuitem.clicked.connect (() => {
+                sort(Services.Sort.CREATED);
+            });
 
             var menu_grid = new Gtk.Grid ();
             menu_grid.row_spacing = 6;
@@ -98,7 +97,7 @@ namespace Lockbox.Widgets {
             var menu = new Gtk.PopoverMenu ();
             menu.add (menu_grid);
 
-            app_menu = new Gtk.MenuButton ();
+            var app_menu = new Gtk.MenuButton ();
             app_menu.image =  new Gtk.Image.from_icon_name ("open-menu", Gtk.IconSize.LARGE_TOOLBAR);
             app_menu.tooltip_text = _("Menu");
             app_menu.valign = Gtk.Align.CENTER;

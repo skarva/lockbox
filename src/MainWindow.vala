@@ -114,6 +114,7 @@ namespace Lockbox {
             collection_list = new Gtk.ListBox ();
             collection_list.selection_mode = Gtk.SelectionMode.NONE;
             collection_list.set_filter_func (CollectionFilterFunc);
+            set_sort_func (Services.Settings.get_default ().sort_by);
             scroll_window.add (collection_list);
             layout_stack.add_named (scroll_window, "collection");
 
@@ -130,6 +131,17 @@ namespace Lockbox {
             headerbar.filter.connect((keyword) => {
                 filter_keyword = keyword;
                 collection_list.invalidate_filter ();
+            });
+
+            headerbar.sort.connect((sort_by) => {
+                var settings = Services.Settings.get_default ();
+                if (sort_by != settings.sort_by) {
+                    settings.sort_by = sort_by;
+                    settings.sort_desc = true;
+                } else {
+                    settings.sort_desc = !settings.sort_desc;
+                }
+                set_sort_func (sort_by);
             });
 
             show_all ();
@@ -278,6 +290,15 @@ namespace Lockbox {
                                                              clear_clipboard_timed_out);
         }
 
+        private void set_sort_func (Services.Sort sort_by) {
+            if (sort_by == Services.Sort.NAME) {
+                collection_list.set_sort_func (CollectionSortNameFunc);
+            } else if (sort_by == Services.Sort.CREATED) {
+                collection_list.set_sort_func (CollectionSortDateFunc);
+            }
+            collection_list.invalidate_sort ();
+        }
+
         private bool CollectionFilterFunc (Gtk.ListBoxRow row) {
             if (filter_keyword.length == 0) {
                 return true;
@@ -298,6 +319,28 @@ namespace Lockbox {
             }
 
             return false;
+        }
+
+        private int CollectionSortNameFunc (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
+            var collection_row1 = row1 as Widgets.CollectionListRow;
+            var collection_row2 = row2 as Widgets.CollectionListRow;
+            var desc = Services.Settings.get_default ().sort_desc ? 1 : -1;
+
+            return collection_row1.item.label.ascii_casecmp (collection_row2.item.label) * desc;
+        }
+
+        private int CollectionSortDateFunc (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
+            var collection_row1 = row1 as Widgets.CollectionListRow;
+            var collection_row2 = row2 as Widgets.CollectionListRow;
+            var desc = Services.Settings.get_default ().sort_desc ? 1 : -1;
+
+            if (collection_row1.item.created < collection_row2.item.created) {
+                return -1 * desc;
+            } else if (collection_row1.item.created > collection_row2.item.created) {
+                return 1 * desc;
+            }
+
+            return 0;
         }
     }
 } // Lockbox

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
+    <enum id="tech.skarva.lockbox.sort">
+        <value value="0" nick="name"/>
+        <value value="1" nick="created"/>
+    </enum>
     <schema path="/tech/skarva/lockbox/saved-state/" id="tech.skarva.lockbox.saved-state" gettext-domain="tech.skarva.lockbox">
         <key name="maximized" type="b">
             <default>false</default>
@@ -27,7 +31,7 @@
             <description>Y-axis position of the main window.</description>
         </key>
     </schema>
-    <schema path="/tech/skarva/lockbox/settings/" id="tech.skarva.lockbox.settings" gettext-domain="techw.skarva.lockbox">
+    <schema path="/tech/skarva/lockbox/settings/" id="tech.skarva.lockbox.settings" gettext-domain="tech.skarva.lockbox">
         <key name="clear-clipboard" type="b">
             <default>true</default>
             <summary>Clear clipboard after timeout.</summary>
@@ -42,6 +46,16 @@
             <default>false</default>
             <summary>Toggle for application dark mode.</summary>
             <description>Toggle for appication dark mode.</description>
+        </key>
+        <key name="sort-by" enum="tech.skarva.lockbox.sort">
+            <default>'name'</default>
+            <summary>An index of the sorting method</summary>
+            <description>An index of the sorting method to apply to the collection list</description>
+        </key>
+        <key name="sort-desc" type="b">
+            <default>true</default>
+            <summary>Toggle for ascending or descending sort</summary>
+            <description>Toggle for ascending or descending sort</description>
         </key>
     </schema>
 </schemalist>
