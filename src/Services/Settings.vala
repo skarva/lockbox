@@ -18,6 +18,11 @@
 */
 
 namespace Lockbox.Services {
+    public enum Sort {
+        NAME,
+        CREATED
+    }
+
     public class SavedState : Granite.Services.Settings {
         public int window_width { get; set; }
         public int window_height { get; set; }
@@ -42,6 +47,7 @@ namespace Lockbox.Services {
         public bool clear_clipboard { get; set; }
         public int clear_clipboard_timeout { get; set; }
         public bool dark_theme { get; set; }
+        public Sort sort_by { get; set; }
 
         public Settings () {
             base (Constants.PROJECT_NAME + ".settings");
