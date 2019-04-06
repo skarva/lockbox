@@ -20,10 +20,11 @@
 namespace Lockbox.Widgets {
     public class CollectionListRow : Gtk.ListBoxRow {
         public Secret.Item item { get; set; }
+        public Gtk.Label title { get; set; }
 
         public signal void copy_username (Secret.Item item);
         public signal void copy_password (Secret.Item item);
-        public signal void edit_entry(Secret.Item item);
+        public signal void edit_entry(CollectionListRow row);
         public signal void delete_entry (CollectionListRow row);
 
         public CollectionListRow (Secret.Item item) {
@@ -33,7 +34,7 @@ namespace Lockbox.Widgets {
             var container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             container.height_request = 50;
 
-            var title = new Gtk.Label (item.label);
+            title = new Gtk.Label (item.label);
 
             var copy_username_button = new Gtk.Button.with_label ("Copy Username");
             var copy_password_button = new Gtk.Button.with_label ("Copy Password");
@@ -59,7 +60,7 @@ namespace Lockbox.Widgets {
             });
 
             edit_item.clicked.connect (() => {
-                edit_entry(item);
+                edit_entry(this);
             });
 
             delete_item.clicked.connect ( () => {
