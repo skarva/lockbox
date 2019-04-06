@@ -25,7 +25,7 @@ namespace Lockbox.Dialogs {
         private Gtk.Entry password_entry;
 
         private bool is_edit;
-        private Secret.Item item;
+        private Widgets.CollectionListRow row;
 
         public signal void new_login (string name,
                                       HashTable<string, string> attributes,
@@ -97,7 +97,8 @@ namespace Lockbox.Dialogs {
             response.connect (on_response);
         }
 
-        public void set_entries (Secret.Item item) {
+        public void set_entries (Widgets.CollectionListRow row) {
+            var item = row.item;
             name_entry.text = item.label;
             uri_entry.text = item.attributes.get ("uri");
             username_entry.text = item.attributes.get ("username");
@@ -105,7 +106,7 @@ namespace Lockbox.Dialogs {
                 password_entry.text = item.get_secret ().get_text ();
             });
             is_edit = true;
-            this.item = item;
+            this.row = row;
         }
 
         private void on_response (Gtk.Dialog source, int response_id) {
@@ -124,6 +125,7 @@ namespace Lockbox.Dialogs {
                         alert.run ();
                         alert.destroy ();
                     } else if (is_edit) {
+                        var item = row.item;
                         item.label = name_entry.text.strip ();
 
                         var attributes = item.get_attributes ();
@@ -136,6 +138,7 @@ namespace Lockbox.Dialogs {
                                                              secret.length,
                                                              "text/plain");
                         item.set_secret.begin (secret_value, new Cancellable ());
+                        row.title.set_text(name_entry.text.strip ());
                         destroy ();
                     } else {
                         var id = "{" + Uuid.string_random () + "}";

@@ -234,16 +234,16 @@ namespace Lockbox {
             collection_list.show_all ();
         }
 
-        private void edit_item (Secret.Item item) {
-            if (Schemas.is_login (item)) {
+        private void edit_item (Widgets.CollectionListRow row) {
+            if (Schemas.is_login (row.item)) {
                 var login_dialog = new Dialogs.LoginDialog (this);
-                login_dialog.set_entries (item);
+                login_dialog.set_entries (row);
                 login_dialog.show_all ();
 
                 login_dialog.present ();
-            } else if (Schemas.is_note (item)) {
+            } else if (Schemas.is_note (row.item)) {
                 var note_dialog = new Dialogs.NoteDialog (this);
-                note_dialog.set_entries (item);
+                note_dialog.set_entries (row);
                 note_dialog.show_all ();
 
                 note_dialog.present ();

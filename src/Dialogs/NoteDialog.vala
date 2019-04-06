@@ -23,7 +23,7 @@ namespace Lockbox.Dialogs {
         private Gtk.TextView content_entry;
 
         private bool is_edit;
-        private Secret.Item item;
+        private Widgets.CollectionListRow row;
 
         public signal void new_note (string name,
                                       HashTable<string, string> attributes,
@@ -77,13 +77,14 @@ namespace Lockbox.Dialogs {
             response.connect (on_response);
         }
 
-        public void set_entries (Secret.Item item) {
+        public void set_entries (Widgets.CollectionListRow row) {
+            var item = row.item;
             name_entry.text = item.label;
             item.load_secret.begin (new Cancellable (), (obj, res) => {
                 content_entry.buffer.text = item.get_secret ().get_text ();
             });
             is_edit = true;
-            this.item = item;
+            this.row = row;
         }
 
         private void on_response (Gtk.Dialog source, int response_id) {
@@ -101,6 +102,7 @@ namespace Lockbox.Dialogs {
                         alert.run ();
                         alert.destroy ();
                     } else if (is_edit) {
+                        var item = row.item;
                         item.label = name_entry.text.strip ();
 
                         var secret = content_entry.buffer.text.strip ();
@@ -108,6 +110,7 @@ namespace Lockbox.Dialogs {
                                                              secret.length,
                                                              "text/plain");
                         item.set_secret.begin (secret_value, new Cancellable ());
+                        row.title.set_text(name_entry.text.strip ());
                         destroy ();
                     } else {
                         var id = "{" + Uuid.string_random () + "}";
