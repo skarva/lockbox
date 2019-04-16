@@ -21,9 +21,8 @@ namespace Lockbox {
     public class MainWindow : Gtk.ApplicationWindow {
         public weak Lockbox.Application app { get; construct; }
 
-        private Gtk.Stack layout_stack;
+        private Widgets.HeaderBar headerbar;
         private Gtk.ListBox collection_list;
-        private Widgets.WelcomeScreen welcome;
 
         private string filter_keyword = "";
 
@@ -38,6 +37,7 @@ namespace Lockbox {
         public const string ACTION_PREFIX = "lockbox.";
         public const string ACTION_ADD_LOGIN = "action_add_login";
         public const string ACTION_ADD_NOTE = "action_add_note";
+        public const string ACTION_SEARCH = "action_search";
         public const string ACTION_PREFERENCES = "action_preferences";
         public const string ACTION_UNDO = "action_undo";
         public const string ACTION_QUIT = "action_quit";
@@ -47,6 +47,7 @@ namespace Lockbox {
         public const ActionEntry[] action_entries = {
             { ACTION_ADD_LOGIN, action_add_login },
             { ACTION_ADD_NOTE, action_add_note },
+            { ACTION_SEARCH, action_search },
             { ACTION_PREFERENCES, action_preferences },
             { ACTION_UNDO, action_undo },
             { ACTION_QUIT, action_quit }
@@ -63,6 +64,7 @@ namespace Lockbox {
         static construct {
             action_accelerators.set (ACTION_ADD_LOGIN, "<Control>a");
             action_accelerators.set (ACTION_ADD_NOTE, "<Control>n");
+            action_accelerators.set (ACTION_SEARCH, "<Control>f");
             action_accelerators.set (ACTION_UNDO, "<Control>z");
             action_accelerators.set (ACTION_QUIT, "<Control>q");
         }
@@ -99,13 +101,13 @@ namespace Lockbox {
             clipboard = Gtk.Clipboard.get_for_display (get_display (), Gdk.SELECTION_CLIPBOARD);
 
             /* Init Layout */
-            var headerbar = new Widgets.HeaderBar ();
+            headerbar = new Widgets.HeaderBar ();
             set_titlebar (headerbar);
 
-            layout_stack = new Gtk.Stack ();
+            var layout_stack = new Gtk.Stack ();
             add (layout_stack);
 
-            welcome = new Widgets.WelcomeScreen ();
+            var welcome = new Widgets.WelcomeScreen ();
             welcome.show_preferences.connect (action_preferences);
             layout_stack.add_named (welcome, "welcome");
 
@@ -144,6 +146,8 @@ namespace Lockbox {
                 set_sort_func (sort_by);
             });
 
+            action_search ();
+
             show_all ();
         }
 
@@ -173,6 +177,10 @@ namespace Lockbox {
             note_dialog.show_all ();
 
             note_dialog.present ();
+        }
+
+        private void action_search () {
+            headerbar.search_entry.grab_focus ();
         }
 
         private void action_preferences () {
