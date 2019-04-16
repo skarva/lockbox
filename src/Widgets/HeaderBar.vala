@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019 skärva LLC. <https://skarva.tech>
+* Copyright (c) 2019 skarva LLC. <https://skarva.tech>
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -19,6 +19,7 @@
 
 namespace Lockbox.Widgets {
     public class HeaderBar : Gtk.HeaderBar {
+        public Gtk.SearchEntry search_entry { get; private set; }
 
         public signal void filter(string keyword);
         public signal void sort(Services.Sort sort_by);
@@ -58,10 +59,10 @@ namespace Lockbox.Widgets {
             add_button.popover = add_menu;
 
             /* Search entry */
-            var search_entry = new Gtk.SearchEntry ();
+            search_entry = new Gtk.SearchEntry ();
             search_entry.hexpand = true;
             search_entry.valign = Gtk.Align.CENTER;
-            search_entry.placeholder_text = _("Search collection...");
+            search_entry.placeholder_text = _("Search for sites and notes (Ctrl+F)...");
             search_entry.search_changed.connect (() => {
                 filter(search_entry.text.strip ());
             });
