@@ -23,6 +23,7 @@ namespace Lockbox {
 
         private Widgets.HeaderBar headerbar;
         private Gtk.ListBox collection_list;
+        private Gtk.Stack layout_stack;
 
         private string filter_keyword = "";
 
@@ -104,11 +105,16 @@ namespace Lockbox {
             headerbar = new Widgets.HeaderBar ();
             set_titlebar (headerbar);
 
-            var layout_stack = new Gtk.Stack ();
+            layout_stack = new Gtk.Stack ();
             add (layout_stack);
+
+            var launch = new Widgets.LaunchScreen ();
+            layout_stack.add_named (launch, "launch");
 
             var welcome = new Widgets.WelcomeScreen ();
             welcome.show_preferences.connect (action_preferences);
+            welcome.create_login.connect (action_add_login);
+            welcome.create_note.connect (action_add_note);
             layout_stack.add_named (welcome, "welcome");
 
             var scroll_window = new Gtk.ScrolledWindow (null, null);
@@ -120,12 +126,17 @@ namespace Lockbox {
             scroll_window.add (collection_list);
             layout_stack.add_named (scroll_window, "collection");
 
-            layout_stack.visible_child_name = "welcome";
+            layout_stack.visible_child_name = "launch";
 
             /* Connect Signals */
             collection_manager.loaded.connect (() => {
-                populate_list (collection_manager.get_items ());
-                layout_stack.visible_child_name = "collection";
+                var items = collection_manager.get_items ();
+                populate_list (items);
+                if (items.length () > 0) {
+                    layout_stack.visible_child_name = "collection";
+                } else {
+                    layout_stack.visible_child_name = "welcome";
+                }
             });
 
             collection_manager.added.connect (add_item);
@@ -162,6 +173,7 @@ namespace Lockbox {
             login_dialog.new_login.connect ((name, attributes, password) => {
                 collection_manager.add_item(name, attributes, password,
                                             CollectionType.LOGIN);
+                layout_stack.visible_child_name = "collection";
             });
             login_dialog.show_all ();
 
@@ -173,6 +185,7 @@ namespace Lockbox {
             note_dialog.new_note.connect ((name, attributes, content) => {
                 collection_manager.add_item(name, attributes, content,
                                             CollectionType.NOTE);
+                layout_stack.visible_child_name = "collection";
             });
             note_dialog.show_all ();
 
