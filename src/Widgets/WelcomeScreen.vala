@@ -20,19 +20,38 @@
 namespace Lockbox.Widgets {
     public class WelcomeScreen : Granite.Widgets.Welcome {
         public signal void show_preferences ();
-        public signal void create_collection ();
+        public signal void create_login ();
+        public signal void create_note ();
 
         public WelcomeScreen () {
             Object(
-                title: _("Lockbox"),
-                subtitle: _("Sit tight while your secret clearance is verified")
+                title: _("Nothing to see here"),
+                subtitle: _("Start storing your important info securely")
             );
         }
 
         construct {
+            append ("preferences-desktop", "Configure", "Customize your lock box");
+            append ("contact-new", "Store Login", "Add website login details to your lock box");
+            append ("document-new", "Store Note", "Add a new note to yourself to your lock box");
+
             valign = Gtk.Align.FILL;
             halign = Gtk.Align.FILL;
             vexpand = true;
+
+            activated.connect ((index) => {
+                switch (index) {
+                    case 0:
+                        show_preferences ();
+                        break;
+                    case 1:
+                        create_login ();
+                        break;
+                    case 2:
+                        create_note ();
+                        break;
+                }
+            });
         }
     }
 } // Lockbox.Widgets
