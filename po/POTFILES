@@ -1,2 +1,10 @@
 src/Application.vala
 src/MainWindow.vala
+src/Dialogs/LoginDialog.vala
+src/Dialogs/NoteDialog.vala
+src/Dialogs/PreferencesDialog.vala
+src/Widgets/HeaderBar.vala
+src/Widgets/LaunchScreen.vala
+src/Widgets/WelcomeScreen.vala
+data/tech.skarva.lockbox.appdata.xml.in
+data/tech.skarva.lockbox.desktop.in
