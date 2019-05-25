@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2019 skarva llc <contact@skarva.tech> -->
+<component type="desktop">
+    <id>tech.skarva.lockbox.desktop</id>
+    <metadata_license>CC0</metadata_license>
+    <project_license>GPL-3.0+</project_license>
+    <name>Lock Box</name>
+    <summary>Lock your secrets up tight</summary>
+
+    <description>
+        <p>Keep your notes and website logins secure in an easy to manage collection. It is ready to go when you're logged in, and securely encrypted when you're not.</p>
+        <p>Features</p>
+        <ul>
+          <li>Fast search</li>
+          <li>Sort by name or date added</li>
+          <li>Access to logins saved in Epihpany</li>
+        </ul>
+    </description>
+    <translation type="gettext">tech.skarva.lockbox</translation>
+    <launchable type="desktop-id">tech.skarva.lockbox.desktop</launchable>
+    <provides>
+      <binary>tech.skarva.lockbox</binary>
+    </provides>
+
+    <developer_name>skarva llc</developer_name>
+
+    <custom>
+        <value key="x-appcenter-color-primary">#603461</value>
+        <value key="x-appcenter-color-primary-text">rgb(255, 255, 255)</value>
+        <value key="x-appcenter-suggested-price">5</value>
+    </custom>
+</component>

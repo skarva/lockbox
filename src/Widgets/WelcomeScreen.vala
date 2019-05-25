@@ -31,9 +31,9 @@ namespace Lockbox.Widgets {
         }
 
         construct {
-            append ("preferences-desktop", "Configure", "Customize your lock box");
-            append ("contact-new", "Store Login", "Add website login details to your lock box");
-            append ("document-new", "Store Note", "Add a new note to yourself to your lock box");
+            append ("preferences-desktop", _("Configure"), _("Customize your lock box"));
+            append ("contact-new", _("Store Login"), _("Add website login details to your lock box"));
+            append ("document-new", _("Store Note"), _("Add a new note to yourself to your lock box"));
 
             valign = Gtk.Align.FILL;
             halign = Gtk.Align.FILL;
