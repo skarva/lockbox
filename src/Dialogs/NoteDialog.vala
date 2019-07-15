@@ -35,7 +35,8 @@ namespace Lockbox.Dialogs {
                 deletable: false,
                 resizable: false,
                 title: _("Add Note"),
-                transient_for: parent
+                transient_for: parent,
+                modal: true
             );
 
             is_edit = false;

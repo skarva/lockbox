@@ -215,6 +215,11 @@ namespace Lockbox {
             collection_manager.remove_items (removal_list);
             collection_manager.close ();
             update_saved_state ();
+            if (clipboard_timer_id > 0) {
+                GLib.Source.remove (clipboard_timer_id);
+                clipboard_timer_id = 0;
+                clipboard.clear ();
+            }
             destroy ();
         }
 

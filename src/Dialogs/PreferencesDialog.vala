@@ -29,7 +29,8 @@ namespace Lockbox.Dialogs {
                 deletable: false,
                 resizable: false,
                 title: _("Preferences"),
-                transient_for: parent
+                transient_for: parent,
+                modal: false
             );
 
             set_default_response (Gtk.ResponseType.CLOSE);
