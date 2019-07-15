@@ -12,7 +12,7 @@ foreach i : icon_sizes
 endforeach
 
 install_data(
-    'icons/logo.svg',
+    'icons/icon.svg',
     install_dir: join_paths(get_option('datadir'), meson.project_name())
 )
 

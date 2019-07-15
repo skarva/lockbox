@@ -8,12 +8,12 @@
     <summary>Lock your secrets up tight</summary>
 
     <description>
-        <p>Keep your notes and website logins secure in an easy to manage collection. It is ready to go when you're logged in, and securely encrypted when you're not.</p>
+        <p>Keep your notes and website logins secure in an easy-to-manage collection. It is ready to go when you're logged in, and securely encrypted when you're not.</p>
         <p>Features</p>
         <ul>
           <li>Fast search</li>
           <li>Sort by name or date added</li>
-          <li>Access to logins saved in Epihpany</li>
+          <li>Access to passwords saved in Epihpany</li>
         </ul>
     </description>
     <translation type="gettext">tech.skarva.lockbox</translation>

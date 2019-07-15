@@ -37,7 +37,8 @@ namespace Lockbox.Dialogs {
                 deletable: false,
                 resizable: false,
                 title: _("Add Login"),
-                transient_for: parent
+                transient_for: parent,
+                modal: true
             );
 
             is_edit = false;
