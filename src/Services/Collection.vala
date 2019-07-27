@@ -37,6 +37,7 @@ namespace Lockbox.Services {
                     service = Secret.Service.get.end (res);
                     var collections = service.get_collections ();
                     var found_collection = false;
+
                     foreach (var collection in collections) {
                         if (collection.label == "Login") {
                             default_collection = collection;
@@ -46,6 +47,9 @@ namespace Lockbox.Services {
 
                     if (found_collection) {
                         loaded ();
+                    } else {
+                        // No collections present so create one
+                        create_collection ();
                     }
                 } catch (Error e) {
                     critical (e.message);
@@ -57,6 +61,19 @@ namespace Lockbox.Services {
             Secret.Service.disconnect ();
         }
 
+        public void create_collection () {
+            Secret.Collection.create.begin (service, "Login", "default", 0,
+                new Cancellable (), (obj, res) => {
+                    try {
+                        var collection = Secret.Collection.create.end (res);
+                        default_collection = collection;
+                        loaded ();
+                    } catch (Error e) {
+                        critical (e.message);
+                    }
+            });
+        }
+
         public void add_item (string name, HashTable<string, string> attributes,
                               string secret, CollectionType type) {
             if (type == LOGIN) {
@@ -65,7 +82,7 @@ namespace Lockbox.Services {
                                                      "text/plain");
 
                 Secret.Item.create.begin (default_collection,
-                                Schemas.epiphany (), attributes, name, 
+                                Schemas.epiphany (), attributes, name,
                                 secret_value, Secret.ItemCreateFlags.NONE,
                                 new Cancellable (), (obj, res) => {
                                     try {
