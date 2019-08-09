@@ -33,7 +33,7 @@ namespace Lockbox.Dialogs {
             Object (
                 border_width: 12,
                 deletable: false,
-                resizable: false,
+                resizable: true,
                 title: _("Add Note"),
                 transient_for: parent,
                 modal: true
@@ -58,6 +58,7 @@ namespace Lockbox.Dialogs {
             name_label.halign = Gtk.Align.END;
             name_label.margin_start = 12;
             name_entry = new Gtk.Entry ();
+            name_entry.hexpand = true;
             name_entry.activates_default = true;
             grid.attach (name_label, 0, 1, 1, 1);
             grid.attach (name_entry, 1, 1, 1, 1);
@@ -65,11 +66,17 @@ namespace Lockbox.Dialogs {
             var content_label = new Gtk.Label (_("Note:"));
             content_label.halign = Gtk.Align.END;
             content_label.margin_start = 12;
+            var content_window = new Gtk.ScrolledWindow (null, null);
+            content_window.height_request = 300;
+            content_window.width_request = 500;
             content_entry = new Gtk.TextView ();
+            content_entry.expand = true;
+            content_entry.wrap_mode = Gtk.WrapMode.WORD;
             content_entry.input_purpose = Gtk.InputPurpose.FREE_FORM;
             content_entry.accepts_tab = true;
+            content_window.add (content_entry);
             grid.attach (content_label, 0, 2, 1, 1);
-            grid.attach (content_entry, 1, 2, 1, 1);
+            grid.attach (content_window, 1, 2, 1, 1);
 
             var close = add_button (_("Cancel"), Gtk.ResponseType.CLOSE);
             var save = add_button (_("Save note"), Gtk.ResponseType.OK);
