@@ -21,6 +21,13 @@ install_data(
     install_dir: join_paths(get_option('datadir'), 'glib-2.0', 'schemas')
 )
 
+gnome = import('gnome')
+resources = gnome.compile_resources(
+    'lockbox-resources',
+    files('lockbox.gresource.xml'),
+    source_dir: [ join_paths(meson.source_root(), 'data') ]
+)
+
 #Translate and install our .desktop file
 i18n.merge_file(
     input: meson.project_name() + '.desktop.in',

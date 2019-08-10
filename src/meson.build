@@ -25,6 +25,7 @@ executable(meson.project_name(),
     'Widgets/LaunchScreen.vala',
     'Widgets/WelcomeScreen.vala',
     config_header,
+    resources,
     dependencies: dependencies,
     install: true
 )

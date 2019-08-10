@@ -69,11 +69,13 @@ namespace Lockbox.Dialogs {
             var content_window = new Gtk.ScrolledWindow (null, null);
             content_window.height_request = 300;
             content_window.width_request = 500;
+            content_window.get_style_context ().add_class ("note-content");
             content_entry = new Gtk.TextView ();
             content_entry.expand = true;
             content_entry.wrap_mode = Gtk.WrapMode.WORD;
             content_entry.input_purpose = Gtk.InputPurpose.FREE_FORM;
             content_entry.accepts_tab = true;
+            content_entry.get_style_context ().add_class ("note-text");
             content_window.add (content_entry);
             grid.attach (content_label, 0, 2, 1, 1);
             grid.attach (content_window, 1, 2, 1, 1);
@@ -83,6 +85,16 @@ namespace Lockbox.Dialogs {
             save.get_style_context ().add_class (Gtk.STYLE_CLASS_SUGGESTED_ACTION);
 
             response.connect (on_response);
+
+            content_entry.focus_in_event.connect ((event) => {
+                content_window.get_style_context ().add_class ("note-content-focus");
+                return false;
+            });
+
+            content_entry.focus_out_event.connect ((event) => {
+                content_window.get_style_context ().remove_class ("note-content-focus");
+                return false;
+            });
         }
 
         public void set_entries (Widgets.CollectionListRow row) {

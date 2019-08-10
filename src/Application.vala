@@ -59,6 +59,14 @@ namespace Lockbox {
         public static int main (string[] args) {
             Gtk.init (ref args);
 
+            var css_provider = new Gtk.CssProvider ();
+            css_provider.load_from_resource ("tech/skarva/lockbox/Note.css");
+
+            Gtk.StyleContext.add_provider_for_screen (
+                Gdk.Screen.get_default (),
+                css_provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
             app_cmd_name = "Lockbox";
             Application app = Application.instance;
             return app.run (args);
