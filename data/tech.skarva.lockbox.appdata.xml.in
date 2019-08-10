@@ -8,7 +8,7 @@
     <summary>Lock your secrets up tight</summary>
 
     <description>
-        <p>Keep your notes and website logins secure in an easy-to-manage collection. It is ready to go when you're logged in, and securely encrypted when you're not.</p>
+        <p>Keep your notes and website credentials secure in an easy-to-manage collection. It is ready to go when you're logged in, and securely encrypted when you're not.</p>
         <p>Features</p>
         <ul>
           <li>Fast search</li>
@@ -16,16 +16,47 @@
           <li>Access to passwords saved in Epihpany</li>
         </ul>
     </description>
-    <translation type="gettext">tech.skarva.lockbox</translation>
+
     <launchable type="desktop-id">tech.skarva.lockbox.desktop</launchable>
     <provides>
       <binary>tech.skarva.lockbox</binary>
     </provides>
 
+    <screenshots>
+        <screenshot type="default">
+            <caption>Dark Theme</caption>
+            <image>screenshot1.png</image>
+        </screenshot>
+        <screenshot>
+            <caption>Light Theme</caption>
+            <image>screenshot2.png</image>
+        </screenshot>
+        <screenshot>
+            <caption>Creating a new secret item</caption>
+            <image>screenshot3.png</image>
+        </screenshot>
+        <screenshot>
+            <caption>Quick searching</caption>
+            <image>screenshot4.png</image>
+        </screenshot>
+    </screenshots>
+
     <developer_name>skarva llc</developer_name>
+    <url type="homepage">https://skarva.tech</url>
+    <url type="bugtracker">https://github.com/skarva/lockbox/issues</url>
+
+    <content_rating type="oars-1.1" />
+
+    <releases>
+        <release version="1.0" date="2019-8-10">
+            <description>
+                <p>Initial release</p>
+            </description>
+        </release>
+    </releases>
 
     <custom>
-        <value key="x-appcenter-color-primary">#603461</value>
+        <value key="x-appcenter-color-primary">#667885</value>
         <value key="x-appcenter-color-primary-text">rgb(255, 255, 255)</value>
         <value key="x-appcenter-suggested-price">5</value>
     </custom>

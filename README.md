@@ -1,6 +1,6 @@
 # Lock Box
 
-![Screenshot](data/screenshot.png?raw=true)
+![Lock Box Screenshot](data/screenshot1.png?raw=true)
 
 ## Lock your secrets up tight
 
