@@ -72,7 +72,6 @@ namespace Lockbox.Dialogs {
             content_window.get_style_context ().add_class ("note-content");
             content_entry = new Gtk.TextView ();
             content_entry.expand = true;
-            content_entry.wrap_mode = Gtk.WrapMode.WORD;
             content_entry.input_purpose = Gtk.InputPurpose.FREE_FORM;
             content_entry.accepts_tab = true;
             content_entry.get_style_context ().add_class ("note-text");
