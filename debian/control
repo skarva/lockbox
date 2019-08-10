@@ -1,0 +1,18 @@
+Source: tech.skarva.lockbox
+Section: x11
+Priority: optional
+Maintainer: Ryan Kornheisl <ryan@skarva.tech>
+Depends: libsecret-1-0, libgranite5
+Build-Depends: debhelper (>= 10.5.1),
+               gettext,
+               libgtk-3-dev (>= 3.10),
+               libsecret-1-dev,
+               libgranite-dev,
+               meson,
+               valac (>= 0.28.0)
+Standards-Version: 4.1.1
+
+Package: tech.skarva.lockbox
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Secret login and note manager
