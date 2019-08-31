@@ -6,5 +6,5 @@ src/Dialogs/PreferencesDialog.vala
 src/Widgets/HeaderBar.vala
 src/Widgets/LaunchScreen.vala
 src/Widgets/WelcomeScreen.vala
-data/tech.skarva.lockbox.appdata.xml.in
-data/tech.skarva.lockbox.desktop.in
+data/com.github.skarva.lockbox.appdata.xml.in
+data/com.github.skarva.lockbox.desktop.in

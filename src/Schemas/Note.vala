@@ -30,7 +30,7 @@ namespace Lockbox.Schemas {
     }
 
     public static Secret.Schema note () {
-        var schema = new Secret.Schema ("tech.skarva.lockbox.notes", Secret.SchemaFlags.NONE,
+        var schema = new Secret.Schema ("com.github.skarva.lockbox.notes", Secret.SchemaFlags.NONE,
                 "id", Secret.SchemaAttributeType.STRING,
                 "name", Secret.SchemaAttributeType.STRING);
         return schema;
