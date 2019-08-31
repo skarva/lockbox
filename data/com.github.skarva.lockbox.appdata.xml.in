@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2019 skarva llc <contact@skarva.tech> -->
 <component type="desktop">
-    <id>com.github.skarva.lockbox.desktop</id>
+    <id>com.github.skarva.lockbox</id>
     <metadata_license>CC0</metadata_license>
     <project_license>GPL-3.0+</project_license>
     <name>Lock Box</name>
@@ -44,8 +44,6 @@
     <developer_name>skarva llc</developer_name>
     <url type="homepage">https://skarva.tech</url>
     <url type="bugtracker">https://github.com/skarva/lockbox/issues</url>
-
-    <content_rating type="oars-1.1" />
 
     <releases>
         <release version="1.0" date="2019-8-10">
