@@ -1,14 +1,14 @@
-# Northern Sami translations for tech.skarva.lockbox package.
-# Copyright (C) 2019 THE tech.skarva.lockbox'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the tech.skarva.lockbox package.
+# Northern Sami translations for com.github.skarva.lockbox package.
+# Copyright (C) 2019 THE com.github.skarva.lockbox'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the com.github.skarva.lockbox package.
 # Automatically generated, 2019.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: tech.skarva.lockbox\n"
+"Project-Id-Version: com.github.skarva.lockbox\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-24 23:49-0400\n"
-"PO-Revision-Date: 2019-05-24 23:06-0400\n"
+"POT-Creation-Date: 2019-08-30 21:31-0400\n"
+"PO-Revision-Date: 2019-08-30 21:31-0400\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: se\n"
@@ -16,55 +16,55 @@ msgstr ""
 "Content-Type: text/plain; charset=ASCII\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/Dialogs/LoginDialog.vala:39 src/Dialogs/LoginDialog.vala:55
+#: src/Dialogs/LoginDialog.vala:39 src/Dialogs/LoginDialog.vala:56
 msgid "Add Login"
 msgstr ""
 
-#: src/Dialogs/LoginDialog.vala:58 src/Dialogs/NoteDialog.vala:56
+#: src/Dialogs/LoginDialog.vala:59 src/Dialogs/NoteDialog.vala:57
 msgid "Name:"
 msgstr ""
 
-#: src/Dialogs/LoginDialog.vala:66
+#: src/Dialogs/LoginDialog.vala:67
 msgid "URI:"
 msgstr ""
 
-#: src/Dialogs/LoginDialog.vala:74
+#: src/Dialogs/LoginDialog.vala:75
 msgid "Username:"
 msgstr ""
 
-#: src/Dialogs/LoginDialog.vala:82
+#: src/Dialogs/LoginDialog.vala:83
 msgid "Password:"
 msgstr ""
 
-#: src/Dialogs/LoginDialog.vala:93 src/Dialogs/NoteDialog.vala:73
+#: src/Dialogs/LoginDialog.vala:94 src/Dialogs/NoteDialog.vala:82
 msgid "Cancel"
 msgstr ""
 
-#: src/Dialogs/LoginDialog.vala:94
+#: src/Dialogs/LoginDialog.vala:95
 msgid "Save Login"
 msgstr ""
 
-#: src/Dialogs/LoginDialog.vala:120 src/Dialogs/NoteDialog.vala:97
+#: src/Dialogs/LoginDialog.vala:121 src/Dialogs/NoteDialog.vala:116
 msgid "Some fields are still empty!"
 msgstr ""
 
-#: src/Dialogs/LoginDialog.vala:121
+#: src/Dialogs/LoginDialog.vala:122
 msgid "You must fill in all the fields in order to save your login info."
 msgstr ""
 
-#: src/Dialogs/NoteDialog.vala:37 src/Dialogs/NoteDialog.vala:53
+#: src/Dialogs/NoteDialog.vala:37 src/Dialogs/NoteDialog.vala:54
 msgid "Add Note"
 msgstr ""
 
-#: src/Dialogs/NoteDialog.vala:64
+#: src/Dialogs/NoteDialog.vala:66
 msgid "Note:"
 msgstr ""
 
-#: src/Dialogs/NoteDialog.vala:74
+#: src/Dialogs/NoteDialog.vala:83
 msgid "Save note"
 msgstr ""
 
-#: src/Dialogs/NoteDialog.vala:98
+#: src/Dialogs/NoteDialog.vala:117
 msgid "You must fill in all the fields in order to save your note."
 msgstr ""
 
@@ -72,27 +72,27 @@ msgstr ""
 msgid "Preferences"
 msgstr ""
 
-#: src/Dialogs/PreferencesDialog.vala:47
+#: src/Dialogs/PreferencesDialog.vala:48
 msgid "Security"
 msgstr ""
 
-#: src/Dialogs/PreferencesDialog.vala:51
+#: src/Dialogs/PreferencesDialog.vala:52
 msgid "Clear clipboard after timeout:"
 msgstr ""
 
-#: src/Dialogs/PreferencesDialog.vala:56
+#: src/Dialogs/PreferencesDialog.vala:57
 msgid "Timeout (secs):"
 msgstr ""
 
-#: src/Dialogs/PreferencesDialog.vala:64
+#: src/Dialogs/PreferencesDialog.vala:65
 msgid "Interface"
 msgstr ""
 
-#: src/Dialogs/PreferencesDialog.vala:68
+#: src/Dialogs/PreferencesDialog.vala:69
 msgid "Dark Mode:"
 msgstr ""
 
-#: src/Dialogs/PreferencesDialog.vala:73
+#: src/Dialogs/PreferencesDialog.vala:74
 msgid "Close"
 msgstr ""
 
@@ -124,8 +124,9 @@ msgstr ""
 msgid "Menu"
 msgstr ""
 
-#: src/Widgets/LaunchScreen.vala:24 data/tech.skarva.lockbox.appdata.xml.in:7
-#: data/tech.skarva.lockbox.desktop.in:3
+#: src/Widgets/LaunchScreen.vala:24
+#: data/com.github.skarva.lockbox.appdata.xml.in:7
+#: data/com.github.skarva.lockbox.desktop.in:3
 msgid "Lock Box"
 msgstr ""
 
@@ -165,49 +166,69 @@ msgstr ""
 msgid "Add a new note to yourself to your lock box"
 msgstr ""
 
-#: data/tech.skarva.lockbox.appdata.xml.in:8
+#: data/com.github.skarva.lockbox.appdata.xml.in:8
 msgid "Lock your secrets up tight"
 msgstr ""
 
-#: data/tech.skarva.lockbox.appdata.xml.in:11
+#: data/com.github.skarva.lockbox.appdata.xml.in:11
 msgid ""
-"Keep your notes and website logins secure in an easy to manage collection. "
-"It is ready to go when you're logged in, and securely encrypted when you're "
-"not."
+"Keep your notes and website credentials secure in an easy-to-manage "
+"collection. It is ready to go when you're logged in, and securely encrypted "
+"when you're not."
 msgstr ""
 
-#: data/tech.skarva.lockbox.appdata.xml.in:12
+#: data/com.github.skarva.lockbox.appdata.xml.in:12
 msgid "Features"
 msgstr ""
 
-#: data/tech.skarva.lockbox.appdata.xml.in:14
+#: data/com.github.skarva.lockbox.appdata.xml.in:14
 msgid "Fast search"
 msgstr ""
 
-#: data/tech.skarva.lockbox.appdata.xml.in:15
+#: data/com.github.skarva.lockbox.appdata.xml.in:15
 msgid "Sort by name or date added"
 msgstr ""
 
-#: data/tech.skarva.lockbox.appdata.xml.in:16
-msgid "Access to logins saved in Epihpany"
+#: data/com.github.skarva.lockbox.appdata.xml.in:16
+msgid "Access to passwords saved in Epihpany"
 msgstr ""
 
-#: data/tech.skarva.lockbox.appdata.xml.in:25
+#: data/com.github.skarva.lockbox.appdata.xml.in:27
+msgid "Dark Theme"
+msgstr ""
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:31
+msgid "Light Theme"
+msgstr ""
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:35
+msgid "Creating a new secret item"
+msgstr ""
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:39
+msgid "Quick searching"
+msgstr ""
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:44
 msgid "skarva llc"
 msgstr ""
 
-#: data/tech.skarva.lockbox.desktop.in:4
+#: data/com.github.skarva.lockbox.appdata.xml.in:53
+msgid "Initial release"
+msgstr ""
+
+#: data/com.github.skarva.lockbox.desktop.in:4
 msgid "Password Manager"
 msgstr ""
 
-#: data/tech.skarva.lockbox.desktop.in:5
+#: data/com.github.skarva.lockbox.desktop.in:5
 msgid "Secure and manage your secure information"
 msgstr ""
 
-#: data/tech.skarva.lockbox.desktop.in:8
-msgid "tech.skarva.lockbox"
+#: data/com.github.skarva.lockbox.desktop.in:8
+msgid "com.github.skarva.lockbox"
 msgstr ""
 
-#: data/tech.skarva.lockbox.desktop.in:12
+#: data/com.github.skarva.lockbox.desktop.in:12
 msgid "Password;Login;Notes;"
 msgstr ""

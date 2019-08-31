@@ -26,7 +26,7 @@ Run `meson build` to configure the build environment. Change to the build direct
     cd build
     ninja
 
-To install, use `ninja install`, then execute with `tech.skarva.lockbox`
+To install, use `ninja install`, then execute with `com.github.skarva.lockbox`
 
     sudo ninja install
-    tech.skarva.lockbox
+    com.github.skarva.lockbox
