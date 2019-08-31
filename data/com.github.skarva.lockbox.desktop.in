@@ -2,7 +2,7 @@
 Name=Lock Box
 GenericName=Password Manager
 Comment=Secure and manage your secure information
-Categories=System;Utility;Internet;
+Categories=Utility;
 Exec=com.github.skarva.lockbox
 Icon=com.github.skarva.lockbox
 Terminal=false

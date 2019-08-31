@@ -1,4 +1,4 @@
-icon_sizes = ['32', '48', '64', '128']
+icon_sizes = ['16', '24', '32', '48', '64', '128']
 
 foreach i : icon_sizes
     install_data(
@@ -10,11 +10,6 @@ foreach i : icon_sizes
         install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', i + 'x' + i + '@2', 'apps')
     )
 endforeach
-
-install_data(
-    'icons/icon.svg',
-    install_dir: join_paths(get_option('datadir'), meson.project_name())
-)
 
 install_data(
     meson.project_name() + '.gschema.xml',
@@ -46,3 +41,23 @@ i18n.merge_file(
     install: true,
     install_dir: join_paths(get_option('datadir'), 'metainfo')
 )
+
+desktop_file_validate = find_program('desktop-file-validate', required:false)
+
+if desktop_file_validate.found()
+  test (
+    'Validate desktop file',
+    desktop_file_validate,
+    args: join_paths(meson.current_build_dir (), meson.project_name() + '.desktop')
+  )
+endif
+
+appstreamcli = find_program(['appstreamcli', 'appstream-util'], required:false)
+
+if appstreamcli.found()
+  test (
+    'Validate appdata file',
+    appstreamcli,
+    args: ['validate', join_paths(meson.current_build_dir (), meson.project_name() + '.appdata.xml')]
+  )
+endif
