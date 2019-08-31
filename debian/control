@@ -1,4 +1,4 @@
-Source: tech.skarva.lockbox
+Source: com.github.skarva.lockbox
 Section: x11
 Priority: optional
 Maintainer: Ryan Kornheisl <ryan@skarva.tech>
@@ -12,7 +12,7 @@ Build-Depends: debhelper (>= 10.5.1),
                valac (>= 0.28.0)
 Standards-Version: 4.1.1
 
-Package: tech.skarva.lockbox
+Package: com.github.skarva.lockbox
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: Secret login and note manager
