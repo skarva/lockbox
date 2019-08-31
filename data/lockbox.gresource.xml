@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2019 skarva llc <contact@skarva.tech> -->
-<gresources>
-    <gresource prefix="/com/github/skarva/lockbox">
-        <file alias="Note.css" compressed="true">styles/Note.css</file>
-    </gresource>
-</gresources>
