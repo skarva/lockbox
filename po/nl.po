@@ -1,0 +1,145 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the extra package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: extra\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-11 19:55+0200\n"
+"PO-Revision-Date: 2019-11-04 14:21+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.4\n"
+"Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nl\n"
+
+#: data/com.github.manexim.home.appdata.xml.in:7
+#: data/com.github.manexim.home.desktop.in:4
+#: data/com.github.manexim.home.desktop.in:5
+msgid "Home"
+msgstr "Home"
+
+#: data/com.github.manexim.home.appdata.xml.in:8
+#: data/com.github.manexim.home.desktop.in:6
+msgid "Control your smart home gadgets"
+msgstr "Stuur je slimme gadgets aan"
+
+#: data/com.github.manexim.home.appdata.xml.in:10
+msgid "A smart home application to control your gadgets."
+msgstr "Een slimme toepassing om je slimme gadgets aan te sturen."
+
+#: data/com.github.manexim.home.appdata.xml.in:11
+msgid "Supported devices:"
+msgstr "Ondersteunde apparaten:"
+
+#: data/com.github.manexim.home.appdata.xml.in:13
+msgid "LIFX"
+msgstr "LIFX"
+
+#: data/com.github.manexim.home.appdata.xml.in:14
+msgid "Philips Hue"
+msgstr "Philips Hue"
+
+#: data/com.github.manexim.home.appdata.xml.in:26
+#: data/com.github.manexim.home.appdata.xml.in:52
+msgid "New:"
+msgstr "Nieuw:"
+
+#: data/com.github.manexim.home.appdata.xml.in:28
+msgid "Add new UI"
+msgstr "Nieuw uiterlijk"
+
+#: data/com.github.manexim.home.appdata.xml.in:29
+msgid "Add initial support for Philips Hue devices"
+msgstr "Initiële ondersteuning voor Philips Hue-apparaten"
+
+#: data/com.github.manexim.home.appdata.xml.in:30
+msgid "Add discovery for Philips Hue bridges"
+msgstr "Philips Hue Bridges kunnen nu worden gevonden"
+
+#: data/com.github.manexim.home.appdata.xml.in:31
+msgid "Add page to configure Philips Hue bridges"
+msgstr "Pagina toegevoegd om Philips Hue Bridges in te stellen"
+
+#: data/com.github.manexim.home.appdata.xml.in:32
+msgid "Add service to save configurations"
+msgstr "Dienst toegevoegd om instellingen op te slaan"
+
+#: data/com.github.manexim.home.appdata.xml.in:34
+#: data/com.github.manexim.home.appdata.xml.in:58
+msgid "Improved:"
+msgstr "Verbeterd:"
+
+#: data/com.github.manexim.home.appdata.xml.in:36
+msgid "Update welcome view"
+msgstr "Welkomstpagina bijgewerkt"
+
+#: data/com.github.manexim.home.appdata.xml.in:37
+msgid "Add mode switch for dark theme if freedesktop schema is not available"
+msgstr "Donkerethemamodus toegevoegd voor als het freedesktop-schema niet beschikbaar is"
+
+#: data/com.github.manexim.home.appdata.xml.in:39
+#: data/com.github.manexim.home.appdata.xml.in:62
+msgid "Fixed:"
+msgstr "Opgelost:"
+
+#: data/com.github.manexim.home.appdata.xml.in:42
+msgid "Translations:"
+msgstr "Vertalingen:"
+
+#: data/com.github.manexim.home.appdata.xml.in:44
+msgid "French (by NathanBnm)"
+msgstr "Franse vertaling, met dank aan @NathanBnm"
+
+#: data/com.github.manexim.home.appdata.xml.in:45
+msgid "German"
+msgstr "Duits"
+
+#: data/com.github.manexim.home.appdata.xml.in:46
+msgid "Russian (by camellan)"
+msgstr "Russische vertaling, met dank aan @camellan"
+
+#: data/com.github.manexim.home.appdata.xml.in:54
+msgid "Add welcome view for onboarding"
+msgstr "Welkomstpagina toegevoegd voor onboarding"
+
+#: data/com.github.manexim.home.appdata.xml.in:55
+msgid "Show loading page if no smart home gadget is found"
+msgstr "'Bezig met laden'-pagina toegevoegd voor als er geen slimme gadget is aangetroffen"
+
+#: data/com.github.manexim.home.appdata.xml.in:56
+msgid "Show manufacturer and model of device"
+msgstr "De maker van en het type apparaat worden nu getoond"
+
+#: data/com.github.manexim.home.appdata.xml.in:60
+msgid "Save and load window settings"
+msgstr "Vensterinstellingen opslaan en laden"
+
+#: data/com.github.manexim.home.appdata.xml.in:64
+msgid "Remove mention of elementary OS in app description"
+msgstr "Vermelding van elementary OS verwijdert uit omschrijving"
+
+#: data/com.github.manexim.home.appdata.xml.in:65
+msgid "Suffix symbolic icon names with -symbolic"
+msgstr "Symbolische pictogramnamen eindigen nu op -symbolic"
+
+#: data/com.github.manexim.home.appdata.xml.in:66
+msgid "Install all available icon sizes"
+msgstr "Alle beschikbare pictogramgroottes worden nu geïnstalleerd"
+
+#: data/com.github.manexim.home.appdata.xml.in:72
+msgid "Initial release"
+msgstr "Initiële uitgave"
+
+#: data/com.github.manexim.home.appdata.xml.in:102
+msgid "Manexim"
+msgstr "Manexim"
+
+#: data/com.github.manexim.home.desktop.in:8
+msgid "com.github.manexim.home"
+msgstr "com.github.manexim.home"
