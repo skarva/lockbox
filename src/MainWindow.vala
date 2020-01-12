@@ -122,6 +122,7 @@ namespace Lockbox {
             collection_list = new Gtk.ListBox ();
             collection_list.selection_mode = Gtk.SelectionMode.NONE;
             collection_list.set_filter_func (CollectionFilterFunc);
+            collection_list.activate_on_single_click = false;
             set_sort_func (Services.Settings.get_default ().sort_by);
             scroll_window.add (collection_list);
             layout_stack.add_named (scroll_window, "collection");
@@ -156,6 +157,8 @@ namespace Lockbox {
                 }
                 set_sort_func (sort_by);
             });
+
+            collection_list.row_activated.connect (open_url);
 
             action_search ();
 
@@ -297,6 +300,22 @@ namespace Lockbox {
                     reset_clipboard_timer ();
                 }
             });
+        }
+
+        private void open_url (Gtk.ListBoxRow row) {
+            var crow = row as Widgets.CollectionListRow;
+
+            if (Schemas.is_login (crow.item)) {
+                var item = crow.item;
+                var uri = item.attributes.get ("uri");
+                if (uri != null && uri.length > 0) {
+                    try {
+                        AppInfo.launch_default_for_uri (uri, null);
+                    } catch (Error e) {
+                        warning (e.message);
+                    }
+                }
+            }
         }
 
         private bool clear_clipboard_timed_out () {
