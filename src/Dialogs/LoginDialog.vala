@@ -23,6 +23,7 @@ namespace Lockbox.Dialogs {
         private Gtk.Entry uri_entry;
         private Gtk.Entry username_entry;
         private Gtk.Entry password_entry;
+        private Gtk.CheckButton show_password_button;
 
         private bool is_edit;
         private Widgets.CollectionListRow row;
@@ -90,6 +91,10 @@ namespace Lockbox.Dialogs {
             password_entry.activates_default = true;
             grid.attach (password_label, 0, 4, 1, 1);
             grid.attach (password_entry, 1, 4, 1, 1);
+
+            show_password_button = new Gtk.CheckButton.with_label (_("Show Password"));
+            show_password_button.bind_property("active", password_entry, "visibility", GLib.BindingFlags.DEFAULT);
+            grid.attach (show_password_button, 1    , 5, 1, 1);
 
             var close = add_button (_("Cancel"), Gtk.ResponseType.CLOSE);
             var save = add_button (_("Save Login"), Gtk.ResponseType.OK);
