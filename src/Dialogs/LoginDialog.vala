@@ -94,7 +94,7 @@ namespace Lockbox.Dialogs {
 
             show_password_button = new Gtk.CheckButton.with_label (_("Show Password"));
             show_password_button.bind_property("active", password_entry, "visibility", GLib.BindingFlags.DEFAULT);
-            grid.attach (show_password_button, 1    , 5, 1, 1);
+            grid.attach (show_password_button, 1, 5, 1, 1);
 
             var close = add_button (_("Cancel"), Gtk.ResponseType.CLOSE);
             var save = add_button (_("Save Login"), Gtk.ResponseType.OK);

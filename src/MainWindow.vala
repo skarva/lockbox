@@ -165,6 +165,26 @@ namespace Lockbox {
             show_all ();
         }
 
+        public override bool key_press_event (Gdk.EventKey event) {
+            var focus_widget = get_focus ();
+            if (focus_widget != null && focus_widget is Gtk.Editable) {
+                return base.key_press_event(event);
+            }
+
+            var modifiers = Gtk.accelerator_get_default_mod_mask ();
+            bool modifiers_active = (event.state & modifiers) != 0;
+
+            if (!modifiers_active) {
+                var typed_unichar = event.str.get_char ();
+
+                if (typed_unichar.isalnum ()) {
+                    action_search ();
+                }
+            }
+
+            return base.key_press_event (event);
+        }
+
         protected override bool delete_event (Gdk.EventAny event) {
             action_quit ();
 
