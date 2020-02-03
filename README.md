@@ -1,7 +1,7 @@
-![Build Status](https://travis-ci.com/skarva/lockbox.svg?branch=master)(https://travis-ci.com/skarva/lockbox)
+![Build Status](https://travis-ci.com/skarva/lockbox.svg?branch=master)
 
 <p align="center">
-    <img src="data/icons/Icon.svg" alt="Icon" />
+    <img src="data/icons/icon.svg" alt="Icon" />
 </p>
 <h1 align="center">Lock Box</h1>
 <p align="center">
