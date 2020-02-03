@@ -46,7 +46,18 @@
     <url type="bugtracker">https://github.com/skarva/lockbox/issues</url>
 
     <releases>
-        <release version="1.0" date="2019-8-10">
+        <release version="1.1" date="2020-02-02">
+            <description>
+                <p>Quality of life patches!</p>
+                <ul>
+                    <li>Show password when you edit login credentials</li>
+                    <li>Double-clicking a login opens the site in your default browser</li>
+                    <li>Search is focused the moment you start typing</li>
+                    <li>Dutch translation (Thanks to Vistaus!)</li>
+                </ul>
+            </description>
+        </release>
+        <release version="1.0" date="2019-08-10">
             <description>
                 <p>Initial release</p>
             </description>
@@ -82,7 +93,7 @@
         <content_attribute id="money-purchasing">none</content_attribute>
         <content_attribute id="money-gambling">none</content_attribute>
       </content_rating>
-    
+
 
     <custom>
         <value key="x-appcenter-color-primary">#667885</value>

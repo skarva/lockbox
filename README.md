@@ -1,4 +1,12 @@
-# Lock Box
+![Build Status](https://travis-ci.com/skarva/lockbox.svg?branch=master)(https://travis-ci.com/skarva/lockbox)
+
+<p align="center">
+    <img src="data/icons/Icon.svg" alt="Icon" />
+</p>
+<h1 align="center">Lock Box</h1>
+<p align="center">
+    <a href="https://appcenter.elementary.io/com.github.skarva.lockbox"><img src="https://appcenter.elementary.io/badge.svg" alt="Get it on AppCenter" /></a>
+</p>
 
 ![Lock Box Screenshot](data/screenshot1.png?raw=true)
 
@@ -9,7 +17,7 @@ Keep your notes and website logins secure in an easy to manage collection. It is
 ### Features
 - Fast search
 - Sort by name or date added
-- Access to logins saved in Epihpany
+- Access to logins saved in Epiphany
 
 ## Developing and Building
 
