@@ -1,3 +1,9 @@
+tech.skarva.lockbox (1.1) juno; urgency=medium
+
+  * Quality of life patches
+
+ -- Ryan Kornheisl <ryan@skarva.tech>  Sun, 02 Feb 2020 22:33:01 -0500
+
 tech.skarva.lockbox (0.1) juno; urgency=low
 
   * Initial Release.
