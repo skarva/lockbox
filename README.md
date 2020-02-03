@@ -1,4 +1,4 @@
-![Build Status](https://travis-ci.com/skarva/lockbox.svg?branch=master)
+[![Build Status](https://travis-ci.com/skarva/lockbox.svg?branch=master)](https://travis-ci.com/skarva/lockbox)
 
 <p align="center">
     <img src="data/icons/icon.svg" alt="Icon" />
