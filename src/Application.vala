@@ -20,11 +20,18 @@
 namespace Lockbox {
     public class Application : Gtk.Application {
         public static string app_cmd_name;
+        public static GLib.Settings saved_state;
+        public static GLib.Settings app_settings;
 
         construct {
             flags |= ApplicationFlags.HANDLES_OPEN;
 
             application_id = Constants.PROJECT_NAME;
+        }
+
+        static construct {
+            saved_state = new GLib.Settings (Constants.PROJECT_NAME + ".saved-state");
+            app_settings = new GLib.Settings (Constants.PROJECT_NAME + ".settings");
         }
 
         public Application () {
