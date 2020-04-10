@@ -37,8 +37,6 @@ namespace Lockbox.Dialogs {
         }
 
         construct {
-            var settings = Services.Settings.get_default ();
-
             var grid = new Gtk.Grid ();
             grid.column_spacing = 12;
             grid.row_spacing = 6;
@@ -57,7 +55,7 @@ namespace Lockbox.Dialogs {
             var clear_clipboard_timeout_label = new SettingsLabel (_("Timeout (secs):"));
             clear_clipboard_timeout = new Gtk.Entry ();
             clear_clipboard_timeout.input_purpose = Gtk.InputPurpose.DIGITS;
-            clear_clipboard_timeout.text = settings.clear_clipboard_timeout.to_string ();
+            clear_clipboard_timeout.text = Application.app_settings.get_int ("clear-clipboard-timeout").to_string ();
             clear_clipboard_timeout.activates_default = true;
             grid.attach (clear_clipboard_timeout_label, 0, 2, 1, 1);
             grid.attach (clear_clipboard_timeout, 1, 2, 1, 1);
@@ -94,7 +92,7 @@ namespace Lockbox.Dialogs {
             public SettingsSwitch (string setting) {
                 halign = Gtk.Align.START;
                 valign = Gtk.Align.CENTER;
-                Services.Settings.get_default ().schema.bind (setting, this, "active", SettingsBindFlags.DEFAULT);
+                Application.app_settings.bind (setting, this, "active", SettingsBindFlags.DEFAULT);
             }
         }
     }

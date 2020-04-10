@@ -83,20 +83,21 @@ namespace Lockbox {
                 app.set_accels_for_action (ACTION_PREFIX + action, action_accelerators[action].to_array ());
             }
 
-            /* Load State and Settings */
-            var saved_state = Services.SavedState.get_default ();
-            set_default_size (saved_state.window_width, saved_state.window_height);
-            if (saved_state.window_x == -1 || saved_state.window_y == -1) {
+            set_default_size (Application.saved_state.get_int ("window-width"), Application.saved_state.get_int ("window-height"));
+
+            var window_x = Application.saved_state.get_int ("window-x");
+            var window_y = Application.saved_state.get_int ("window-y");
+            if (window_x == -1 || window_y == -1) {
                 window_position = Gtk.WindowPosition.CENTER;
             } else {
-                move (saved_state.window_x, saved_state.window_y);
+                move (window_x, window_y);
             }
 
-            if (saved_state.maximized) {
+            if (Application.saved_state.get_boolean ("maximized")) {
                 this.maximize ();
             }
 
-            Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = Services.Settings.get_default ().dark_theme;
+            Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = Application.app_settings.get_boolean ("dark-theme");
 
             /* Init Clipboard */
             clipboard = Gtk.Clipboard.get_for_display (get_display (), Gdk.SELECTION_CLIPBOARD);
@@ -123,7 +124,7 @@ namespace Lockbox {
             collection_list.selection_mode = Gtk.SelectionMode.NONE;
             collection_list.set_filter_func (CollectionFilterFunc);
             collection_list.activate_on_single_click = false;
-            set_sort_func (Services.Settings.get_default ().sort_by);
+            set_sort_func ((Services.Sort) Application.app_settings.get_enum ("sort-by"));
             scroll_window.add (collection_list);
             layout_stack.add_named (scroll_window, "collection");
 
@@ -148,12 +149,11 @@ namespace Lockbox {
             });
 
             headerbar.sort.connect((sort_by) => {
-                var settings = Services.Settings.get_default ();
-                if (sort_by != settings.sort_by) {
-                    settings.sort_by = sort_by;
-                    settings.sort_desc = true;
+                if (sort_by != Application.app_settings.get_enum ("sort-by")) {
+                    Application.app_settings.set_enum ("sort-by", sort_by);
+                    Application.app_settings.set_boolean ("sort-desc", true);
                 } else {
-                    settings.sort_desc = !settings.sort_desc;
+                    Application.app_settings.set_boolean ("sort-desc", !Application.app_settings.get_boolean ("sort-desc"));
                 }
                 set_sort_func (sort_by);
             });
@@ -247,18 +247,17 @@ namespace Lockbox {
         }
 
         private void update_saved_state () {
-            var saved_state = Services.SavedState.get_default ();
             int window_width;
             int window_height;
             int window_x;
             int window_y;
             get_size (out window_width, out window_height);
             get_position (out window_x, out window_y);
-            saved_state.window_width = window_width;
-            saved_state.window_height = window_height;
-            saved_state.window_x = window_x;
-            saved_state.window_y = window_y;
-            saved_state.maximized = is_maximized;
+            Application.saved_state.set_int ("window-width", window_width);
+            Application.saved_state.set_int ("window-height", window_height);
+            Application.saved_state.set_int ("window-x", window_x);
+            Application.saved_state.set_int ("window-y", window_y);
+            Application.saved_state.set_boolean ("maximized", is_maximized);
         }
 
         private void populate_list (List<Secret.Item> items) {
@@ -307,7 +306,7 @@ namespace Lockbox {
         private void copy_username (Secret.Item item) {
             var username = item.attributes.get ("username");
             clipboard.set_text (username, -1);
-            if (Services.Settings.get_default ().clear_clipboard) {
+            if (Application.app_settings.get_boolean ("clear-clipboard")) {
                 reset_clipboard_timer ();
             }
         }
@@ -316,7 +315,7 @@ namespace Lockbox {
             item.load_secret.begin (new Cancellable (), (obj, res) => {
                 var password = item.get_secret ().get_text ();
                 clipboard.set_text (password, -1);
-                if (Services.Settings.get_default ().clear_clipboard) {
+                if (Application.app_settings.get_boolean ("clear-clipboard")) {
                     reset_clipboard_timer ();
                 }
             });
@@ -339,7 +338,7 @@ namespace Lockbox {
         }
 
         private bool clear_clipboard_timed_out () {
-            if (Services.Settings.get_default ().clear_clipboard) {
+            if (Application.app_settings.get_boolean ("clear-clipboard")) {
                 GLib.Source.remove (clipboard_timer_id);
                 clipboard_timer_id = 0;
                 clipboard.clear ();
@@ -352,7 +351,7 @@ namespace Lockbox {
                 GLib.Source.remove (clipboard_timer_id);
                 clipboard_timer_id = 0;
             }
-            clipboard_timer_id = GLib.Timeout.add_seconds (Services.Settings.get_default ().clear_clipboard_timeout,
+            clipboard_timer_id = GLib.Timeout.add_seconds (Application.app_settings.get_int ("clear-clipboard-timeout"),
                                                              clear_clipboard_timed_out);
         }
 
@@ -390,7 +389,7 @@ namespace Lockbox {
         private int CollectionSortNameFunc (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
             var collection_row1 = row1 as Widgets.CollectionListRow;
             var collection_row2 = row2 as Widgets.CollectionListRow;
-            var desc = Services.Settings.get_default ().sort_desc ? 1 : -1;
+            var desc = Application.app_settings.get_boolean ("sort-desc") ? 1 : -1;
 
             return collection_row1.item.label.ascii_casecmp (collection_row2.item.label) * desc;
         }
@@ -398,7 +397,7 @@ namespace Lockbox {
         private int CollectionSortDateFunc (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
             var collection_row1 = row1 as Widgets.CollectionListRow;
             var collection_row2 = row2 as Widgets.CollectionListRow;
-            var desc = Services.Settings.get_default ().sort_desc ? 1 : -1;
+            var desc = Application.app_settings.get_boolean ("sort-desc") ? 1 : -1;
 
             if (collection_row1.item.created < collection_row2.item.created) {
                 return -1 * desc;
