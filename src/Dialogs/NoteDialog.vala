@@ -48,7 +48,7 @@ namespace Lockbox.Dialogs {
             var grid = new Gtk.Grid ();
             grid.column_spacing = 12;
             grid.row_spacing = 6;
-            grid.margin_bottom = 12;
+            grid.margin_bottom = 24;
             get_content_area ().add (grid);
 
             var header = new Granite.HeaderLabel (_("Add Note"));
@@ -56,7 +56,6 @@ namespace Lockbox.Dialogs {
 
             var name_label = new Gtk.Label (_("Name:"));
             name_label.halign = Gtk.Align.END;
-            name_label.margin_start = 12;
             name_entry = new Gtk.Entry ();
             name_entry.hexpand = true;
             name_entry.activates_default = true;
@@ -65,7 +64,6 @@ namespace Lockbox.Dialogs {
 
             var content_label = new Gtk.Label (_("Note:"));
             content_label.halign = Gtk.Align.END;
-            content_label.margin_start = 12;
             var content_window = new Gtk.ScrolledWindow (null, null);
             content_window.height_request = 300;
             content_window.width_request = 500;

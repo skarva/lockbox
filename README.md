@@ -15,17 +15,17 @@
 Keep your notes and website logins secure in an easy to manage collection. It is ready to go when you're logged in, and securely encrypted when you're not.
 
 ### Features
-- Fast search
-- Sort by name or date added
-- Access to logins saved in Epiphany
+* Fast search
+* Sort by name or date added
+* Access to logins saved in Epiphany
 
 ## Developing and Building
 
 You'll need the following dependencies:
 * meson
+* libgtk3-dev
 * libgranite-dev
 * libsecret-1-dev
-* libvala-0.34-dev (or higher)
 * valac
 
 Run `meson build` to configure the build environment. Change to the build directory and run `ninja` to build

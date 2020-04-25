@@ -19,6 +19,24 @@
 
 namespace Lockbox {
     public class MainWindow : Gtk.ApplicationWindow {
+        public const string ACTION_PREFIX = "lockbox.";
+        public const string ACTION_ADD_LOGIN = "action_add_login";
+        public const string ACTION_ADD_NOTE = "action_add_note";
+        public const string ACTION_SEARCH = "action_search";
+        public const string ACTION_PREFERENCES = "action_preferences";
+        public const string ACTION_UNDO = "action_undo";
+        public const string ACTION_QUIT = "action_quit";
+
+        public const ActionEntry[] action_entries = {
+            { ACTION_ADD_LOGIN, action_add_login },
+            { ACTION_ADD_NOTE, action_add_note },
+            { ACTION_SEARCH, action_search },
+            { ACTION_PREFERENCES, action_preferences },
+            { ACTION_UNDO, action_undo },
+            { ACTION_QUIT, action_quit }
+        };
+
+
         public weak Lockbox.Application app { get; construct; }
 
         private Widgets.HeaderBar headerbar;
@@ -32,27 +50,11 @@ namespace Lockbox {
         private Services.CollectionManager collection_manager;
         private Gtk.Clipboard clipboard;
         private uint clipboard_timer_id = 0;
+        private uint auto_reload_timer_id = 0;
 
         public SimpleActionGroup actions { get; construct; }
 
-        public const string ACTION_PREFIX = "lockbox.";
-        public const string ACTION_ADD_LOGIN = "action_add_login";
-        public const string ACTION_ADD_NOTE = "action_add_note";
-        public const string ACTION_SEARCH = "action_search";
-        public const string ACTION_PREFERENCES = "action_preferences";
-        public const string ACTION_UNDO = "action_undo";
-        public const string ACTION_QUIT = "action_quit";
-
         public static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
-
-        public const ActionEntry[] action_entries = {
-            { ACTION_ADD_LOGIN, action_add_login },
-            { ACTION_ADD_NOTE, action_add_note },
-            { ACTION_SEARCH, action_search },
-            { ACTION_PREFERENCES, action_preferences },
-            { ACTION_UNDO, action_undo },
-            { ACTION_QUIT, action_quit }
-        };
 
         public MainWindow (Lockbox.Application app) {
             Object (
@@ -124,7 +126,7 @@ namespace Lockbox {
             collection_list.selection_mode = Gtk.SelectionMode.NONE;
             collection_list.set_filter_func (CollectionFilterFunc);
             collection_list.activate_on_single_click = false;
-            set_sort_func ((Services.Sort) Application.app_settings.get_enum ("sort-by"));
+            set_sort_func ((Lockbox.Sort) Application.app_settings.get_enum ("sort-by"));
             scroll_window.add (collection_list);
             layout_stack.add_named (scroll_window, "collection");
 
@@ -134,11 +136,14 @@ namespace Lockbox {
             collection_manager.loaded.connect (() => {
                 var items = collection_manager.get_items ();
                 populate_list (items);
+
                 if (items.length () > 0) {
                     layout_stack.visible_child_name = "collection";
                 } else {
                     layout_stack.visible_child_name = "welcome";
                 }
+
+                reset_auto_reload_timer ();
             });
 
             collection_manager.added.connect (add_item);
@@ -155,6 +160,7 @@ namespace Lockbox {
                 } else {
                     Application.app_settings.set_boolean ("sort-desc", !Application.app_settings.get_boolean ("sort-desc"));
                 }
+
                 set_sort_func (sort_by);
             });
 
@@ -238,11 +244,18 @@ namespace Lockbox {
             collection_manager.remove_items (removal_list);
             collection_manager.close ();
             update_saved_state ();
+
             if (clipboard_timer_id > 0) {
                 GLib.Source.remove (clipboard_timer_id);
                 clipboard_timer_id = 0;
                 clipboard.clear ();
             }
+
+            if (auto_reload_timer_id > 0) {
+                GLib.Source.remove (auto_reload_timer_id);
+                auto_reload_timer_id = 0;
+            }
+
             destroy ();
         }
 
@@ -251,6 +264,7 @@ namespace Lockbox {
             int window_height;
             int window_x;
             int window_y;
+
             get_size (out window_width, out window_height);
             get_position (out window_x, out window_y);
             Application.saved_state.set_int ("window-width", window_width);
@@ -265,17 +279,19 @@ namespace Lockbox {
                 if (Schemas.is_login (item) || Schemas.is_note (item)) {
                     add_item (item);
                 } else {
-                    critical ("Unknown Item type");
+                    debug ("Unknown Item type");
                 }
             }
         }
 
         private void add_item (Secret.Item item) {
             var row = new Widgets.CollectionListRow (item);
+
             if (Schemas.is_login (item)) {
                 row.copy_username.connect (copy_username);
                 row.copy_password.connect (copy_password);
             }
+
             row.edit_entry.connect (edit_item);
             row.delete_entry.connect (remove_item);
             collection_list.add (row);
@@ -306,6 +322,7 @@ namespace Lockbox {
         private void copy_username (Secret.Item item) {
             var username = item.attributes.get ("username");
             clipboard.set_text (username, -1);
+
             if (Application.app_settings.get_boolean ("clear-clipboard")) {
                 reset_clipboard_timer ();
             }
@@ -315,6 +332,7 @@ namespace Lockbox {
             item.load_secret.begin (new Cancellable (), (obj, res) => {
                 var password = item.get_secret ().get_text ();
                 clipboard.set_text (password, -1);
+
                 if (Application.app_settings.get_boolean ("clear-clipboard")) {
                     reset_clipboard_timer ();
                 }
@@ -327,6 +345,7 @@ namespace Lockbox {
             if (Schemas.is_login (crow.item)) {
                 var item = crow.item;
                 var uri = item.attributes.get ("uri");
+
                 if (uri != null && uri.length > 0) {
                     try {
                         AppInfo.launch_default_for_uri (uri, null);
@@ -339,28 +358,53 @@ namespace Lockbox {
 
         private bool clear_clipboard_timed_out () {
             if (Application.app_settings.get_boolean ("clear-clipboard")) {
-                GLib.Source.remove (clipboard_timer_id);
-                clipboard_timer_id = 0;
                 clipboard.clear ();
             }
+
+            GLib.Source.remove (clipboard_timer_id);
+            clipboard_timer_id = 0;
+
             return true;
         }
 
         private void reset_clipboard_timer () {
-            if (clipboard_timer_id > 0) {
+            if (clipboard_timer_id != 0) {
                 GLib.Source.remove (clipboard_timer_id);
                 clipboard_timer_id = 0;
             }
+
             clipboard_timer_id = GLib.Timeout.add_seconds (Application.app_settings.get_int ("clear-clipboard-timeout"),
                                                              clear_clipboard_timed_out);
         }
 
-        private void set_sort_func (Services.Sort sort_by) {
-            if (sort_by == Services.Sort.NAME) {
+        private bool auto_reload_timed_out (){
+            if (Application.app_settings.get_boolean ("auto-reload")) {
+                // Reload collection_row
+            }
+
+            GLib.Source.remove (auto_reload_timer_id);
+            auto_reload_timer_id = 0;
+
+            return true;
+        }
+
+        private void reset_auto_reload_timer () {
+            if (auto_reload_timer_id != 0) {
+                GLib.Source.remove (auto_reload_timer_id);
+                auto_reload_timer_id = 0;
+            }
+
+            auto_reload_timer_id = GLib.Timeout.add_seconds (Application.app_settings.get_int ("auto-reload-timeout"),
+                                                                auto_reload_timed_out);
+        }
+
+        private void set_sort_func (Lockbox.Sort sort_by) {
+            if (sort_by == Lockbox.Sort.NAME) {
                 collection_list.set_sort_func (CollectionSortNameFunc);
-            } else if (sort_by == Services.Sort.CREATED) {
+            } else if (sort_by == Lockbox.Sort.CREATED) {
                 collection_list.set_sort_func (CollectionSortDateFunc);
             }
+
             collection_list.invalidate_sort ();
         }
 
@@ -378,8 +422,7 @@ namespace Lockbox {
             }
 
             // Search using case insensitivity
-            if (label.ascii_down ().contains (filter_keyword.ascii_down ()))
-            {
+            if (label.ascii_down ().contains (filter_keyword.ascii_down ())) {
                 return true;
             }
 

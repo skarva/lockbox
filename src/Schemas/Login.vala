@@ -20,11 +20,14 @@
 namespace Lockbox.Schemas {
     public static bool is_login(Secret.Item item) {
         string name = item.get_schema_name ();
-        if (name == epiphany ().name) {
-            return true;
-        } else {
+
+        if (name == null || name.length == 0) {
             return false;
+        } else if (name == epiphany ().name) {
+            return true;
         }
+
+        return false;
     }
 
     public static Secret.Schema epiphany () {
@@ -36,6 +39,7 @@ namespace Lockbox.Schemas {
                 "form_password", Secret.SchemaAttributeType.STRING,
                 "username", Secret.SchemaAttributeType.STRING,
                 "server_time_modified", Secret.SchemaAttributeType.STRING);
+
         return schema;
     }
 }

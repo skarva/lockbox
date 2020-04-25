@@ -22,7 +22,7 @@ namespace Lockbox.Widgets {
         public Gtk.SearchEntry search_entry { get; private set; }
 
         public signal void filter(string keyword);
-        public signal void sort(Services.Sort sort_by);
+        public signal void sort(Lockbox.Sort sort_by);
 
         public HeaderBar () {
             Object (
@@ -75,13 +75,13 @@ namespace Lockbox.Widgets {
             var sort_by_name_menuitem = new Gtk.ModelButton ();
             sort_by_name_menuitem.text = _("Sort by Name");
             sort_by_name_menuitem.clicked.connect (() => {
-                sort(Services.Sort.NAME);
+                sort(Lockbox.Sort.NAME);
             });
 
             var sort_by_created_menuitem = new Gtk.ModelButton ();
             sort_by_created_menuitem.text = _("Sort by Created Date");
             sort_by_created_menuitem.clicked.connect (() => {
-                sort(Services.Sort.CREATED);
+                sort(Lockbox.Sort.CREATED);
             });
 
             var menu_grid = new Gtk.Grid ();

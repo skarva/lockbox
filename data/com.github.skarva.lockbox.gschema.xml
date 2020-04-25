@@ -43,6 +43,16 @@
             <summary>Timeout for clearing clipboard in seconds.</summary>
             <description>Timeout for clearing clipboard in seconds.</description>
         </key>
+        <key name="auto-reload" type="b">
+            <default>true</default>
+            <summary>Auto-reload login list after specified time.</summary>
+            <description>Auto-reload login list after specified time.</description>
+        </key>
+        <key name="auto-reload-timeout" type="i">
+            <default>60</default>
+            <summary>Time in seconds to wait before auto-reloading.</summary>
+            <description>Time in seconds to wait before auto-reloading.</description>
+        </key>
         <key name="dark-theme" type="b">
             <default>false</default>
             <summary>Toggle for application dark mode.</summary>

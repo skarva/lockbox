@@ -20,19 +20,21 @@
 namespace Lockbox.Schemas {
     public static bool is_note (Secret.Item item) {
         string name = item.get_schema_name ();
+
         if (name == null || name.length == 0) {
             return false;
         } else if (name == note ().name) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public static Secret.Schema note () {
         var schema = new Secret.Schema ("com.github.skarva.lockbox.notes", Secret.SchemaFlags.NONE,
                 "id", Secret.SchemaAttributeType.STRING,
                 "name", Secret.SchemaAttributeType.STRING);
+
         return schema;
     }
 }

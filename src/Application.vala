@@ -72,7 +72,8 @@ namespace Lockbox {
             Gtk.StyleContext.add_provider_for_screen (
                 Gdk.Screen.get_default (),
                 css_provider,
-                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            );
 
             app_cmd_name = "Lockbox";
             Application app = Application.instance;

@@ -51,7 +51,7 @@ namespace Lockbox.Dialogs {
             var grid = new Gtk.Grid ();
             grid.column_spacing = 12;
             grid.row_spacing = 6;
-            grid.margin_bottom = 12;
+            grid.margin_bottom = 24;
             get_content_area ().add (grid);
 
             var header = new Granite.HeaderLabel (_("Add Login"));
@@ -59,7 +59,7 @@ namespace Lockbox.Dialogs {
 
             var name_label = new Gtk.Label (_("Name:"));
             name_label.halign = Gtk.Align.END;
-            name_label.margin_start = 12;
+
             name_entry = new Gtk.Entry ();
             name_entry.activates_default = true;
             grid.attach (name_label, 0, 1, 1, 1);
@@ -67,7 +67,6 @@ namespace Lockbox.Dialogs {
 
             var uri_label = new Gtk.Label (_("URI:"));
             uri_label.halign = Gtk.Align.END;
-            uri_label.margin_start = 12;
             uri_entry = new Gtk.Entry ();
             uri_entry.activates_default = true;
             grid.attach (uri_label, 0, 2, 1, 1);
@@ -75,7 +74,6 @@ namespace Lockbox.Dialogs {
 
             var username_label = new Gtk.Label (_("Username:"));
             username_label.halign = Gtk.Align.END;
-            username_label.margin_start = 12;
             username_entry = new Gtk.Entry ();
             username_entry.activates_default = true;
             grid.attach (username_label, 0, 3, 1, 1);
@@ -83,7 +81,6 @@ namespace Lockbox.Dialogs {
 
             var password_label = new Gtk.Label (_("Password:"));
             password_label.halign = Gtk.Align.END;
-            password_label.margin_start = 12;
             password_entry = new Gtk.Entry ();
             password_entry.input_purpose = Gtk.InputPurpose.PASSWORD;
             password_entry.invisible_char = '*';
@@ -105,6 +102,7 @@ namespace Lockbox.Dialogs {
 
         public void set_entries (Widgets.CollectionListRow row) {
             var item = row.item;
+            
             name_entry.text = item.label;
             uri_entry.text = item.attributes.get ("uri");
             username_entry.text = item.attributes.get ("username");
@@ -121,6 +119,7 @@ namespace Lockbox.Dialogs {
                     var valid_input = name_entry.text_length == 0 ||
                                       username_entry.text_length == 0 ||
                                       password_entry.text_length == 0;
+                                      
                     if (valid_input) {
                         var alert = new Granite.MessageDialog.with_image_from_icon_name (
                             _("Some fields are still empty!"),
@@ -142,7 +141,9 @@ namespace Lockbox.Dialogs {
                         var secret = password_entry.text.strip ();
                         var secret_value = new Secret.Value (secret,
                                                              secret.length,
-                                                             "text/plain");
+                                                             "text/plain"
+                                                            );
+                                                            
                         item.set_secret.begin (secret_value, new Cancellable ());
                         row.title.set_text(name_entry.text.strip ());
                         destroy ();

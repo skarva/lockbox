@@ -18,8 +18,5 @@
 */
 
 namespace Lockbox.Services {
-    public enum Sort {
-        NAME,
-        CREATED
-    }
+    
 }

@@ -19,6 +19,7 @@
 
 namespace Lockbox {
     public enum CollectionType { LOGIN, NOTE }
+    public enum Sort { NAME, CREATED }
 }
 
 namespace Lockbox.Services {
@@ -30,7 +31,7 @@ namespace Lockbox.Services {
         public signal void opened ();
         public signal void added (Secret.Item item);
 
-        // This should open the Login collection and, if it exists, the secure Note collection
+        // This should open the collection, if it exists, otherwise create one
         public CollectionManager () {
             Secret.Service.get.begin (Secret.ServiceFlags.LOAD_COLLECTIONS, new Cancellable (), (obj, res) => {
                 try {
@@ -79,7 +80,8 @@ namespace Lockbox.Services {
             if (type == LOGIN) {
                 var secret_value = new Secret.Value (secret,
                                                      secret.length,
-                                                     "text/plain");
+                                                     "text/plain"
+                                                    );
 
                 Secret.Item.create.begin (default_collection,
                                 Schemas.epiphany (), attributes, name,
@@ -95,7 +97,8 @@ namespace Lockbox.Services {
             } else if (type == NOTE) {
                     var secret_value = new Secret.Value (secret,
                                                          secret.length,
-                                                         "text/plain");
+                                                         "text/plain"
+                                                        );
 
                     Secret.Item.create.begin (default_collection,
                             Schemas.note (), attributes, name, secret_value,

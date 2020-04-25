@@ -34,12 +34,14 @@ namespace Lockbox.Widgets {
             var container = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             container.height_request = 50;
 
-            title = new Gtk.Label (item.label);
+            title = new Gtk.Label (this.item.label);
 
             var copy_username_button = new Gtk.Button.with_label ("Copy Username");
             var copy_password_button = new Gtk.Button.with_label ("Copy Password");
+
             var edit_item = new Gtk.Button.from_icon_name ("accessories-text-editor-symbolic", Gtk.IconSize.BUTTON);
             edit_item.relief = Gtk.ReliefStyle.NONE;
+
             var delete_item = new Gtk.Button.from_icon_name ("edit-delete-symbolic", Gtk.IconSize.BUTTON);
             delete_item.relief = Gtk.ReliefStyle.NONE;
 
@@ -52,11 +54,11 @@ namespace Lockbox.Widgets {
             add (container);
 
             copy_username_button.clicked.connect ( () => {
-                copy_username (item);
+                copy_username (this.item);
             });
 
             copy_password_button.clicked.connect ( () => {
-                copy_password (item);
+                copy_password (this.item);
             });
 
             edit_item.clicked.connect (() => {

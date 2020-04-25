@@ -21,6 +21,8 @@ namespace Lockbox.Dialogs {
     public class PreferencesDialog : Gtk.Dialog {
         private Gtk.Switch clear_clipboard;
         private Gtk.Entry clear_clipboard_timeout;
+        private Gtk.Switch auto_reload;
+        private Gtk.Entry auto_reload_timeout;
         private Gtk.Switch dark_theme;
 
         public PreferencesDialog (Gtk.Window? parent) {
@@ -40,19 +42,19 @@ namespace Lockbox.Dialogs {
             var grid = new Gtk.Grid ();
             grid.column_spacing = 12;
             grid.row_spacing = 6;
-            grid.margin_bottom = 12;
+            grid.margin_bottom = 24;
             get_content_area ().add (grid);
 
-            var security_header = new Granite.HeaderLabel (_("Security"));
-            grid.attach (security_header, 0, 0, 2, 1);
+            var behavior_header = new Granite.HeaderLabel (_("Behavior"));
+            grid.attach (behavior_header, 0, 0, 2, 1);
 
             /* Clipboard clearing settings */
-            var clear_clipboard_label = new SettingsLabel (_("Clear clipboard after timeout:"));
+            var clear_clipboard_label = new SettingsLabel (_("Clear clipboard:"));
             clear_clipboard = new SettingsSwitch ("clear-clipboard");
             grid.attach (clear_clipboard_label, 0, 1, 1, 1);
             grid.attach (clear_clipboard, 1, 1, 1, 1);
 
-            var clear_clipboard_timeout_label = new SettingsLabel (_("Timeout (secs):"));
+            var clear_clipboard_timeout_label = new SettingsLabel (_("After (seconds):"));
             clear_clipboard_timeout = new Gtk.Entry ();
             clear_clipboard_timeout.input_purpose = Gtk.InputPurpose.DIGITS;
             clear_clipboard_timeout.text = Application.app_settings.get_int ("clear-clipboard-timeout").to_string ();
@@ -60,14 +62,27 @@ namespace Lockbox.Dialogs {
             grid.attach (clear_clipboard_timeout_label, 0, 2, 1, 1);
             grid.attach (clear_clipboard_timeout, 1, 2, 1, 1);
 
+            var auto_reload_label = new SettingsLabel (_("Auto-reload collection:"));
+            auto_reload = new SettingsSwitch ("auto-reload");
+            grid.attach (auto_reload_label, 0, 3, 1, 1);
+            grid.attach (auto_reload, 1, 3, 1, 1);
+
+            var auto_reload_timeout_label = new SettingsLabel (_("Every (seconds):"));
+            auto_reload_timeout = new Gtk.Entry ();
+            auto_reload_timeout.input_purpose = Gtk.InputPurpose.DIGITS;
+            auto_reload_timeout.text = Application.app_settings.get_int ("auto-reload-timeout").to_string ();
+            auto_reload_timeout.activates_default = true;
+            grid.attach (auto_reload_timeout_label, 0, 4, 1, 1);
+            grid.attach (auto_reload_timeout, 1, 4, 1, 1);
+
             var interface_header = new Granite.HeaderLabel(_("Interface"));
-            grid.attach (interface_header, 0, 3, 2, 1);
+            grid.attach (interface_header, 0, 5, 2, 1);
 
             /* Dark Mode setting */
             var dark_theme_label = new SettingsLabel (_("Dark Mode:"));
             dark_theme = new SettingsSwitch ("dark-theme");
-            grid.attach (dark_theme_label, 0, 4, 1, 1);
-            grid.attach (dark_theme, 1, 4, 1, 1);
+            grid.attach (dark_theme_label, 0, 6, 1, 1);
+            grid.attach (dark_theme, 1, 6, 1, 1);
 
             var close_button = add_button (_("Close"), Gtk.ResponseType.CLOSE);
 
