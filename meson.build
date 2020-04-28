@@ -1,4 +1,4 @@
-project('com.github.skarva.lockbox', 'vala', 'c', meson_version: '>= 0.43', version: '1.1.1')
+project('com.github.skarva.lockbox', 'vala', 'c', meson_version: '>= 0.43', version: '1.2')
 
 i18n = import('i18n')
 

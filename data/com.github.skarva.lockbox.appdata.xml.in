@@ -46,6 +46,15 @@
     <url type="bugtracker">https://github.com/skarva/lockbox/issues</url>
 
     <releases>
+        <release version="1.2" date="2020-04-28">
+            <description>
+                <p>New coat of paint</p>
+                <ul>
+                    <li>New icon thanks to Fatih</li>
+                    <li>Additional back-end updates thanks to Ryo</li>
+                </ul>
+            </description>
+        </release>
         <release version="1.1" date="2020-02-02">
             <description>
                 <p>Quality of life patches!</p>
