@@ -195,7 +195,7 @@ msgid "Sort by name or date added"
 msgstr "Sorteer op naam of aanmaakdatum"
 
 #: data/com.github.skarva.lockbox.appdata.xml.in:16
-msgid "Access to passwords saved in Epihpany"
+msgid "Access to passwords saved in Epiphany"
 msgstr "Toegang tot in GNOME Web opgeslagen wachtwoorden"
 
 #: data/com.github.skarva.lockbox.appdata.xml.in:27
