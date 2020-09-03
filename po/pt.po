@@ -44,7 +44,7 @@ msgstr "Cancelar"
 
 #: src/Dialogs/LoginDialog.vala:95
 msgid "Save Login"
-msgstr "Gravar Login"
+msgstr "Guardar Login"
 
 #: src/Dialogs/LoginDialog.vala:121 src/Dialogs/NoteDialog.vala:116
 msgid "Some fields are still empty!"
@@ -53,7 +53,7 @@ msgstr "Alguns campos ainda estão vazios!"
 #: src/Dialogs/LoginDialog.vala:122
 msgid "You must fill in all the fields in order to save your login info."
 msgstr ""
-"Tem que preencher todos os campos para poder gravar a sua informação do "
+"Tem que preencher todos os campos para poder guardar a sua informação do "
 "login."
 
 #: src/Dialogs/NoteDialog.vala:37 src/Dialogs/NoteDialog.vala:54
@@ -66,11 +66,11 @@ msgstr "Nota:"
 
 #: src/Dialogs/NoteDialog.vala:83
 msgid "Save note"
-msgstr "Gravar nota"
+msgstr "Guardar nota"
 
 #: src/Dialogs/NoteDialog.vala:117
 msgid "You must fill in all the fields in order to save your note."
-msgstr "Tem que preencher todos os campos para poder gravar a sua nota."
+msgstr "Tem que preencher todos os campos para poder guardar a sua nota."
 
 #: src/Dialogs/PreferencesDialog.vala:31 src/Widgets/HeaderBar.vala:72
 msgid "Preferences"
