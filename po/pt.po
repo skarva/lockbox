@@ -1,0 +1,241 @@
+# Portuguese (Portugal) translations for com.github.skarva.lockbox package.
+# Copyright (C) 2019 THE com.github.skarva.lockbox'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the com.github.skarva.lockbox package.
+# André Barata <andretiagob@protonmail.com>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: com.github.skarva.lockbox\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-08-30 21:31-0400\n"
+"PO-Revision-Date: 2020-08-27 15:08+0100\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.1\n"
+"Last-Translator: André Barata <andretiagob@protonmail.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: pt\n"
+
+#: src/Dialogs/LoginDialog.vala:39 src/Dialogs/LoginDialog.vala:56
+msgid "Add Login"
+msgstr "Adicionar Login"
+
+#: src/Dialogs/LoginDialog.vala:59 src/Dialogs/NoteDialog.vala:57
+msgid "Name:"
+msgstr "Nome:"
+
+#: src/Dialogs/LoginDialog.vala:67
+msgid "URI:"
+msgstr "URI:"
+
+#: src/Dialogs/LoginDialog.vala:75
+msgid "Username:"
+msgstr "Nome de Utilizador:"
+
+#: src/Dialogs/LoginDialog.vala:83
+msgid "Password:"
+msgstr "Senha:"
+
+#: src/Dialogs/LoginDialog.vala:94 src/Dialogs/NoteDialog.vala:82
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/Dialogs/LoginDialog.vala:95
+msgid "Save Login"
+msgstr "Guardar Login"
+
+#: src/Dialogs/LoginDialog.vala:121 src/Dialogs/NoteDialog.vala:116
+msgid "Some fields are still empty!"
+msgstr "Alguns campos ainda estão vazios!"
+
+#: src/Dialogs/LoginDialog.vala:122
+msgid "You must fill in all the fields in order to save your login info."
+msgstr ""
+"Tem que preencher todos os campos para poder guardar a sua informação do "
+"login."
+
+#: src/Dialogs/NoteDialog.vala:37 src/Dialogs/NoteDialog.vala:54
+msgid "Add Note"
+msgstr "Adicionar Nota"
+
+#: src/Dialogs/NoteDialog.vala:66
+msgid "Note:"
+msgstr "Nota:"
+
+#: src/Dialogs/NoteDialog.vala:83
+msgid "Save note"
+msgstr "Guardar nota"
+
+#: src/Dialogs/NoteDialog.vala:117
+msgid "You must fill in all the fields in order to save your note."
+msgstr "Tem que preencher todos os campos para poder guardar a sua nota."
+
+#: src/Dialogs/PreferencesDialog.vala:31 src/Widgets/HeaderBar.vala:72
+msgid "Preferences"
+msgstr "Preferências"
+
+#: src/Dialogs/PreferencesDialog.vala:48
+msgid "Security"
+msgstr "Segurança"
+
+#: src/Dialogs/PreferencesDialog.vala:52
+msgid "Clear clipboard after timeout:"
+msgstr "Apagar a área de transferência após esgotar o tempo:"
+
+#: src/Dialogs/PreferencesDialog.vala:57
+msgid "Timeout (secs):"
+msgstr "Esgotar do Tempo (segundos):"
+
+#: src/Dialogs/PreferencesDialog.vala:65
+msgid "Interface"
+msgstr "Interface"
+
+#: src/Dialogs/PreferencesDialog.vala:69
+msgid "Dark Mode:"
+msgstr "Tema Escuro:"
+
+#: src/Dialogs/PreferencesDialog.vala:74
+msgid "Close"
+msgstr "Fechar"
+
+#: src/Widgets/HeaderBar.vala:37
+msgid "Add New Login"
+msgstr "Adicionar Novo Login"
+
+#: src/Widgets/HeaderBar.vala:41
+msgid "Add Secure Note"
+msgstr "Adicionar Nota Segura"
+
+#: src/Widgets/HeaderBar.vala:58
+msgid "Add Login or Note"
+msgstr "Adicionar Login ou Nota"
+
+#: src/Widgets/HeaderBar.vala:65
+msgid "Search for sites and notes (Ctrl+F)..."
+msgstr "Procurar por web sites e notas (Ctrl+F)..."
+
+#: src/Widgets/HeaderBar.vala:76
+msgid "Sort by Name"
+msgstr "Organizar por Nome"
+
+#: src/Widgets/HeaderBar.vala:82
+msgid "Sort by Created Date"
+msgstr "Organizar por Data Criada"
+
+#: src/Widgets/HeaderBar.vala:103
+msgid "Menu"
+msgstr "Menu"
+
+#: src/Widgets/LaunchScreen.vala:24
+#: data/com.github.skarva.lockbox.appdata.xml.in:7
+#: data/com.github.skarva.lockbox.desktop.in:3
+msgid "Lock Box"
+msgstr "Lock Box"
+
+#: src/Widgets/LaunchScreen.vala:25
+msgid "Sit tight while your secret clearance is verified"
+msgstr "Espere pacientemente enquanto a sua autorização secreta é verificada"
+
+#: src/Widgets/WelcomeScreen.vala:28
+msgid "Nothing to see here"
+msgstr "Nada para ver aqui"
+
+#: src/Widgets/WelcomeScreen.vala:29
+msgid "Start storing your important info securely"
+msgstr "Começe a guardar a sua informação importante de forma segura"
+
+#: src/Widgets/WelcomeScreen.vala:34
+msgid "Configure"
+msgstr "Configurar"
+
+#: src/Widgets/WelcomeScreen.vala:34
+msgid "Customize your lock box"
+msgstr "Personalizar o seu lock box"
+
+#: src/Widgets/WelcomeScreen.vala:35
+msgid "Store Login"
+msgstr "Guardar Login"
+
+#: src/Widgets/WelcomeScreen.vala:35
+msgid "Add website login details to your lock box"
+msgstr "Adicione detalhes do login do web site ao seu lock box"
+
+#: src/Widgets/WelcomeScreen.vala:36
+msgid "Store Note"
+msgstr "Guardar Nota"
+
+#: src/Widgets/WelcomeScreen.vala:36
+msgid "Add a new note to yourself to your lock box"
+msgstr "Adicionar uma nova nota para si no seu lock box"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:8
+msgid "Lock your secrets up tight"
+msgstr "Guarde bem os seus segredos"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:11
+msgid ""
+"Keep your notes and website credentials secure in an easy-to-manage "
+"collection. It is ready to go when you're logged in, and securely encrypted "
+"when you're not."
+msgstr ""
+"Mantenha as suas notas e credenciais de web sites em segurança numa coleção "
+"de fácil gestão. Esta está sempre pronta ao entrar e encriptada de forma "
+"segura quando não está."
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:12
+msgid "Features"
+msgstr "Funcionalidades"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:14
+msgid "Fast search"
+msgstr "Procura rápida"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:15
+msgid "Sort by name or date added"
+msgstr "Organizar por nome ou por data adicionada"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:16
+msgid "Access to passwords saved in Epiphany"
+msgstr "Acesso a senhas guardadas no Epiphany"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:27
+msgid "Dark Theme"
+msgstr "Tema Escuro"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:31
+msgid "Light Theme"
+msgstr "Tema Claro"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:35
+msgid "Creating a new secret item"
+msgstr "A criar um novo item secreto"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:39
+msgid "Quick searching"
+msgstr "Procura rápida"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:44
+msgid "skarva llc"
+msgstr "skarva llc"
+
+#: data/com.github.skarva.lockbox.appdata.xml.in:53
+msgid "Initial release"
+msgstr "Lançamento inicial"
+
+#: data/com.github.skarva.lockbox.desktop.in:4
+msgid "Password Manager"
+msgstr "Administrador de Senhas"
+
+#: data/com.github.skarva.lockbox.desktop.in:5
+msgid "Secure and manage your secure information"
+msgstr "Proteja e administre a sua informação segura"
+
+#: data/com.github.skarva.lockbox.desktop.in:8
+msgid "com.github.skarva.lockbox"
+msgstr "com.github.skarva.lockbox"
+
+#: data/com.github.skarva.lockbox.desktop.in:12
+msgid "Password;Login;Notes;"
+msgstr "Password;Senha;Login;Notes;Notas;"
