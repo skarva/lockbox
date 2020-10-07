@@ -20,41 +20,44 @@
 namespace Lockbox {
     public class MainWindow : Gtk.ApplicationWindow {
         public const string ACTION_PREFIX = "lockbox.";
-        public const string ACTION_ADD_LOGIN = "action_add_login";
-        public const string ACTION_ADD_NOTE = "action_add_note";
-        public const string ACTION_SEARCH = "action_search";
+        public const string ACTION_ADD_LOGIN = "action_add_login"; // ctrl + n
+        public const string ACTION_ADD_NOTE = "action_add_note"; // ctrl + m
+        public const string ACTION_EDIT_ITEM = "action_edit_item"; // ctrl + e
+        public const string ACTION_REMOVE_ITEM = "action_remove_item"; // ctrl + r
+        public const string ACTION_COPY_USERNAME = "action_copy_username"; // ctrl + u
+        public const string ACTION_COPY_PASSWORD = "action_copy_password"; // ctrl + p
+        public const string ACTION_TOGGLE_DARK_MODE = "action_toggle_dark_mode"; // ctrl + ~
+        public const string ACTION_SYNC = "action_sync"; // ctrl + s
+        public const string ACTION_SEARCH = "action_search"; // ctrl + f
         public const string ACTION_PREFERENCES = "action_preferences";
-        public const string ACTION_UNDO = "action_undo";
-        public const string ACTION_QUIT = "action_quit";
+        public const string ACTION_QUIT = "action_quit"; // ctrl + q
 
         public const ActionEntry[] action_entries = {
             { ACTION_ADD_LOGIN, action_add_login },
             { ACTION_ADD_NOTE, action_add_note },
             { ACTION_SEARCH, action_search },
             { ACTION_PREFERENCES, action_preferences },
-            { ACTION_UNDO, action_undo },
             { ACTION_QUIT, action_quit }
         };
 
 
         public weak Lockbox.Application app { get; construct; }
 
-        private Widgets.HeaderBar headerbar;
-        private Gtk.ListBox collection_list;
-        private Gtk.Stack layout_stack;
-
-        private string filter_keyword = "";
-
-        private List<Secret.Item> removal_list;
-
-        private Services.CollectionManager collection_manager;
-        private Gtk.Clipboard clipboard;
-        private uint clipboard_timer_id = 0;
-        private uint auto_reload_timer_id = 0;
-
         public SimpleActionGroup actions { get; construct; }
 
         public static Gee.MultiMap<string, string> action_accelerators = new Gee.HashMultiMap<string, string> ();
+
+
+        private Widgets.HeaderBar headerbar;
+        private Widgets.CollectionList list;
+        private Gtk.Stack layout_stack;
+
+        public string filter_keyword = "";
+
+        private Services.CollectionManager manager;
+        private Gtk.Clipboard clipboard;
+        private uint clipboard_timer_id = 0;
+        private uint auto_reload_timer_id = 0;
 
         public MainWindow (Lockbox.Application app) {
             Object (
@@ -65,16 +68,15 @@ namespace Lockbox {
         }
 
         static construct {
-            action_accelerators.set (ACTION_ADD_LOGIN, "<Control>a");
-            action_accelerators.set (ACTION_ADD_NOTE, "<Control>n");
+            action_accelerators.set (ACTION_ADD_LOGIN, "<Control>n");
+            action_accelerators.set (ACTION_ADD_NOTE, "<Control>m");
             action_accelerators.set (ACTION_SEARCH, "<Control>f");
-            action_accelerators.set (ACTION_UNDO, "<Control>z");
             action_accelerators.set (ACTION_QUIT, "<Control>q");
         }
 
         construct {
             /* Load up Secret Service and Collections */
-            collection_manager = new Services.CollectionManager ();
+            manager = new Services.CollectionManager ();
 
             /* Set up actions and hotkeys */
             actions = new SimpleActionGroup ();
@@ -85,18 +87,17 @@ namespace Lockbox {
                 app.set_accels_for_action (ACTION_PREFIX + action, action_accelerators[action].to_array ());
             }
 
-            set_default_size (Application.saved_state.get_int ("window-width"), Application.saved_state.get_int ("window-height"));
-
-            var window_x = Application.saved_state.get_int ("window-x");
-            var window_y = Application.saved_state.get_int ("window-y");
-            if (window_x == -1 || window_y == -1) {
-                window_position = Gtk.WindowPosition.CENTER;
-            } else {
-                move (window_x, window_y);
-            }
+            var rect = Gdk.Rectangle ();
+            Application.saved_state.get ("window-size", "(ii)", out rect.width, out rect.height);
+            set_default_size (rect.width, rect.height);
 
             if (Application.saved_state.get_boolean ("maximized")) {
                 this.maximize ();
+            } else {
+                Application.saved_state.get ("window-position", "(ii)", out rect.x, out rect.y);
+                if (rect.x != -1 || rect.y != -1) {
+                    move (rect.x, rect.y);
+                }
             }
 
             Gtk.Settings.get_default ().gtk_application_prefer_dark_theme = Application.app_settings.get_boolean ("dark-theme");
@@ -122,35 +123,31 @@ namespace Lockbox {
 
             var scroll_window = new Gtk.ScrolledWindow (null, null);
 
-            collection_list = new Gtk.ListBox ();
-            collection_list.selection_mode = Gtk.SelectionMode.NONE;
-            collection_list.set_filter_func (CollectionFilterFunc);
-            collection_list.activate_on_single_click = false;
+            list = new Widgets.CollectionList (this);
+            list.selection_mode = Gtk.SelectionMode.NONE;
+            list.activate_on_single_click = false;
             set_sort_func ((Lockbox.Sort) Application.app_settings.get_enum ("sort-by"));
-            scroll_window.add (collection_list);
+            scroll_window.add (list);
             layout_stack.add_named (scroll_window, "collection");
 
-            layout_stack.visible_child_name = "launch";
-
             /* Connect Signals */
-            collection_manager.loaded.connect (() => {
-                var items = collection_manager.get_items ();
-                populate_list (items);
+            // manager.loaded.connect (() => {
+            //     var items = manager.get_items ();
+            //     populate_list (items);
 
-                if (items.length () > 0) {
-                    layout_stack.visible_child_name = "collection";
-                } else {
-                    layout_stack.visible_child_name = "welcome";
-                }
+            //     if (items.length () > 0) {
+            //         layout_stack.visible_child_name = "collection";
+            //     } else {
+            //         layout_stack.visible_child_name = "welcome";
+            //     }
 
-                reset_auto_reload_timer ();
-            });
-
-            collection_manager.added.connect (add_item);
+            //     reset_auto_reload_timer ();
+            // });
+            manager.search_results.connect (add_item);
 
             headerbar.filter.connect((keyword) => {
                 filter_keyword = keyword;
-                collection_list.invalidate_filter ();
+                list.invalidate_filter ();
             });
 
             headerbar.sort.connect((sort_by) => {
@@ -164,11 +161,22 @@ namespace Lockbox {
                 set_sort_func (sort_by);
             });
 
-            collection_list.row_activated.connect (open_url);
+            list.row_activated.connect (open_url);
 
             action_search ();
 
             show_all ();
+        }
+
+        public void add_item (List<Secret.Item> items){
+            foreach (var item in items) {
+                list.add_row (item);
+            }
+            if (list.size () == 0) {
+                layout_stack.visible_child_name = "welcome";
+            } else {
+                layout_stack.visible_child_name = "collection";
+            }
         }
 
         public override bool key_press_event (Gdk.EventKey event) {
@@ -200,8 +208,8 @@ namespace Lockbox {
         private void action_add_login () {
             var login_dialog = new Dialogs.LoginDialog (this);
             login_dialog.new_login.connect ((name, attributes, password) => {
-                collection_manager.add_item(name, attributes, password,
-                                            CollectionType.LOGIN);
+                manager.store(Schemas.epiphany (), attributes,
+                                            name, password);
                 layout_stack.visible_child_name = "collection";
             });
             login_dialog.show_all ();
@@ -212,8 +220,8 @@ namespace Lockbox {
         private void action_add_note () {
             var note_dialog = new Dialogs.NoteDialog (this);
             note_dialog.new_note.connect ((name, attributes, content) => {
-                collection_manager.add_item(name, attributes, content,
-                                            CollectionType.NOTE);
+                manager.store(Schemas.note (), attributes,
+                                            name, content);
                 layout_stack.visible_child_name = "collection";
             });
             note_dialog.show_all ();
@@ -232,17 +240,9 @@ namespace Lockbox {
             preferences_dialog.present ();
         }
 
-        private void action_undo () {
-            if (removal_list.length () > 0) {
-                var restored_item = removal_list.last ().data;
-                removal_list.remove (restored_item);
-                add_item (restored_item);
-            }
-        }
-
         private void action_quit () {
-            collection_manager.remove_items (removal_list);
-            collection_manager.close ();
+            // manager.remove_items (removal_list);
+            // manager.close ();
             update_saved_state ();
 
             if (clipboard_timer_id > 0) {
@@ -259,76 +259,32 @@ namespace Lockbox {
             destroy ();
         }
 
-        private void update_saved_state () {
-            int window_width;
-            int window_height;
-            int window_x;
-            int window_y;
+        public void refresh_list () {
+            /* Need to load for each type of collection
+               item supported (ie Login, Note, etc) */
+            manager.search (Schemas.epiphany (), Secret.attributes_build(Schemas.epiphany (), null));
+        }
 
-            get_size (out window_width, out window_height);
-            get_position (out window_x, out window_y);
-            Application.saved_state.set_int ("window-width", window_width);
-            Application.saved_state.set_int ("window-height", window_height);
-            Application.saved_state.set_int ("window-x", window_x);
-            Application.saved_state.set_int ("window-y", window_y);
+        private void update_saved_state () {
+            int width, height, x, y;
+
+            get_size (out width, out height);
+            get_position (out x, out y);
+            Application.saved_state.set ("window-size", "(ii)", width, height);
+            Application.saved_state.set ("window-position", "(ii)", x, y);
             Application.saved_state.set_boolean ("maximized", is_maximized);
         }
 
-        private void populate_list (List<Secret.Item> items) {
-            foreach (var item in items) {
-                if (Schemas.is_login (item) || Schemas.is_note (item)) {
-                    add_item (item);
-                } else {
-                    debug ("Unknown Item type");
-                }
-            }
-        }
-
-        private void add_item (Secret.Item item) {
-            var row = new Widgets.CollectionListRow (item);
-
-            if (Schemas.is_login (item)) {
-                row.copy_username.connect (copy_username);
-                row.copy_password.connect (copy_password);
-            }
-
-            row.edit_entry.connect (edit_item);
-            row.delete_entry.connect (remove_item);
-            collection_list.add (row);
-            collection_list.show_all ();
-        }
-
-        private void edit_item (Widgets.CollectionListRow row) {
-            if (Schemas.is_login (row.item)) {
-                var login_dialog = new Dialogs.LoginDialog (this);
-                login_dialog.set_entries (row);
-                login_dialog.show_all ();
-
-                login_dialog.present ();
-            } else if (Schemas.is_note (row.item)) {
-                var note_dialog = new Dialogs.NoteDialog (this);
-                note_dialog.set_entries (row);
-                note_dialog.show_all ();
-
-                note_dialog.present ();
-            }
-        }
-
-        private void remove_item (Widgets.CollectionListRow row) {
-            removal_list.append (row.item);
-            collection_list.remove (row);
-        }
-
-        private void copy_username (Secret.Item item) {
+        public void copy_username (Secret.Item item) {
             var username = item.attributes.get ("username");
             clipboard.set_text (username, -1);
 
-            if (Application.app_settings.get_boolean ("clear-clipboard")) {
+                if (Application.app_settings.get_boolean ("clear-clipboard")) {
                 reset_clipboard_timer ();
             }
         }
 
-        private void copy_password (Secret.Item item) {
+        public void copy_password (Secret.Item item) {
             item.load_secret.begin (new Cancellable (), (obj, res) => {
                 var password = item.get_secret ().get_text ();
                 clipboard.set_text (password, -1);
@@ -339,7 +295,7 @@ namespace Lockbox {
             });
         }
 
-        private void open_url (Gtk.ListBoxRow row) {
+        public void open_url (Gtk.ListBoxRow row) {
             var crow = row as Widgets.CollectionListRow;
 
             if (Schemas.is_login (crow.item)) {
@@ -395,60 +351,17 @@ namespace Lockbox {
             }
 
             auto_reload_timer_id = GLib.Timeout.add_seconds (Application.app_settings.get_int ("auto-reload-timeout"),
-                                                                auto_reload_timed_out);
+                                                             auto_reload_timed_out);
         }
 
         private void set_sort_func (Lockbox.Sort sort_by) {
             if (sort_by == Lockbox.Sort.NAME) {
-                collection_list.set_sort_func (CollectionSortNameFunc);
+                list.set_sort_func (list.sort_by_name);
             } else if (sort_by == Lockbox.Sort.CREATED) {
-                collection_list.set_sort_func (CollectionSortDateFunc);
+                list.set_sort_func (list.sort_by_date);
             }
 
-            collection_list.invalidate_sort ();
-        }
-
-        private bool CollectionFilterFunc (Gtk.ListBoxRow row) {
-            if (filter_keyword.length == 0) {
-                return true;
-            }
-
-            var collection_row = row as Widgets.CollectionListRow;
-            var label = collection_row.item.label;
-
-            // Search using exact match (case-sensitive)
-            if (label.contains (filter_keyword)) {
-                return true;
-            }
-
-            // Search using case insensitivity
-            if (label.ascii_down ().contains (filter_keyword.ascii_down ())) {
-                return true;
-            }
-
-            return false;
-        }
-
-        private int CollectionSortNameFunc (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
-            var collection_row1 = row1 as Widgets.CollectionListRow;
-            var collection_row2 = row2 as Widgets.CollectionListRow;
-            var desc = Application.app_settings.get_boolean ("sort-desc") ? 1 : -1;
-
-            return collection_row1.item.label.ascii_casecmp (collection_row2.item.label) * desc;
-        }
-
-        private int CollectionSortDateFunc (Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
-            var collection_row1 = row1 as Widgets.CollectionListRow;
-            var collection_row2 = row2 as Widgets.CollectionListRow;
-            var desc = Application.app_settings.get_boolean ("sort-desc") ? 1 : -1;
-
-            if (collection_row1.item.created < collection_row2.item.created) {
-                return -1 * desc;
-            } else if (collection_row1.item.created > collection_row2.item.created) {
-                return 1 * desc;
-            }
-
-            return 0;
+            list.invalidate_sort ();
         }
     }
 } // Lockbox

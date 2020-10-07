@@ -119,6 +119,8 @@ namespace Lockbox.Dialogs {
                         alert.run ();
                         alert.destroy ();
                     } else if (is_edit) {
+                        // I think there is a cleaner way to do this just using the hashtable
+                        // and calls to Secret
                         var item = row.item;
                         item.label = name_entry.text.strip ();
 
@@ -130,6 +132,7 @@ namespace Lockbox.Dialogs {
                         row.title.set_text(name_entry.text.strip ());
                         destroy ();
                     } else {
+                        // Update this to use attribute_build
                         var id = "{" + Uuid.string_random () + "}";
                         var attributes = new HashTable<string, string> (str_hash, str_equal);
                         attributes.insert ("id", id);

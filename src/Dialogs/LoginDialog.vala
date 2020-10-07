@@ -102,7 +102,7 @@ namespace Lockbox.Dialogs {
 
         public void set_entries (Widgets.CollectionListRow row) {
             var item = row.item;
-            
+
             name_entry.text = item.label;
             uri_entry.text = item.attributes.get ("uri");
             username_entry.text = item.attributes.get ("username");
@@ -116,11 +116,11 @@ namespace Lockbox.Dialogs {
         private void on_response (Gtk.Dialog source, int response_id) {
             switch (response_id) {
                 case Gtk.ResponseType.OK:
-                    var valid_input = name_entry.text_length == 0 ||
+                    var invalid_input = name_entry.text_length == 0 ||
                                       username_entry.text_length == 0 ||
                                       password_entry.text_length == 0;
-                                      
-                    if (valid_input) {
+
+                    if (invalid_input) {
                         var alert = new Granite.MessageDialog.with_image_from_icon_name (
                             _("Some fields are still empty!"),
                             _("You must fill in all the fields in order to save your login info."),
@@ -130,6 +130,8 @@ namespace Lockbox.Dialogs {
                         alert.run ();
                         alert.destroy ();
                     } else if (is_edit) {
+                        // I think there is a cleaner way to do this just using the hashtable
+                        // and calls to Secret
                         var item = row.item;
                         item.label = name_entry.text.strip ();
 
@@ -143,11 +145,12 @@ namespace Lockbox.Dialogs {
                                                              secret.length,
                                                              "text/plain"
                                                             );
-                                                            
+
                         item.set_secret.begin (secret_value, new Cancellable ());
                         row.title.set_text(name_entry.text.strip ());
                         destroy ();
                     } else {
+                        // Update this to use attribute_build
                         var id = "{" + Uuid.string_random () + "}";
                         var timestamp = get_real_time () / 1000;
                         var attributes = new HashTable<string, string> (str_hash, str_equal);

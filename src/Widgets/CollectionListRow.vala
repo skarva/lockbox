@@ -37,7 +37,11 @@ namespace Lockbox.Widgets {
             title = new Gtk.Label (this.item.label);
 
             var copy_username_button = new Gtk.Button.with_label ("Copy Username");
+            copy_username_button.margin_top = 12;
+            copy_username_button.margin_bottom = 12;
             var copy_password_button = new Gtk.Button.with_label ("Copy Password");
+            copy_password_button.margin_top = 12;
+            copy_password_button.margin_bottom = 12;
 
             var edit_item = new Gtk.Button.from_icon_name ("accessories-text-editor-symbolic", Gtk.IconSize.BUTTON);
             edit_item.relief = Gtk.ReliefStyle.NONE;

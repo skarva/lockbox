@@ -18,22 +18,20 @@
 */
 
 namespace Lockbox.Schemas {
+    const string note_schema_name = "com.github.skarva.lockbox.notes";
+
     public static bool is_note (Secret.Item item) {
         string name = item.get_schema_name ();
 
-        if (name == null || name.length == 0) {
+        if (name == null || name.length == 0)
             return false;
-        } else if (name == note ().name) {
-            return true;
-        }
 
-        return false;
+        return name == note_schema_name;
     }
 
     public static Secret.Schema note () {
-        var schema = new Secret.Schema ("com.github.skarva.lockbox.notes", Secret.SchemaFlags.NONE,
-                "id", Secret.SchemaAttributeType.STRING,
-                "name", Secret.SchemaAttributeType.STRING);
+        var schema = new Secret.Schema (note_schema_name, Secret.SchemaFlags.NONE,
+                "id", Secret.SchemaAttributeType.STRING);
 
         return schema;
     }

@@ -18,6 +18,8 @@
 */
 
 namespace Lockbox {
+    public enum Sort { NAME, CREATED }
+
     public class Application : Gtk.Application {
         public static string app_cmd_name;
         public static GLib.Settings saved_state;
@@ -60,6 +62,7 @@ namespace Lockbox {
 
         protected override void activate () {
             var window = new MainWindow (this);
+            window.refresh_list ();
             window.show_all ();
         }
 

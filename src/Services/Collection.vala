@@ -16,41 +16,20 @@
 * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA 02110-1301 USA
 */
-
-namespace Lockbox {
-    public enum CollectionType { LOGIN, NOTE }
-    public enum Sort { NAME, CREATED }
-}
-
 namespace Lockbox.Services {
     public class CollectionManager {
-        private Secret.Service service;
-        private Secret.Collection default_collection;
+        public signal void stored (string schema_name, string id, string label);
+        public signal void search_results(List<Secret.Item> items);
 
-        public signal void loaded ();
-        public signal void opened ();
-        public signal void added (Secret.Item item);
-
-        // This should open the collection, if it exists, otherwise create one
-        public CollectionManager () {
-            Secret.Service.get.begin (Secret.ServiceFlags.LOAD_COLLECTIONS, new Cancellable (), (obj, res) => {
+        public void store (Secret.Schema schema, HashTable<string, string> attributes,
+                           string label, string secret) {
+            Secret.password_store.begin (schema, null, label, secret,
+                                         new Cancellable (), (object, result) => {
                 try {
-                    service = Secret.Service.get.end (res);
-                    var collections = service.get_collections ();
-                    var found_collection = false;
-
-                    foreach (var collection in collections) {
-                        if (collection.label == "Login") {
-                            default_collection = collection;
-                            found_collection = true;
-                        }
-                    }
-
-                    if (found_collection) {
-                        loaded ();
+                    if (Secret.password_store.end (result)) {
+                        stored (schema.name, attributes.get ("id"), label);
                     } else {
-                        // No collections present so create one
-                        create_collection ();
+                        warning ("Could not store password" + label);
                     }
                 } catch (Error e) {
                     critical (e.message);
@@ -58,81 +37,35 @@ namespace Lockbox.Services {
             });
         }
 
-        public void close () {
-            Secret.Service.disconnect ();
+        public void remove () {
+
         }
 
-        public void create_collection () {
-            Secret.Collection.create.begin (service, "Login", "default", 0,
-                new Cancellable (), (obj, res) => {
-                    try {
-                        var collection = Secret.Collection.create.end (res);
-                        default_collection = collection;
-                        loaded ();
-                    } catch (Error e) {
-                        critical (e.message);
+        public void search (Secret.Schema schema, HashTable<string, string> attributes) {
+            var flags = Secret.SearchFlags.ALL |
+                        Secret.SearchFlags.UNLOCK |
+                        Secret.SearchFlags.LOAD_SECRETS;
+
+            Secret.Service.get.begin (Secret.ServiceFlags.LOAD_COLLECTIONS, null, (obj, res) => {
+                try {
+                    var service = Secret.Service.get.end (res);
+                    if (service != null) {
+                        service.search.begin (schema, attributes, flags, null, (obj, res) => {
+                            try {
+                                var item_list = service.search.end (res);
+                                search_results (item_list);
+                            } catch (Error e) {
+                                critical (e.message);
+                            }
+                        });
+                    } else {
+                        critical ("Could not open Secret service to perform search");
+                        search_results (new List<Secret.Item> ());
                     }
-            });
-        }
-
-        public void add_item (string name, HashTable<string, string> attributes,
-                              string secret, CollectionType type) {
-            if (type == LOGIN) {
-                var secret_value = new Secret.Value (secret,
-                                                     secret.length,
-                                                     "text/plain"
-                                                    );
-
-                Secret.Item.create.begin (default_collection,
-                                Schemas.epiphany (), attributes, name,
-                                secret_value, Secret.ItemCreateFlags.NONE,
-                                new Cancellable (), (obj, res) => {
-                                    try {
-                                        var item = Secret.Item.create.end (res);
-                                        added (item);
-                                    } catch (Error e) {
-                                        critical (e.message);
-                                    }
-                                });
-            } else if (type == NOTE) {
-                    var secret_value = new Secret.Value (secret,
-                                                         secret.length,
-                                                         "text/plain"
-                                                        );
-
-                    Secret.Item.create.begin (default_collection,
-                            Schemas.note (), attributes, name, secret_value,
-                            Secret.ItemCreateFlags.NONE,
-                            new Cancellable (), (obj, res) => {
-                                try {
-                                    var item = Secret.Item.create.end (res);
-                                    added (item);
-                                } catch (Error e) {
-                                    critical (e.message);
-                                }
-                            });
-            }
-        }
-
-        public void remove_items (List<Secret.Item> items) {
-            foreach (var item in items) {
-                item.delete.begin (new Cancellable ());
-            }
-        }
-
-        public List<Secret.Item> get_items () {
-            var collection_items = default_collection.get_items ();
-            var relevant_items = new List<Secret.Item> ();
-            var login_schema = Schemas.epiphany ().name;
-            var note_schema = Schemas.note ().name;
-
-            foreach (var item in collection_items) {
-                if (item.get_schema_name () == login_schema || item.get_schema_name () == note_schema) {
-                    relevant_items.append (item);
+                } catch (Error e) {
+                    critical (e.message);
                 }
-            }
-
-            return relevant_items;
+            });
         }
     }
 } // Lockbox.Services

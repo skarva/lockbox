@@ -18,20 +18,19 @@
 */
 
 namespace Lockbox.Schemas {
+    const string login_schema_name = "org.epiphany.FormPassword";
+
     public static bool is_login(Secret.Item item) {
         string name = item.get_schema_name ();
 
-        if (name == null || name.length == 0) {
+        if (name == null || name.length == 0)
             return false;
-        } else if (name == epiphany ().name) {
-            return true;
-        }
 
-        return false;
+        return name == login_schema_name;
     }
 
     public static Secret.Schema epiphany () {
-        var schema = new Secret.Schema ("org.epiphany.FormPassword", Secret.SchemaFlags.NONE,
+        var schema = new Secret.Schema (login_schema_name, Secret.SchemaFlags.NONE,
                 "id", Secret.SchemaAttributeType.STRING,
                 "uri", Secret.SchemaAttributeType.STRING,
                 "target_origin", Secret.SchemaAttributeType.STRING,
