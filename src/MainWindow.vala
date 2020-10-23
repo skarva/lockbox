@@ -131,18 +131,6 @@ namespace Lockbox {
             layout_stack.add_named (scroll_window, "collection");
 
             /* Connect Signals */
-            // manager.loaded.connect (() => {
-            //     var items = manager.get_items ();
-            //     populate_list (items);
-
-            //     if (items.length () > 0) {
-            //         layout_stack.visible_child_name = "collection";
-            //     } else {
-            //         layout_stack.visible_child_name = "welcome";
-            //     }
-
-            //     reset_auto_reload_timer ();
-            // });
             manager.search_results.connect (add_item);
 
             headerbar.filter.connect((keyword) => {
@@ -164,6 +152,10 @@ namespace Lockbox {
             list.row_activated.connect (open_url);
 
             action_search ();
+
+            if (Application.app_settings.get_boolean ("auto-reload")) {
+                reset_auto_reload_timer ();
+            }
 
             show_all ();
         }
@@ -335,7 +327,7 @@ namespace Lockbox {
 
         private bool auto_reload_timed_out (){
             if (Application.app_settings.get_boolean ("auto-reload")) {
-                // Reload collection_row
+                // Reload list
             }
 
             GLib.Source.remove (auto_reload_timer_id);

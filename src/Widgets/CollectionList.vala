@@ -25,29 +25,29 @@ namespace Lockbox.Widgets {
         public CollectionList(MainWindow? window) {
             main_window = window;
             model = new ListStore (Type.OBJECT);
-            
-            bind_model (model, add_row);
+
+            bind_model (model, create_item_row);
 
             set_filter_func (filter);
         }
 
         /// Adds relevant secret item data to a new row
-        /// Returns size of the list after adding
         public void add_row (Secret.Item item) {
-            var row = new Widgets.CollectionListRow (item);
+            // var row = new Widgets.CollectionListRow (item);
 
-            if (Schemas.is_login (item)) {
-                row.copy_username.connect (main_window.copy_username);
-                row.copy_password.connect (main_window.copy_password);
-            }
+            // if (Schemas.is_login (item)) {
+            //     row.copy_username.connect (main_window.copy_username);
+            //     row.copy_password.connect (main_window.copy_password);
+            // }
 
-            row.edit_entry.connect (edit_row);
-            row.delete_entry.connect (remove_row);
-            add (row);
+            // row.edit_entry.connect (edit_row);
+            // row.delete_entry.connect (remove_row);
+            // add (row);
 
-            show_all ();
+            // show_all ();
         }
 
+        /// Create dialog to edit desired secret item
         public void edit_row (Widgets.CollectionListRow row) {
             if (Schemas.is_login (row.item)) {
                 var login_dialog = new Dialogs.LoginDialog (main_window);
@@ -64,6 +64,7 @@ namespace Lockbox.Widgets {
             }
         }
 
+        /// Remove row with desired secret item
         public void remove_row (Widgets.CollectionListRow row) {
             remove (row);
         }
@@ -113,6 +114,20 @@ namespace Lockbox.Widgets {
 
         public uint size () {
             return model.get_n_items ();
+        }
+
+        public Gtk.Widget create_item_row (Object item) {
+            var row = new Widgets.CollectionListRow ((Secret.Item) item);
+
+            if (Schemas.is_login ((Secret.Item) item)) {
+                row.copy_username.connect (main_window.copy_username);
+                row.copy_password.connect (main_window.copy_password);
+            }
+
+            row.edit_entry.connect (edit_row);
+            row.delete_entry.connect (remove_row);
+
+            return row;
         }
     }
 } // Lockbox.Widgets
