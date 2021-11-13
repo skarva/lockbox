@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Lock Box
+GenericName=Lock Box Password App
+Comment=Encrypted password and note manager
+Categories=Utility;System;
+Exec=com.github.skarva.lockbox
+Icon=com.github.skarva.lockbox
+Terminal=false
+Type=Application
+Keywords=Password;Note;Sync
