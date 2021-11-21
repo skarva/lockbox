@@ -1,0 +1,53 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the com.github.skarva.lockbox package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: com.github.skarva.lockbox\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-21 00:18-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/Application.vala:21
+msgid "Lock Box Coming Soon"
+msgstr ""
+
+#: data/lockbox.desktop.in:3 data/lockbox.appdata.xml.in:6
+msgid "Lock Box"
+msgstr ""
+
+#: data/lockbox.desktop.in:4
+msgid "Lock Box Password App"
+msgstr ""
+
+#: data/lockbox.desktop.in:5
+msgid "Encrypted password and note manager"
+msgstr ""
+
+#: data/lockbox.desktop.in:8
+msgid "com.github.skarva.lockbox"
+msgstr ""
+
+#: data/lockbox.desktop.in:11
+msgid "Password;Note;Sync"
+msgstr ""
+
+#: data/lockbox.appdata.xml.in:7
+msgid "Lock your secrets up tight"
+msgstr ""
+
+#: data/lockbox.appdata.xml.in:9
+msgid ""
+"Keep your notes and website credentials secure in an easy-to-manage "
+"collection. It is ready to go when you're logged in, and securely encrypted "
+"when you're not."
+msgstr ""

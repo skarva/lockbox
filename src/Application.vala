@@ -18,7 +18,7 @@ public class LockBox : Gtk.Application {
             title = "Lock Box"
         };
 
-        var label = new Gtk.Label ("Lock Box Coming Soon");
+        var label = new Gtk.Label (_("Lock Box Coming Soon"));
 
         main_window.add (label);
         main_window.show_all ();
