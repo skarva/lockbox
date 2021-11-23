@@ -1,0 +1,19 @@
+app-id: com.github.skarva.lockbox
+
+runtime: io.elementary.Platform
+runtime-version: '6'
+sdk: io.elementary.Sdk
+
+command: com.github.skarva.lockbox
+
+finish-args:
+  - '--share=ipc'
+  - '--socket=fallback-x11'
+  - '--socket=wayland'
+
+modules:
+  - name: lockbox
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .
