@@ -43,8 +43,6 @@ namespace Lockbox {
 
             Granite.Services.Logger.initialize ("Lock Box");
             Granite.Services.Logger.DisplayLevel = Granite.Services.LogLevel.NOTIFY;
-
-            Granite.Services.Paths.initialize ("lockbox", Constants.DATADIR);
         }
 
         public static Application _instance = null;
