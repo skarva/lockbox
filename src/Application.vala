@@ -12,15 +12,8 @@ public class LockBox : Gtk.Application {
     }
 
     protected override void activate () {
-        var main_window = new Gtk.ApplicationWindow (this) {
-            default_height =  600,
-            default_width = 600,
-            title = "Lock Box"
-        };
+        var main_window = new MainWindow (this);
 
-        var label = new Gtk.Label (_("Lock Box Coming Soon"));
-
-        main_window.add (label);
         main_window.show_all ();
     }
 
