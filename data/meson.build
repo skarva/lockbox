@@ -39,7 +39,7 @@ i18n.merge_file(
     output: meson.project_name() + '.appdata.xml',
     po_dir: join_paths(meson.source_root(), 'po'),
     install: true,
-    install_dir: join_paths(get_option('datadir'), 'metainfo')
+    install_dir: join_paths(get_option('datadir'), 'appdata')
 )
 
 desktop_file_validate = find_program('desktop-file-validate', required:false)

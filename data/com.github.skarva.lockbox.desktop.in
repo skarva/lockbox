@@ -1,11 +1,12 @@
 [Desktop Entry]
-Name=Lock Box
-GenericName=Password Manager
-Comment=Secure and manage your secure information
-Categories=Utility;
-Exec=com.github.skarva.lockbox
-Icon=com.github.skarva.lockbox
-Terminal=false
+Version=1.0
 Type=Application
-X-GNOME-Gettext-Domain=com.github.skarva.lockbox
+
+Name=Lock Box
+Comment=Lock your secrets up tight
+Categories=Utility;GTK;
+
+Icon=com.github.skarva.lockbox
+Exec=com.github.skarva.lockbox
+Terminal=false
 Keywords=Password;Login;Notes;
