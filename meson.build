@@ -1,4 +1,7 @@
-project('com.github.skarva.lockbox', 'vala', 'c')
+project(
+    'com.github.skarva.lockbox',
+    'vala', 'c',
+    version: '7.0.0')
 
 i18n = import('i18n')
 
@@ -8,8 +11,10 @@ executable(
     meson.project_name(),
     'src' / 'Application.vala',
     'src' / 'MainWindow.vala',
+    'src/Widgets' / 'SecureItem.vala',
     dependencies: [
-        dependency('gtk+-3.0')
+        dependency('gtk4'),
+        dependency('granite-7')
     ],
     install: true
 )

@@ -15,9 +15,9 @@
 Keep your notes and website logins secure in an easy to manage collection. It is ready to go when you're logged in, and securely encrypted when you're not.
 
 ### Features
+* Store passwords or important notes
 * Fast search
 * Sort by name or date added
-* Access to logins saved in Epiphany
 
 ## Developing and Building
 

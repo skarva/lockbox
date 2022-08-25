@@ -3,8 +3,8 @@
  * SPDX-FileCopyrightText: 2021 skarva llc <contact@skarva.tech>
  */
 
-public class LockBox : Gtk.Application {
-    public LockBox () {
+public class LockBox.Application : Gtk.Application {
+    public Application () {
         Object (
             application_id: "com.github.skarva.lockbox",
             flags: ApplicationFlags.FLAGS_NONE
@@ -12,12 +12,28 @@ public class LockBox : Gtk.Application {
     }
 
     protected override void activate () {
-        var main_window = new MainWindow (this);
-
-        main_window.show_all ();
+        var main_window = new MainWindow () {
+            title = _("Lock Box")
+        };
+        main_window.present ();
+        
+        add_window(main_window);
+        
+        var granite_settings = Granite.Settings.get_default ();
+        var gtk_settings = Gtk.Settings.get_default ();
+        
+        gtk_settings.gtk_application_prefer_dark_theme = (
+            granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK
+        );
+        
+        granite_settings.notify["prefers-color-scheme"].connect (() => {
+            gtk_settings.gtk_application_prefer_dark_theme = (
+                granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK
+            );
+        });
     }
 
     public static int main (string[] args) {
-        return new LockBox ().run (args);
+        return new Application ().run (args);
     }
 }

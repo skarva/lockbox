@@ -1,19 +1,20 @@
-public class MainWindow : Gtk.Window {
-    public MainWindow (Gtk.Application application) {
-        Object (
-            application: application,
-            icon_name: "com.github.skarva.lockbox",
-            title: _("Lock Box"),
-        );
-    }
+public class LockBox.MainWindow : Gtk.Window {
+    private Gtk.ListBox secret_item_list;
 
     construct {
         var header = new Gtk.HeaderBar ();
-        header.show_close_button = true;
-
-        var label = new Gtk.Label (_("Lock Box Coming Soon"));
-
         set_titlebar (header);
-        add (label);
+
+        secret_item_list = new Gtk.ListBox () {
+            hexpand = true,
+            vexpand = true
+        };
+        
+        var test_item = new LockBox.Widgets.SecureItem ();
+        var test_item2 = new LockBox.Widgets.SecureItem ();
+        secret_item_list.append (test_item);
+        secret_item_list.append (test_item2);
+        
+        child = secret_item_list;
     }
 }
