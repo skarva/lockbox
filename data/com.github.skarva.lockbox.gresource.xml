@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="/com/github/skarva/lockbox/">
+        <file alias="Application.css" compressed="true">style/Application.css</file>
+    </gresource>
+</gresources>
