@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2021 skarva llc <contact@skarva.tech> -->
+<!-- Copyright 2022 skarva llc <contact@skarva.tech> -->
 <component type="desktop">
     <id>com.github.skarva.lockbox</id>
     <metadata_license>CC0</metadata_license>

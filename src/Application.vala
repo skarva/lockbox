@@ -4,6 +4,13 @@
  */
 
 public class LockBox.Application : Gtk.Application {
+    public const string ACTION_PREFIX = "app.";
+    public const string ACTION_MINI = "action-mini";
+
+    private const ActionEntry[] ACTION_ENTRIES = {
+        { ACTION_MINI, action_mini_toggle }
+    };
+
     public Application () {
         Object (
             application_id: "com.github.skarva.lockbox",
@@ -12,35 +19,38 @@ public class LockBox.Application : Gtk.Application {
     }
 
     protected override void activate () {
-        var main_window = new MainWindow () {
-            default_height = 600,
-            default_width = 600,
-            title = _("Lock Box")
-        };
+        add_action_entries (ACTION_ENTRIES, this);
+
+        ((SimpleAction) lookup_action (ACTION_MINI)).set_enabled (false);
+
+        // TODO Initialize mini window and load saved state
+
+        var main_window = new MainWindow (this);
         main_window.present ();
 
         add_window(main_window);
 
-        var granite_settings = Granite.Settings.get_default ();
-        var gtk_settings = Gtk.Settings.get_default ();
+        var settings = new Settings ("com.github.skarva.lockbox");
+        settings.bind ("window-height", main_window, "default-height", SettingsBindFlags.DEFAULT);
+        settings.bind ("window-width", main_window, "default-width", SettingsBindFlags.DEFAULT);
 
-        gtk_settings.gtk_application_prefer_dark_theme = (
-            granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK
-        );
+        if (settings.get_boolean ("window-maximized")) {
+            main_window.maximize ();
+        }
 
-        granite_settings.notify["prefers-color-scheme"].connect (() => {
-            gtk_settings.gtk_application_prefer_dark_theme = (
-                granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK
-            );
-        });
+        settings.bind ("window-maximized", main_window, "maximized", SettingsBindFlags.SET);
     }
-    
+
     protected override void startup () {
         base.startup ();
-        
+
         var provider = new Gtk.CssProvider ();
         provider.load_from_resource ("/com/github/skarva/lockbox/Application.css");
         Gtk.StyleContext.add_provider_for_display (Gdk.Display.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
+
+    private void action_mini_toggle () {
+        // TODO Swap window modes and save settings
     }
 
     public static int main (string[] args) {

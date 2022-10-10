@@ -8,6 +8,10 @@ i18n = import('i18n')
 
 add_global_arguments('-DGETTEXT_PACKAGE="@0@"'.format (meson.project_name()), language:'c')
 
+config_data = configuration_data()
+config_data.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
+config_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
+
 i18n.merge_file(
     input: 'data' / 'lockbox.desktop.in',
     output: meson.project_name() + '.desktop',
@@ -18,8 +22,8 @@ i18n.merge_file(
 )
 
 i18n.merge_file(
-    input: 'data' / 'lockbox.appdata.xml.in',
-    output: meson.project_name() + '.appdata.xml',
+    input: 'data' / 'lockbox.metainfo.xml.in',
+    output: meson.project_name() + '.metainfo.xml',
     po_dir: meson.source_root() / 'po',
     install: true,
     install_dir: get_option('datadir') / 'metainfo'
@@ -27,7 +31,7 @@ i18n.merge_file(
 
 gresource_lockbox = gnome.compile_resources(
     'gresource_lockbox',
-    join_paths('data', meson.project_name() + '.gresource.xml'),
+    join_paths('data' / 'lockbox.gresource.xml'),
     source_dir: 'data'
 )
 
@@ -35,6 +39,7 @@ executable(
     meson.project_name(),
     'src' / 'Application.vala',
     'src' / 'MainWindow.vala',
+    'src/Views' / 'EmptyListView.vala',
     'src/Views' / 'WelcomeView.vala',
     'src/Widgets' / 'SecureItem.vala',
     gresource_lockbox,
@@ -42,7 +47,7 @@ executable(
         dependency('gtk4'),
         dependency('granite-7')
     ],
-install: true
+    install: true
 )
 
 subdir('po')
@@ -61,3 +66,11 @@ foreach i: icon_sizes
         rename: meson.project_name() + '.svg'
     )
 endforeach
+
+install_data (
+    'data' / 'lockbox.gschema.xml',
+    install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
+    rename: meson.project_name() + '.gschema.xml'
+)
+
+meson.add_install_script('meson/post_install.py')
