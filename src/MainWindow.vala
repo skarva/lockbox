@@ -18,7 +18,7 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
 
         search_entry = new Gtk.SearchEntry () {
                 hexpand = true,
-                placeholder_text = _("Search Credentials and Notes"),
+                placeholder_text = _("Search your Secrets"),
                 valign = Gtk.Align.CENTER,
                 margin_end = 12,
         };
@@ -32,10 +32,25 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
             halign = Gtk.Align.END
         };
 
+        var welcome_placeholder = new LockBox.WelcomeView ();
+
+        var empty_placeholder = new LockBox.EmptyListView ();
+
+        var secrets_listbox = new Gtk.ListBox () {
+            hexpand = true,
+            vexpand = true
+        };
+        secrets_listbox.set_placeholder (empty_placeholder);
+
+        var scrolled = new Gtk.ScrolledWindow () {
+            child = secrets_listbox
+        };
+
+        // TODO: Add leaflet to hold welcome placeholder and scroll windows, and hook up signals
+
         var main_header = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
         main_header.add_css_class ("titlebar");
         main_header.add_css_class (Granite.STYLE_CLASS_FLAT);
-        main_header.add_css_class (Granite.STYLE_CLASS_DEFAULT_DECORATION);
         main_header.append (start_window_controls);
         main_header.append (search_entry);
         main_header.append (mini_mode_button);
@@ -43,6 +58,7 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
 
         var main_layout = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
         main_layout.append (main_header);
+        main_layout.append (scrolled);
 
         var error_toast = new Granite.Toast ("");
 
