@@ -39,6 +39,8 @@ executable(
     meson.project_name(),
     'src' / 'Application.vala',
     'src' / 'MainWindow.vala',
+    'src' / 'SecretObject.vala',
+    'src' / 'CredentialObject.vala',
     'src/Views' / 'EmptyListView.vala',
     'src/Views' / 'WelcomeView.vala',
     'src/Widgets' / 'SecureItem.vala',

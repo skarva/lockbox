@@ -5,6 +5,7 @@
 
 public class LockBox.MainWindow : Gtk.ApplicationWindow {
     public Gtk.SearchEntry search_entry { get; private set; }
+    public ListStore secrets_liststore { get; private set; }
 
     public MainWindow (Gtk.Application application) {
         Object(application: application);
@@ -42,11 +43,18 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
         };
         secrets_listbox.set_placeholder (empty_placeholder);
 
+        secrets_liststore = new ListStore (typeof (SecretObject));
+        secrets_listbox.bind_model (secrets_liststore, create_secret_row);
+
         var scrolled = new Gtk.ScrolledWindow () {
             child = secrets_listbox
         };
 
-        // TODO: Add leaflet to hold welcome placeholder and scroll windows, and hook up signals
+        var stack = new Gtk.Stack ();
+        stack.add_named (welcome_placeholder, "welcome");
+        stack.add_named (scrolled, "secrets");
+
+        // TODO: Hook up signals
 
         var main_header = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
         main_header.add_css_class ("titlebar");
@@ -58,7 +66,7 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
 
         var main_layout = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
         main_layout.append (main_header);
-        main_layout.append (scrolled);
+        main_layout.append (stack);
 
         var error_toast = new Granite.Toast ("");
 
@@ -96,5 +104,12 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
                 granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK
             );
         });
+    }
+
+    // TODO: This may need to either figure out type or have functions to create different secret types (note vs cred)
+    private Gtk.Widget create_secret_row (GLib.Object object) {
+        unowned var secret_object = (SecretObject) object;
+
+        return new LockBox.SecureItem ();
     }
 }
