@@ -4,8 +4,9 @@
  */
 
 public class LockBox.MainWindow : Gtk.ApplicationWindow {
-    public Gtk.SearchEntry search_entry { get; private set; }
-    public ListStore secrets_liststore { get; private set; }
+    private Gtk.SearchEntry search_entry { get; private set; }
+    private Gtk.Stack stack { get; private set; }
+    private ListStore secrets_liststore { get; private set; }
 
     public MainWindow (Gtk.Application application) {
         Object(application: application);
@@ -50,11 +51,12 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
             child = secrets_listbox
         };
 
-        var stack = new Gtk.Stack ();
+        stack = new Gtk.Stack ();
         stack.add_named (welcome_placeholder, "welcome");
         stack.add_named (scrolled, "secrets");
 
-        // TODO: Hook up signals
+        welcome_placeholder.clicked_new_box.connect (create_secrets_list);
+        welcome_placeholder.clicked_load_box.connect (load_secrets_list);
 
         var main_header = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
         main_header.add_css_class ("titlebar");
@@ -111,5 +113,13 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
         unowned var secret_object = (SecretObject) object;
 
         return new LockBox.SecureItem ();
+    }
+
+    private void create_secrets_list () {
+        stack.set_visible_child_name ("secrets");
+    }
+    
+    private void load_secrets_list () {
+        stack.set_visible_child_name ("secrets");
     }
 }
