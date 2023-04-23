@@ -4,6 +4,9 @@
  */
 
 public class LockBox.EmptyListView : Gtk.Box {
+    public signal void clicked_new_login ();
+    public signal void clicked_new_note ();
+
     construct {
         var welcome = new Granite.Placeholder ("Lock Box") {
             description = "Lock your credentials and secrets up tight."
@@ -23,8 +26,7 @@ public class LockBox.EmptyListView : Gtk.Box {
 
         append (welcome);
 
-        // TODO Connect button clicks to actions
-        // login_button.clicked.connect (() => clicked_new_login ());
-        // note_button.clicked.connect (() => clicked_new_note ());
+        login_button.clicked.connect (() => clicked_new_login ());
+        note_button.clicked.connect (() => clicked_new_note ());
     }
 }

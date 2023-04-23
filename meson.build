@@ -41,6 +41,8 @@ executable(
     'src' / 'MainWindow.vala',
     'src' / 'SecretObject.vala',
     'src' / 'CredentialObject.vala',
+    'src/Dialogs' / 'NewLocalDialog.vala',
+    'src/Dialogs' / 'LoadLocalDialog.vala',
     'src/Views' / 'EmptyListView.vala',
     'src/Views' / 'WelcomeView.vala',
     'src/Widgets' / 'SecureItem.vala',

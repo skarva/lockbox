@@ -23,7 +23,7 @@ public class LockBox.Application : Gtk.Application {
 
         ((SimpleAction) lookup_action (ACTION_MINI)).set_enabled (false);
 
-        // TODO Initialize mini window and load saved state
+        // TODO Initialize mini window
 
         var main_window = new MainWindow (this);
         main_window.present ();

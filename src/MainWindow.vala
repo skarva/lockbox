@@ -9,19 +9,21 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
     private ListStore secrets_liststore { get; private set; }
 
     public MainWindow (Gtk.Application application) {
-        Object(application: application);
+        Object(
+            application: application,
+            icon_name: "com.github.skarva.lockbox",
+            title: _("Lock Box")
+        );
     }
 
     construct {
-        icon_name = "com.github.skarva.lockbox";
-        title = _("Lock Box");
-
         var start_window_controls = new Gtk.WindowControls (Gtk.PackType.START);
 
         search_entry = new Gtk.SearchEntry () {
                 hexpand = true,
                 placeholder_text = _("Search your Secrets"),
                 valign = Gtk.Align.CENTER,
+                margin_start = 12,
                 margin_end = 12,
         };
 
@@ -116,10 +118,22 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
     }
 
     private void create_secrets_list () {
-        stack.set_visible_child_name ("secrets");
+        var dialog = new Dialogs.NewLocalDialog (this);
+        dialog.present ();
+        dialog.response.connect ((response_id) => {
+            if (response_id == Gtk.ResponseType.ACCEPT)
+                stack.set_visible_child_name ("secrets");
+            dialog.destroy ();
+        });
     }
-    
+
     private void load_secrets_list () {
-        stack.set_visible_child_name ("secrets");
+        var dialog = new Dialogs.LoadLocalDialog (this);
+        dialog.present ();
+        dialog.response.connect ((response_id) =>{
+            if (response_id == Gtk.ResponseType.ACCEPT)
+                stack.set_visible_child_name ("secrets");
+            dialog.destroy ();
+        });
     }
 }
