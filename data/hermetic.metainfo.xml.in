@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2022 skarva llc <contact@skarva.tech> -->
+<!-- Copyright 2023 skarva llc <contact@skarva.tech> -->
 <component type="desktop">
     <id>com.github.skarva.hermetic</id>
     <metadata_license>CC0</metadata_license>
@@ -8,11 +8,17 @@
     <description>
         <p>Keep your notes and website credentials secure in an easy-to-manage collection. It is ready to go when you're logged in, and securely encrypted when you're not.</p>
     </description>
+    
+    <launchable type="desktop-id">com.github.skarva.hermetic.desktop</launchable>
+    
+    <url type="homepage">https://github.com/skarva/hermetic</url>
+    
+    <content_rating type="oars-1.1" />
 
     <custom>
         <value key="x-appcenter-color-primary">#485a6c</value>
         <value key="x-appcenter-color-primary-text">rgb(255, 255, 255)</value>
         <value key="x-appcenter-suggested-price">15</value>
-        <value key="x-appcenter-stripe">pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</value>
+        <value key="x-appcenter-stripe">pk_live_51FCdRMKRbBpGR3zW13QhdM6Rw8JSHJJOvHzhR8CQh0aEZiILo339t3Mg2tevLcRtXyYnFlokxaWSgB2c3USkeE5T00IsFkkBAN</value>
     </custom>
 </component>

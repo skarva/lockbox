@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.com/skarva/hermetic.svg?branch=master)](https://travis-ci.com/skarva/hermetic)
-
 <p align="center">
     <img src="data/icons/icon.svg" alt="Icon" />
 </p>
