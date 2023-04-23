@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2022 skarva llc <contact@skarva.tech>
  */
 
-public class LockBox.SecureItem : Gtk.ListBoxRow {
+public class Hermetic.SecureItem : Gtk.ListBoxRow {
     construct {
         var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12);
 

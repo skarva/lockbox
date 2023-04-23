@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2022 skarva llc <contact@skarva.tech>
  */
 
-class Dialogs.LoadLocalDialog : Granite.Dialog {
+class Hermetic.Dialogs.LoadLocalDialog : Granite.Dialog {
     public LoadLocalDialog(Gtk.Window? parent) {
         Object (
             deletable: false,

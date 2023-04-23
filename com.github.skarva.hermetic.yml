@@ -1,10 +1,10 @@
-app-id: com.github.skarva.lockbox
+app-id: com.github.skarva.hermetic
 
 runtime: io.elementary.Platform
 runtime-version: '7.2'
 sdk: io.elementary.Sdk
 
-command: com.github.skarva.lockbox
+command: com.github.skarva.hermetic
 
 finish-args:
   - '--share=ipc'
@@ -12,7 +12,7 @@ finish-args:
   - '--socket=wayland'
 
 modules:
-  - name: lockbox
+  - name: hermetic
     buildsystem: meson
     sources:
       - type: dir

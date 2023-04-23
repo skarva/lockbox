@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2022 skarva llc <contact@skarva.tech>
  */
 
-public class LockBox.Application : Gtk.Application {
+public class Hermetic.Application : Gtk.Application {
     public const string ACTION_PREFIX = "app.";
     public const string ACTION_MINI = "action-mini";
 
@@ -13,7 +13,7 @@ public class LockBox.Application : Gtk.Application {
 
     public Application () {
         Object (
-            application_id: "com.github.skarva.lockbox",
+            application_id: "com.github.skarva.hermetic",
             flags: ApplicationFlags.FLAGS_NONE
         );
     }
@@ -30,7 +30,7 @@ public class LockBox.Application : Gtk.Application {
 
         add_window(main_window);
 
-        var settings = new Settings ("com.github.skarva.lockbox");
+        var settings = new Settings ("com.github.skarva.hermetic");
         settings.bind ("window-height", main_window, "default-height", SettingsBindFlags.DEFAULT);
         settings.bind ("window-width", main_window, "default-width", SettingsBindFlags.DEFAULT);
 
@@ -45,7 +45,7 @@ public class LockBox.Application : Gtk.Application {
         base.startup ();
 
         var provider = new Gtk.CssProvider ();
-        provider.load_from_resource ("/com/github/skarva/lockbox/Application.css");
+        provider.load_from_resource ("/com/github/skarva/hermetic/Application.css");
         Gtk.StyleContext.add_provider_for_display (Gdk.Display.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
     }
 

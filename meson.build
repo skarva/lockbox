@@ -1,5 +1,5 @@
 project(
-    'com.github.skarva.lockbox',
+    'com.github.skarva.hermetic',
     'vala', 'c',
     version: '7.0.0')
 
@@ -13,7 +13,7 @@ config_data.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir
 config_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 
 i18n.merge_file(
-    input: 'data' / 'lockbox.desktop.in',
+    input: 'data' / 'hermetic.desktop.in',
     output: meson.project_name() + '.desktop',
     po_dir: meson.source_root() / 'po',
     type: 'desktop',
@@ -22,16 +22,16 @@ i18n.merge_file(
 )
 
 i18n.merge_file(
-    input: 'data' / 'lockbox.metainfo.xml.in',
+    input: 'data' / 'hermetic.metainfo.xml.in',
     output: meson.project_name() + '.metainfo.xml',
     po_dir: meson.source_root() / 'po',
     install: true,
     install_dir: get_option('datadir') / 'metainfo'
 )
 
-gresource_lockbox = gnome.compile_resources(
-    'gresource_lockbox',
-    join_paths('data' / 'lockbox.gresource.xml'),
+gresource_hermetic = gnome.compile_resources(
+    'gresource_hermetic',
+    join_paths('data' / 'hermetic.gresource.xml'),
     source_dir: 'data'
 )
 
@@ -46,7 +46,7 @@ executable(
     'src/Views' / 'EmptyListView.vala',
     'src/Views' / 'WelcomeView.vala',
     'src/Widgets' / 'SecureItem.vala',
-    gresource_lockbox,
+    gresource_hermetic,
     dependencies: [
         dependency('gtk4'),
         dependency('granite-7')
@@ -72,7 +72,7 @@ foreach i: icon_sizes
 endforeach
 
 install_data (
-    'data' / 'lockbox.gschema.xml',
+    'data' / 'hermetic.gschema.xml',
     install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
     rename: meson.project_name() + '.gschema.xml'
 )

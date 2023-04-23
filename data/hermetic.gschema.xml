@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema path="/com/github/skarva/lockbox/" id="com.github.skarva.lockbox">
+  <schema path="/com/github/skarva/hermetic/" id="com.github.skarva.hermetic">
     <key name="window-width" type="i">
       <default>600</default>
       <summary>Most recent window width</summary>

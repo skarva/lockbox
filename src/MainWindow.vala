@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2022 skarva llc <contact@skarva.tech>
  */
 
-public class LockBox.MainWindow : Gtk.ApplicationWindow {
+public class Hermetic.MainWindow : Gtk.ApplicationWindow {
     private Gtk.SearchEntry search_entry { get; private set; }
     private Gtk.Stack stack { get; private set; }
     private ListStore secrets_liststore { get; private set; }
@@ -11,8 +11,8 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
     public MainWindow (Gtk.Application application) {
         Object(
             application: application,
-            icon_name: "com.github.skarva.lockbox",
-            title: _("Lock Box")
+            icon_name: "com.github.skarva.Hermetic",
+            title: _("Hermetic")
         );
     }
 
@@ -36,9 +36,9 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
             halign = Gtk.Align.END
         };
 
-        var welcome_placeholder = new LockBox.WelcomeView ();
+        var welcome_placeholder = new Views.WelcomeView ();
 
-        var empty_placeholder = new LockBox.EmptyListView ();
+        var empty_placeholder = new Views.EmptyListView ();
 
         var secrets_listbox = new Gtk.ListBox () {
             hexpand = true,
@@ -114,7 +114,7 @@ public class LockBox.MainWindow : Gtk.ApplicationWindow {
     private Gtk.Widget create_secret_row (GLib.Object object) {
         unowned var secret_object = (SecretObject) object;
 
-        return new LockBox.SecureItem ();
+        return new Hermetic.SecureItem ();
     }
 
     private void create_secrets_list () {

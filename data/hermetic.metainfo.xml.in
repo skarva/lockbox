@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2022 skarva llc <contact@skarva.tech> -->
 <component type="desktop">
-    <id>com.github.skarva.lockbox</id>
+    <id>com.github.skarva.hermetic</id>
     <metadata_license>CC0</metadata_license>
-    <name>Lock Box</name>
-    <summary>Lock your secrets up tight</summary>
+    <name>Hermetic</name>
+    <summary>Your secrets. Sealed tight.</summary>
     <description>
         <p>Keep your notes and website credentials secure in an easy-to-manage collection. It is ready to go when you're logged in, and securely encrypted when you're not.</p>
     </description>

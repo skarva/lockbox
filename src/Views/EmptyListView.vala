@@ -3,13 +3,13 @@
  * SPDX-FileCopyrightText: 2022 skarva llc <contact@skarva.tech>
  */
 
-public class LockBox.EmptyListView : Gtk.Box {
+public class Hermetic.Views.EmptyListView : Gtk.Box {
     public signal void clicked_new_login ();
     public signal void clicked_new_note ();
 
     construct {
-        var welcome = new Granite.Placeholder ("Lock Box") {
-            description = "Lock your credentials and secrets up tight."
+        var welcome = new Granite.Placeholder ("Hermetic") {
+            description = "Your secrets. Sealed tight."
         };
 
         var login_button = welcome.append_button (

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Hermetic
+GenericName=Hermetic Secrets App
+Comment=Encrypted password and secrets manager
+Categories=Utility;System;
+Exec=com.github.skarva.hermetic
+Icon=com.github.skarva.hermetic
+Terminal=false
+Type=Application
+Keywords=Password;Note;Sync

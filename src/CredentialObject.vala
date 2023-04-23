@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2022 skarva llc (https://skarva.tech)
  */
 
-public class LockBox.CredentialObject : SecretObject {
+public class Hermetic.CredentialObject : SecretObject {
     public string url { get; set; }
     public string username { get; set; }
 
