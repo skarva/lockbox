@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: 2022 skarva llc <contact@skarva.tech>
+ * SPDX-FileCopyrightText: 2023 skarva llc <contact@skarva.tech>
  */
 
 public class Hermetic.MainWindow : Gtk.ApplicationWindow {

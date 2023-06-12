@@ -1,6 +1,6 @@
 /*
  * SPDX-License-Identifier: GPL-3.0-or-later
- * SPDX-FileCopyrightText: 2022 skarva llc <contact@skarva.tech>
+ * SPDX-FileCopyrightText: 2023 skarva llc <contact@skarva.tech>
  */
 
 class Hermetic.Dialogs.LoadLocalDialog : Granite.Dialog {
@@ -26,6 +26,7 @@ class Hermetic.Dialogs.LoadLocalDialog : Granite.Dialog {
         get_content_area ().append (layout);
         
         add_button ("Cancel", Gtk.ResponseType.CANCEL);
-        add_button ("Load Container", Gtk.ResponseType.ACCEPT);
+        var button = add_button ("Load Container", Gtk.ResponseType.ACCEPT);
+        button.add_css_class (Granite.STYLE_CLASS_SUGGESTED_ACTION);
     }
 }
