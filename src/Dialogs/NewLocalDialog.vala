@@ -7,6 +7,8 @@ class Hermetic.Dialogs.NewLocalDialog : Granite.Dialog {
     private Gtk.Label location_label;
     private Gtk.Entry location_entry;
 
+    public signal void create_container ();
+
     public NewLocalDialog(Gtk.Window? parent) {
         Object (
             deletable: false,
@@ -23,7 +25,7 @@ class Hermetic.Dialogs.NewLocalDialog : Granite.Dialog {
         };
         var label_entry = new Gtk.Entry ();
 
-        var integrate_tooltip = _("Integrate directly into your system so it locks and unlocks when you log in or out. You can still export to make a backup.");
+        var integrate_tooltip = _("Integrate so it locks and unlocks when you log in or out. You can still export to make a backup.");
         var integrate_label = new Gtk.Label (_("Integrate with Login")) {
             halign = Gtk.Align.END,
             margin_start = 12,

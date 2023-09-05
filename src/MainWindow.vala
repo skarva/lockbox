@@ -60,13 +60,16 @@ public class Hermetic.MainWindow : Gtk.ApplicationWindow {
         welcome_placeholder.clicked_new_box.connect (create_secrets_list);
         welcome_placeholder.clicked_load_box.connect (load_secrets_list);
 
-        var main_header = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-        main_header.add_css_class ("titlebar");
+        var main_header = new Gtk.HeaderBar () {
+            show_title_buttons = false,
+            title_widget = new Gtk.Label ("")
+        };
         main_header.add_css_class (Granite.STYLE_CLASS_FLAT);
-        main_header.append (start_window_controls);
-        main_header.append (search_entry);
-        main_header.append (mini_mode_button);
-        main_header.append (end_window_controls);
+        main_header.add_css_class (Granite.STYLE_CLASS_DEFAULT_DECORATION);
+        main_header.pack_start (start_window_controls);
+        main_header.set_title_widget (search_entry);
+        main_header.pack_end (mini_mode_button);
+        main_header.pack_end (end_window_controls);
 
         var main_layout = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
         main_layout.append (main_header);
